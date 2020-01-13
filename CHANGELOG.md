@@ -1,6 +1,12 @@
 # Change Log
 
-## 0.0.0
+## Dev
 
 ### Added
 - Create package structure
+
+## X.Y.Z
+### Added
+### Changed
+### Fixed
+### Removed

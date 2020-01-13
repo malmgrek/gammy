@@ -19,13 +19,14 @@ if __name__ == "__main__":
         version      = versioneer.get_version(),
         author       = meta["__author__"],
         author_email = meta["__contact__"],
-        description  = "Generalized additive models with Bayesian twist",
+        description  = "Generalized additive models with a Bayesian twist",
         url          = "https://github.com/malmgrek/Gammy",
         cmdclass     = versioneer.get_cmdclass(),
         packages     = find_packages(),
         install_requires = [
             "attrs",
             "bayespy",
+            "h5py",
             "matplotlib",
             "numpy",
             "scipy"
