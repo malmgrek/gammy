@@ -1,9 +1,20 @@
 # Change Log
 
-## Dev
+## 0.0.1
 
 ### Added
-- Create package structure
+- Create package basic structure
+- Add `BayesPyFormula` for configuring and manipulating basis-function
+  based GAM models
+- Add `BayesianGAM` for fitting predictive GAM models using Bayesian
+  methods
+- Add utilities for constructing Gaussian process covariances using
+  suitable kernel functions
+- Add `kron` constructing multi-dimensional Gaussian processes with
+  Kronecker covariance structure
+- Add various plotting tools for validating and inspecting model parameters
+  and their posterior probability distributions
+- Add three illustrated examples to README.md
 
 ## X.Y.Z
 ### Added
