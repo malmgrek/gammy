@@ -26,5 +26,9 @@ class KeyFunction:
     def lift(self, f):
         return KeyFunction(function=compose(f, self.function))
 
+    def ravel(self):
+        return KeyFunction(function=lambda t: self.function(t).ravel())
+
+
 
 x = KeyFunction()
