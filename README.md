@@ -57,9 +57,9 @@ as if they were just Numpy arrays.
 
 ```python
 # Define model
-a = gammy.formulae.Scalar(prior=(0, 1e-6))
-b = gammy.formulae.Scalar(prior=(0, 1e-6))
-intercept = gammy.formulae.Scalar(prior=(0, 1e-6))
+a = gammy.Scalar(prior=(0, 1e-6))
+b = gammy.Scalar(prior=(0, 1e-6))
+intercept = gammy.Scalar(prior=(0, 1e-6))
 formula = a * x + b * x ** 2 + intercept
 model = gammy.BayesianGAM(formula).fit(input_data, y)
 ```
@@ -144,14 +144,14 @@ y = (
 
 
 # Define model
-a = gammy.formulae.ExpSineSquared1d(
+a = gammy.ExpSineSquared1d(
     np.arange(0, 2 * np.pi, 0.1),
     l=1.0,
     sigma=1.0,
     period=2 * np.pi,
     energy=0.99
 )
-intercept = gammy.formulae.Scalar(prior=(0, 1e-6))
+intercept = gammy.Scalar(prior=(0, 1e-6))
 formula = a(x[:, 0]) * x[:, 1] + intercept
 model = gammy.BayesianGAM(formula).fit(input_data, y)
 
@@ -225,7 +225,7 @@ b = gammy.ExpSquared1d(
     sigma=4.0,
     energy=0.99
 )(x[:, 1]) # note that we need to define the input map at this point!
-formula = gammy.kron(a, b)
+A = gammy.kron(a, b)
 intercept = gammy.Scalar(prior=(0, 1e-6))
 formula = A + intercept
 model = gammy.BayesianGAM(formula).fit(input_data, y)
