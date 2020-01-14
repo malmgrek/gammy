@@ -107,6 +107,59 @@ class BayesPyFormula():
 
 
 #
+# Operations between formulae
+#
+
+
+def kron(a, b):
+    """Take the tensor product of two BayesPyFormula bases
+
+    Non-commutative!
+
+    Parameters
+    ----------
+    a : BayesPyFormula
+    b : BayesPyFormula
+
+    Returns
+    -------
+    BayesPyFormula
+
+    """
+    # TODO: Note about eigenvectors and Kronecker product
+    # NOTE: This is experimental. The bases must correspond to "zero-mean"
+    #       r.v.. Then Kronecker product of covariances corresponds
+    #       to the product r.v. of independent r.v.'s.
+
+    # In the same order as in a Kronecker product
+    gen = (
+        (f, g) for g in utils.flatten(b.bases) for f in utils.flatten(a.bases)
+    )
+
+    # Outer product of bases
+    basis = listmap(
+        lambda funcs: lambda t: funcs[0](t) * funcs[1](t)
+    )(gen)
+
+    # Kronecker product of prior means and covariances
+    mu_a = np.hstack([mu for mu, _ in a.priors])
+    mu_b = np.hstack([mu for mu, _ in b.priors])
+    Lambda_a = sp.linalg.block_diag(*[
+        Lambda for _, Lambda in a.priors
+    ])
+    Lambda_b = sp.linalg.block_diag(*[
+        Lambda for _, Lambda in b.priors
+    ])
+    prior = (
+        np.kron(mu_a, mu_b), np.kron(Lambda_a, Lambda_b)
+    )
+    return BayesPyFormula(
+        bases=[basis],
+        priors=[prior]
+    )
+
+
+#
 # Custom formulae collection
 #
 
