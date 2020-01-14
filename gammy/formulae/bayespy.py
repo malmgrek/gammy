@@ -4,7 +4,7 @@ import numpy as np
 import scipy as sp
 
 from gammy import utils
-from gammy.utils import compose, listmap, lift_basis, pipe
+from gammy.utils import compose, listmap, rlift_basis, pipe
 
 
 def design_matrix(input_data, basis):
@@ -72,7 +72,7 @@ class BayesPyFormula():
     def __call__(self, *input_maps):
         # TODO: Transform basis
         return BayesPyFormula(
-            bases=[lift_basis(f, m) for (f, m) in zip(self.bases, input_maps)],
+            bases=[rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)],
             priors=self.priors
         )
 

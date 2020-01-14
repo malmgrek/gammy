@@ -26,6 +26,25 @@ def compose2(f, g):
     return h
 
 
+def lift(func):
+    # Could add func's *args, **kwargs here
+    return lambda f: compose2(func, f)
+
+
+def lift2(func):
+    return (
+        lambda f, g: (
+            lambda *args, **kwargs: func(
+                *[f(*args, **kwargs), g(*args, **kwargs)]
+            )
+        )
+    )
+
+
+def rlift(func):
+    return lambda f: compose2(f, func)
+
+
 def compose(*funcs):
     return functools.partial(functools.reduce, compose2)(funcs)
 
@@ -38,6 +57,7 @@ listmap = curryish(compose(list, map))
 tuplemap = curryish(compose(tuple, map))
 listfilter = curryish(compose(list, filter))
 tuplefilter = curryish(compose(tuple, filter))
+
 
 
 #
@@ -178,8 +198,8 @@ def interp1d_1darrays(v, grid, **kwargs):
     ]
 
 
-def lift_basis(basis, function):
-    return listmap(lambda f: compose(f, function))(basis)
+def rlift_basis(basis, func):
+    return listmap(rlift(func))(basis)
 
 
 #
