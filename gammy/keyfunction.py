@@ -17,11 +17,8 @@ class KeyFunction:
     def __getitem__(self, key):
         return KeyFunction(lambda t: t[key])
 
-    # FIXME: Is this needed?
-    def __rmul__(self, other):
-        return KeyFunction(
-            function=lambda t: self.function(t) * other.function(t)
-        )
+    def __mul__(self, other):
+        return KeyFunction(lambda t: self.function(t) * other.function(t))
 
     def __pow__(self, n):
         return KeyFunction(function=lambda t: self.function(t) ** n)
