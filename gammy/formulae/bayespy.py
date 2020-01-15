@@ -2,6 +2,7 @@ import attr
 import bayespy as bp
 import numpy as np
 import scipy as sp
+from scipy import interpolate
 
 from gammy import utils
 from gammy.utils import compose, listmap, rlift_basis, pipe
@@ -29,11 +30,11 @@ class BayesPyFormula():
         List of form ``[(μ1, Λ1), (μ2, Λ2), ...]`` where ``μi, Λi`` are
         the prior mean and precision matrix (inverse of covariance),
         respectively.
+        TODO: Change types to BayesPy objects for thinner wrapping
 
     Example
     -------
     TODO: Can be summed up. How model is generated?
-
 
     """
 
@@ -47,8 +48,8 @@ class BayesPyFormula():
         )
 
     def __mul__(self, input_map):
+        # TODO: Add elementwise multiplication of multiple bases
         # What other linear operations should be supported?
-        # Tensor product i.e. prod(A, B)
         return (
             utils.raise_exception(
                 NotImplementedError((
@@ -59,8 +60,8 @@ class BayesPyFormula():
             else BayesPyFormula(
                 bases=[
                     listmap(
-                        lambda f: lambda t: f(t) * input_map(t))(self.bases[0]
-                    )
+                        lambda f: lambda t: f(t) * input_map(t)
+                    )(self.bases[0])
                 ],
                 priors=self.priors
             )
@@ -282,10 +283,85 @@ def Function(function, prior):
     return BayesPyFormula(bases=[basis], priors=[prior])
 
 
-def FlippedRelu(grid, prior=None):
-    relus = utils.listmap(lambda c: lambda t: (t < c) * (c - t))(grid[1:-1])
+def ReLU(grid, prior=None):
+    relus = listmap(lambda c: lambda t: (t > c) * (c - t))(grid[1:-1])
     prior = (
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
     return BayesPyFormula(bases=[relus], priors=[prior])
+
+
+def FlippedReLU(grid, prior=None):
+    relus = listmap(lambda c: lambda t: (t < c) * (c - t))(grid[1:-1])
+    prior = (
+        (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
+        if not prior else prior
+    )
+    return BayesPyFormula(bases=[relus], priors=[prior])
+
+
+def TanH():
+    raise NotImplementedError
+
+
+def Gaussian1d():
+    raise NotImplementedError
+
+
+def BSpline1d(grid, order=3, extrapolate=True,
+              prior=None, mu_basis=None, mu_hyper=None):
+    """B-spline basis on a fixed grid
+
+    order : int
+        Order of the spline function. Polynomial degree is ``order - 1``
+
+    Number of spline basis functions is always ``N = len(grid) + order - 2``
+
+    """
+    # TODO: Verify that this doesn't break when scaling the grid
+    #       (extrapolation + damping)
+
+    mu_basis = [] if mu_basis is None else mu_basis
+    grid_ext = utils.extend_spline_grid(grid, order)
+
+    def build_basis_element(spline_arg):
+
+        (knots, extrapolate, loc) = spline_arg
+
+        def right_damp(t):
+            return t > knots[-1]
+
+        def left_damp(t):
+            return knots[0] > t
+
+        def element(t):
+            sp_element = interpolate.BSpline.basis_element(
+                knots,
+                extrapolate if loc in (-1, 1) else False
+            )
+            return sp_element(t) if loc == 0 else (
+                sp_element(t) * right_damp(t) if loc == -1 else
+                sp_element(t) * left_damp(t)
+            )
+
+        return utils.compose2(np.nan_to_num, element)
+
+    basis = listmap(build_basis_element)(
+        utils.gen_spline_args_from_grid_ext(grid_ext, order, extrapolate)
+    )
+
+    mu = np.zeros(len(basis)) if prior is None else prior[0]
+    Lambda = np.identity(len(basis)) if prior is None else prior[1]
+    prior = (
+        mu if mu_hyper is None else np.hstack(
+            (mu_hyper[0], mu)
+        ),
+        Lambda if mu_hyper is None else sp.linalg.block_diag(
+            mu_hyper[1], Lambda
+        )
+    )
+    bases = [mu_basis + basis]
+    return BayesPyFormula(bases=bases, priors=[prior])
+
+

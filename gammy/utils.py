@@ -100,6 +100,34 @@ def extract_diag_blocks(x, y):
     return functools.reduce(func, list(y), [x, []])[-1]
 
 
+def extend_spline_grid(grid, order):
+    return grid if order == 1 else pipe(
+        grid,
+        lambda x: np.append(
+            x, np.diff(x)[-(order - 1):][::-1].cumsum() + x[-1]
+        ),
+        lambda x: np.append(
+            x[0] - np.diff(x)[:(order - 1)].cumsum()[::-1], x
+        )
+    )
+
+
+def gen_spline_args_from_grid_ext(grid_ext, order, extrapolate):
+    n = len(grid_ext) - order  # Number of basis functions
+    (i_left, i_right) = (
+        (1, n - 1) if order == 1 else (order - 1, n - order + 1)
+    )
+    return (
+        (grid_ext[i:i + order + 1],) + (
+            (extrapolate, -1) if i < i_left
+            else (
+                (extrapolate, 1) if i >= i_right else (False, 0)
+            )
+        )
+        for i in range(n)
+    )
+
+
 #
 # Basis function generation tools
 #
