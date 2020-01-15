@@ -103,7 +103,7 @@ def gaussian1d_density_plot(model, grid_limits=[0.5, 1.5]):
 
     """
     N = len(model)
-    fig = plt.figure(figsize=(8, 4 * N // 2))
+    fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N + 1, 1)
 
     # Plot inverse gamma
