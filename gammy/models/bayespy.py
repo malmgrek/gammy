@@ -1,4 +1,3 @@
-import attr
 import bayespy as bp
 import h5py
 import numpy as np
@@ -7,8 +6,7 @@ from gammy import utils
 from gammy.utils import listmap, pipe
 
 
-@attr.s(frozen=True)
-class BayesianGAM():
+class BayesianGAM(object):
     """Generalized additive model predictor
 
     Parameters
@@ -20,16 +18,16 @@ class BayesianGAM():
     Currently tau is fixed to Gamma distribution, i.e., it is not possible
     to manually fix the noise level. Note though that one can set tight values
     for `α, β` in `Gamma(α, β)`, recalling that `mean = α / β` and
-    `variance = α / β ** 2`.
+    `variance = α / β ** 2`. The upside is that by estimating the noise level,
+    one gets a nice prediction uncertainty estimate.
 
     """
-    # TODO: Parameter uncertainty
-    # TODO: Prediction uncertainty
-    # TODO: Statistics in original coordinates
+    # TODO: Statistics in original coordinates?
 
-    formula = attr.ib()
-    tau = attr.ib(factory=lambda: bp.nodes.Gamma(1e-3, 1e-3))
-    theta = attr.ib(default=None)
+    def __init__(self, formula, tau=None, theta=None):
+        self.formula = formula
+        self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
+        self.theta = theta if theta is not None else formula.build_theta()
 
     def __len__(self):
         return len(self.formula.bases)
