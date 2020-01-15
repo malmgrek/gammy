@@ -22,6 +22,12 @@ Bayesian statistic with the help of the superb package [BayesPy](http://www.baye
 The work is in very early stage, so many features are still missing.
 
 
+### Projects with GAM functionalities
+
+- [PyGAM](https://pygam.readthedocs.io/en/latest/)
+- [Statsmodels](https://www.statsmodels.org/dev/gam.html)
+
+
 ## Examples
 
 ### Polynomial regression on 'roids
@@ -48,7 +54,7 @@ y = (
     5 * input_data +
     2.0 * input_data ** 2 +
     7 +
-    np.random.randn(len(input_data))
+    10 * np.random.randn(len(input_data))
 )
 ```
 
@@ -279,8 +285,58 @@ ax.plot_surface(X, Y, Z, color="r", antialiased=False)
 ![alt text](./doc/source/images/peaks.png "Peaks")
 
 
+### B-Spline basis
+
+Constructing B-Spline based 1-D basis functions is also supported.
+
+```python
+# Define dummy data
+input_data = 10 * np.random.rand(30)
+y = (
+    2.0 * input_data ** 2 +
+    7 +
+    10 * np.random.randn(len(input_data))
+)
+
+
+# Define model
+a = gammy.Scalar(prior=(0, 1e-6))
+
+grid = np.arange(0, 11, 2.0)
+order = 2
+N = len(grid) + order - 2
+sigma = 10 ** 2
+a = gammy.BSpline1d(
+    grid,
+    order=order,
+    prior=(np.zeros(N), np.identity(N) / sigma),
+    extrapolate=True
+)
+formula = a(x)
+model = gammy.BayesianGAM(formula).fit(input_data, y)
+
+# Plot results
+fig = gammy.plot.validation_plot(
+    model,
+    input_data,
+    y,
+    grid_limits=[-2, 12],
+    input_maps=[x],
+    titles=["a"]
+)
+
+
+# Plot parameter probability density functions
+fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
+```
+
+![alt text](./doc/source/images/example3-0.png "Validation plot")
+![alt text](./doc/source/images/example3-1.png "1-D density plot")
+
+
 ## To-be-added features
 
-- **TODO** Hyperpriors for model parameters
+- **TODO** Fixed ordering for GP related basis functions
+- **TODO** Hyperpriors for model parameters – Start from diagonal precisions
 - **TODO** Multi-dimensional observations
 - **TODO** Dynamically changing models
