@@ -1,5 +1,15 @@
 # Change Log
 
+## 0.0.2
+
+### Added
+- Formulas for `BSpline1d` and `ReLU`
+
+### Changed
+- Rename `KeyFunction` to `ArrayMapper`
+- Remove `attr` frozen class feature from `BayesianGAM` in order to be able
+  to define `theta` as the prior distribution by default in the initialization
+
 ## 0.0.1
 
 ### Added
