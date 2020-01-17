@@ -337,6 +337,10 @@ fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ## To-be-added features
 
 - **TODO** Fixed ordering for GP related basis functions
-- **TODO** Hyperpriors for model parameters – Start from diagonal precisions
+- **TODO** Hyperpriors for model parameters – Start from diagonal precisions.
+           Instead of `(μ, Λ)` pairs, the arguments could be just
+           BayesPy node.
+- **TODO** Add simple Numpy-based linear sover for MAP estimates
+- **TODO** Support non-linear GAM models
 - **TODO** Multi-dimensional observations
 - **TODO** Dynamically changing models
