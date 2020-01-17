@@ -16,7 +16,7 @@ def design_matrix(input_data, basis):
 
 @attr.s(frozen=True)
 class BayesPyFormula():
-    """BayesGAM model configuration settings
+    """BayesianGAM model configuration settings
 
     Parameters
     ----------
@@ -313,8 +313,14 @@ def BSpline1d(grid, order=3, extrapolate=True,
               prior=None, mu_basis=None, mu_hyper=None):
     """B-spline basis on a fixed grid
 
+    Parameters
+    ----------
+
     order : int
         Order of the spline function. Polynomial degree is ``order - 1``
+    extrapolate : bool
+        Extrapolate outside of the grid using basis functions "touching" the
+        endpoints
 
     Number of spline basis functions is always ``N = len(grid) + order - 2``
 
