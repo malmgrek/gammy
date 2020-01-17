@@ -39,16 +39,16 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
         ) if len(input_data.shape) > 1
         else np.linspace(grid_limits[0], grid_limits[1], gridsize)
     )
-    partials = model.predict_partials(grid)
+    partials = model.predict_variance_partials(grid)
     residuals = model.partial_residuals(input_data, y)
 
     # Time series plot
     ax = fig.add_subplot(gs[0, :])
-    (mu, margin_theta) = model.predict_theta_uncertainty(input_data)
+    (mu, sigma_theta) = model.predict_variance_theta(input_data)
     s_y = pd.Series(index=index, data=y)
     s_mu = pd.Series(index=index, data=mu)
-    lower = mu - margin_theta - model.mean_inv_sqrt_tau
-    upper = mu + margin_theta + model.mean_inv_sqrt_tau
+    lower = mu - 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
+    upper = mu + 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
     s_y.plot(ax=ax, linewidth=0, marker="o", alpha=0.3)
     s_mu.plot(ax=ax, color="k")
     ax.fill_between(s_mu.index, lower, upper, color="k", alpha=0.3)
@@ -60,15 +60,20 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
     ax.plot([mu.min(), mu.max()], [y.min(), y.max()], c="k", label="x=y")
     ax.legend(loc="best")
     ax.grid(True)
+    ax.set_xlabel("Predictions")
+    ax.set_ylabel("Observations")
 
     # Partial residual plots
-    for i, ((mu, margin), res, input_map, xlabel, title) in enumerate(
+    for i, ((mu, sigma), res, input_map, xlabel, title) in enumerate(
         zip(partials, residuals, input_maps, xlabels, titles)
         ):
         x = input_map(grid)
         if len(x.shape) == 1 or x.shape[1] == 1:
             ax = fig.add_subplot(gs[2 + i // 2, i % 2])
-            (lower, upper) = (mu - margin, mu + margin)
+            (lower, upper) = (
+                mu - 2 * np.sqrt(sigma),
+                mu + 2 * np.sqrt(sigma)
+            )
             ax.scatter(input_map(input_data), res, **kwargs)
             ax.plot(x, mu, c='k', lw=2)
             ax.fill_between(x, lower, upper, alpha=0.3, color="k")
@@ -79,8 +84,8 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
             w = np.hstack((
                 u.reshape(-1, 1), v.reshape(-1, 1)
             ))
-            # Override
-            (mu, margin) = model.predict_partial(w, i)
+            # Override mu and sigma on purpose!
+            (mu, sigma) = model.predict_variance_partial(w, i)
             mu_mesh = mu.reshape(u.shape)
             ax.plot_surface(u, v, mu_mesh)
         else:

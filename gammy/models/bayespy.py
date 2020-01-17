@@ -57,11 +57,8 @@ class BayesianGAM(object):
         )
 
     @property
-    def mean_inv_sqrt_tau(self):
-        # "Unexplained noise" covariance estimate
-        # Should work also if tau is an 1-D precision "matrix"
-        Y = bp.nodes.GaussianARD(np.array([0]), self.tau)
-        return np.sqrt(Y.get_moments()[1])[0]
+    def inv_mean_tau(self):
+        return 1 / self.tau.get_moments()[0]
 
     def extract_thetai(self, i):
         mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
@@ -93,10 +90,44 @@ class BayesianGAM(object):
         )
 
     def predict(self, input_data):
+        """Predict observations
+
+        Returns
+        -------
+        np.array
+            Mean of posterior predictive distribution
+
+        """
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_theta_uncertainty(self, input_data, scale=2.0):
+    def predict_variance(self, input_data):
+        """Predict observations with variance
+
+        Returns
+        -------
+        (μ, σ) : tuple([np.array, np.array])
+            ``μ`` is mean of posterior predictive distribution
+            ``σ`` is variances of posterior predictive + noise
+
+        """
+        X = self.formula.build_X(input_data)
+        F = bp.nodes.SumMultiply("i,i", self.theta, X)
+        return (
+            F.get_moments()[0],
+            pipe(F, utils.solve_covariance, np.diag) + self.inv_mean_tau
+        )
+
+    def predict_variance_theta(self, input_data):
+        """Predict observations with variance from model parameters
+
+        Returns
+        -------
+        (μ, σ) : tuple([np.array, np.array])
+            ``μ`` is mean of posterior predictive distribution
+            ``σ`` is variances of posterior predictive
+
+        """
         X = self.formula.build_X(input_data)
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
         # Ensuring correct moments
@@ -108,44 +139,30 @@ class BayesianGAM(object):
         # NOTE: See also bp.plot.plot_gaussian how std can be calculated
         return (
             F.get_moments()[0],
-            scale * pipe(F, utils.solve_covariance, np.diag, np.sqrt)
+            pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_total_uncertainty(self, input_data, scale=2.0):
-        X = self.formula.build_X(input_data)
-        F = bp.nodes.SumMultiply("i,i", self.theta, X)
-        return (
-            F.get_moments()[0],
-            (
-                scale * pipe(F, utils.solve_covariance, np.diag, np.sqrt) +
-                scale * self.mean_inv_sqrt_tau
-            )
-        )
-
-    def predict_partials(self, input_data, scale=2.0):
+    def predict_variance_partials(self, input_data):
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
             for X, theta in zip(Xs, self.thetas)
         ]
         mus = [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
-        margins = [
-            scale * pipe(F, utils.solve_covariance, np.diag, np.sqrt)
-            for F in Fs
-        ]
-        return list(zip(mus, margins))
+        sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
+        return list(zip(mus, sigmas))
 
-    def predict_partial(self, input_data, i, scale=2.0):
+    def predict_variance_partial(self, input_data, i):
         # Not refactored with predict_partials for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.extract_thetai(i), X)
         mu = np.dot(X, self.mean_theta[i])
-        margin = scale * pipe(F, utils.solve_covariance, np.diag, np.sqrt)
-        return (mu, margin)
+        sigma = pipe(F, utils.solve_covariance, np.diag)
+        return (mu, sigma)
 
 
     def partial_residuals(self, input_data, y):
-        partials = self.predict_partials(input_data)
+        partials = self.predict_variance_partials(input_data)
         mus = [mu for (mu, _) in partials]
         return [
             y - np.sum(mus[:i] + mus[i + 1:], axis=0)
@@ -154,27 +171,34 @@ class BayesianGAM(object):
 
     def partial_residual(self, input_data, y, i):
         # Not refactored with partial_residuals for perf reasons
-        partials = self.predict_partials(input_data)
+        partials = self.predict_variance_partials(input_data)
         mus = [mu for (mu, _) in partials]
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
+
+    def _save(self, group):
+        self.tau._save(group.create_group("tau"))
+        self.theta._save(group.create_group("theta"))
+        return group
 
     def save(self, filename):
         # TODO: OS independent filepaths
         with h5py.File(filename, "w") as h5f:
             group = h5f.create_group("nodes")
-            self.tau._save(group.create_group("tau"))
-            self.theta._save(group.create_group("theta"))
+            self._save(group)
         return
 
-    def load(self, filename):
-        # TODO: OS independent filepaths
-        with h5py.File(filename, "r") as h5f:
-            tau = self.tau
-            tau._load(h5f["nodes"]["tau"])
-            theta = self.formula.build_theta()
-            theta._load(h5f["nodes"]["theta"])
+    def _load(self, h5f):
+        tau = self.tau
+        tau._load(h5f["nodes"]["tau"])
+        theta = self.formula.build_theta()
+        theta._load(h5f["nodes"]["theta"])
         return BayesianGAM(
             formula=self.formula,
             tau=tau,
             theta=theta
         )
+
+    def load(self, filename):
+        # TODO: OS independent filepaths
+        with h5py.File(filename, "r") as h5f:
+            return self._load(h5f)
