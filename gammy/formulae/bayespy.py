@@ -34,7 +34,7 @@ class BayesPyFormula():
 
     Example
     -------
-    TODO: Can be summed up. How model is generated?
+    Formulas can be summed up
 
     """
 
@@ -48,23 +48,14 @@ class BayesPyFormula():
         )
 
     def __mul__(self, input_map):
-        # TODO: Add elementwise multiplication of multiple bases
         # What other linear operations should be supported?
-        return (
-            utils.raise_exception(
-                NotImplementedError((
-                    "Multiplication currently only supported "
-                    "for formulas with one basis"
-                ))
-            ) if len(self) > 1
-            else BayesPyFormula(
-                bases=[
-                    listmap(
-                        lambda f: lambda t: f(t) * input_map(t)
-                    )(self.bases[0])
-                ],
-                priors=self.priors
-            )
+        return BayesPyFormula(
+            bases=[
+                listmap(
+                    lambda f: lambda t: f(t) * input_map(t)
+                )(basis) for basis in self.bases
+            ],
+            priors=self.priors
         )
 
     def __len__(self):

@@ -197,6 +197,9 @@ def scaled_principal_eigvecsh(H, energy=0.99):
         = \lambda_n^{1/2}\mathbf{u}_n^T \lambda_n^{-1/2}\mathbf{u}_n^T
         = \|\mathbf{w}\|^2
 
+    FIXME: There might be problem with serialization. If there are duplicate
+           eigenvalues, then on different machines, the vectors might
+           appear in different order.
 
     """
     w, v = pipe(
