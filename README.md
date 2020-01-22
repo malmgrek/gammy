@@ -1,4 +1,4 @@
-# Gammy – Generalized additive models in Python with Bayesian twist
+# Gammy – Generalized additive models in Python with a Bayesian twist
 
 Generalized additive model is a predictive model which is defined
 as a sum of terms which are calibrated using observation data. This

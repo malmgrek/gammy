@@ -57,7 +57,7 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
     # XY-plot
     ax = fig.add_subplot(gs[1, :])
     ax.plot(mu, y, alpha=0.3, marker="o", lw=0)
-    ax.plot([mu.min(), mu.max()], [y.min(), y.max()], c="k", label="x=y")
+    ax.plot([mu.min(), mu.max()], [mu.min(), mu.max()], c="k", label="x=y")
     ax.legend(loc="best")
     ax.grid(True)
     ax.set_xlabel("Predictions")
