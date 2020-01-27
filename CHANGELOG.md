@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.0.3
+
+## Fixed
+- Simplify `BayesPyFormula.__mul__` so that all bases are just multiplied
+  with the given input map
+- All references to `sigma` now correspond to variance
+
 ## 0.0.2
 
 ### Added
