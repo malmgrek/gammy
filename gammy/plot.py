@@ -9,7 +9,6 @@ except ImportError:
     )
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from gammy import utils
 from gammy.utils import pipe
@@ -22,6 +21,7 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
 
     """
     # TODO: Support larger input dimensions
+    index = np.arange(len(input_data)) if index is None else index
 
     # Figure definitions
     N = len(model)
@@ -45,13 +45,11 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
     # Time series plot
     ax = fig.add_subplot(gs[0, :])
     (mu, sigma_theta) = model.predict_variance_theta(input_data)
-    s_y = pd.Series(index=index, data=y)
-    s_mu = pd.Series(index=index, data=mu)
     lower = mu - 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
     upper = mu + 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
-    s_y.plot(ax=ax, linewidth=0, marker="o", alpha=0.3)
-    s_mu.plot(ax=ax, color="k")
-    ax.fill_between(s_mu.index, lower, upper, color="k", alpha=0.3)
+    ax.plot(index, y, linewidth=0, marker="o", alpha=0.3)
+    ax.plot(index, mu, color="k")
+    ax.fill_between(index, lower, upper, color="k", alpha=0.3)
     ax.grid(True)
 
     # XY-plot
