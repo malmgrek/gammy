@@ -238,11 +238,12 @@ def rlift_basis(basis, func):
 #
 
 
-def update(formula, input_data, y, tau, **kwargs):
+def update(formula, input_data, y, tau, theta=None, **kwargs):
     """Updates BayesPy nodes
 
     """
-    (theta, F) = formula.build_nodes(input_data)
+    theta = formula.build_theta() if theta is None else theta
+    F = formula.build_F(input_data, theta)
     Y = bp.nodes.GaussianARD(F, tau)
     Y.observe(y)
     Q = bp.inference.VB(Y, theta, tau)

@@ -75,11 +75,13 @@ class BayesianGAM(object):
         """Update BayesPy nodes and construct a GAM predictor
 
         """
+        # TODO: Test that fit always gives same result (if theta reset)
         (theta, _, tau, _) = utils.update(
             formula=self.formula,
             input_data=input_data,
             y=y,
             tau=self.tau,
+            theta=self.theta,
             repeat=repeat,
             **kwargs
         )

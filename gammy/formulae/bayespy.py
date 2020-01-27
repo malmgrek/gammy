@@ -88,14 +88,15 @@ class BayesPyFormula():
     def build_X(self, input_data):
         return np.hstack(self.build_Xs(input_data))
 
-    def build_nodes(self, input_data):
-        """Constructs BayesPy nodes
+    def build_F(self, input_data, theta=None):
+        """Constructs the forward model node
 
         """
-        X = self.build_X(input_data)
-        theta = self.build_theta()
-        F = bp.nodes.SumMultiply("i,i", theta, X)
-        return (theta, F)
+        return bp.nodes.SumMultiply(
+            "i,i",
+            self.build_theta() if theta is None else theta,
+            self.build_X(input_data)
+        )
 
 
 #
