@@ -59,7 +59,6 @@ listfilter = curryish(compose(list, filter))
 tuplefilter = curryish(compose(tuple, filter))
 
 
-
 #
 # Iterable manipulations
 #

@@ -5,7 +5,7 @@ import scipy as sp
 from scipy import interpolate
 
 from gammy import utils
-from gammy.utils import compose, listmap, rlift_basis, pipe
+from gammy.utils import listmap, rlift_basis
 
 
 def design_matrix(input_data, basis):
@@ -23,9 +23,6 @@ class BayesPyFormula():
     bases : list
         Each element is a list of basis functions and corresponds to a term
         in the additive model formula
-    input_maps : list
-        Each element is a function that map the input data
-        to correct type accepted by the term specific basis
     priors : list
         List of form ``[(μ1, Λ1), (μ2, Λ2), ...]`` where ``μi, Λi`` are
         the prior mean and precision matrix (inverse of covariance),
@@ -64,7 +61,9 @@ class BayesPyFormula():
     def __call__(self, *input_maps):
         # TODO: Transform basis
         return BayesPyFormula(
-            bases=[rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)],
+            bases=[
+                rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)
+            ],
             priors=self.priors
         )
 

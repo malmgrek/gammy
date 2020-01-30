@@ -53,7 +53,7 @@ class BayesianGAM(object):
         return pipe(
             self.theta.get_moments()[0],
             lambda x: utils.unflatten(x, self.formula.bases),
-            listmap(lambda x: np.array(x))
+            listmap(np.array)
         )
 
     @property
