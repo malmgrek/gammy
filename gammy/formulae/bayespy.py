@@ -8,6 +8,14 @@ from gammy import utils
 from gammy.utils import listmap, rlift_basis
 
 
+def concat_gaussians(gaussians: list):
+    # gaussians = [(μ1, Λ1), (μ2, Λ2)]
+    return (
+        np.hstack([g[0] for g in gaussians]),
+        sp.linalg.block_diag(*[g[1] for g in gaussians])
+    )
+
+
 def design_matrix(input_data, basis):
     return np.hstack([
         f(input_data).reshape(-1, 1) for f in basis
