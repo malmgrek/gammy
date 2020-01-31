@@ -231,7 +231,7 @@ b = gammy.ExpSquared1d(
     sigma=4.0,
     energy=0.99
 )(x[:, 1]) # note that we need to define the input map at this point!
-A = gammy.kron(a, b)
+A = gammy.Kron(a, b)
 intercept = gammy.Scalar(prior=(0, 1e-6))
 formula = A + intercept
 model = gammy.BayesianGAM(formula).fit(input_data, y)
@@ -336,11 +336,11 @@ fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 
 ## To-be-added features
 
-- **TODO** Fixed ordering for GP related basis functions
+- **TODO** Fixed ordering for GP related basis functions.
 - **TODO** Hyperpriors for model parameters – Start from diagonal precisions.
            Instead of `(μ, Λ)` pairs, the arguments could be just
            BayesPy node.
-- **TODO** Add simple Numpy-based linear sover for MAP estimates
-- **TODO** Support non-linear GAM models
-- **TODO** Multi-dimensional observations
-- **TODO** Dynamically changing models
+- **TODO** Add simple Numpy-based linear solver for MAP estimates.
+- **TODO** Support non-linear GAM models.
+- **TODO** Multi-dimensional observations.
+- **TODO** Dynamically changing models.
