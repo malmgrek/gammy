@@ -1,5 +1,17 @@
 # Change Log
 
+## 0.1.0
+
+### Changed
+- `BayesPyFormula` interface: Attribute `priors` => `prior`.
+  This gives more flexibility in defining priors. E.g., when summing up terms,
+  sometimes one wants the final prior not to be block diagonal.
+- Naming `*partial*` => `*marginal*` in `BayesianGAM`
+
+### Added
+- `Sum` and `Flatten` transformations for `BayesPyFormula`
+- Smoke tests corresponding the README examples
+
 ## 0.0.4
 
 ### Removed
