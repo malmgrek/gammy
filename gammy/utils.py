@@ -251,7 +251,11 @@ def update(formula, input_data, y, tau, theta=None, **kwargs):
 
 
 def solve_covariance(node):
-    # FIXME: Works only for Gaussian?
+    # FIXME: Works only for Gaussian nodes?
+    # TODO: Test using bp.nodes.Gaussian
     u = node.get_moments()
     cov = u[1] - np.outer(u[0], u[0])
     return cov if cov.shape != (1, 1) else np.array(cov.sum())
+
+
+solve_precision = compose(np.linalg.inv, solve_covariance)
