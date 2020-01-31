@@ -102,7 +102,32 @@ class BayesPyFormula():
 #
 
 
-def kron(a, b):
+def Flatten(formula, prior=None):
+    """Flatten formula
+
+    Bases: [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
+
+    """
+    return BayesPyFormula(
+        bases=[utils.flatten(formula.bases)],
+        prior=formula.prior if prior is None else prior
+    )
+
+
+def Sum(formulae, prior=None):
+    """Sum (i.e. concatenate) formulae
+
+    Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
+
+    """
+    priors = [formula.prior for formula in formulae]
+    return BayesPyFormula(
+        bases=[utils.flatten([formula.bases for formula in formulae])],
+        prior=concat_gaussians(priors) if prior is None else prior
+    )
+
+
+def Kron(a, b):
     """Take the tensor product of two BayesPyFormula bases
 
     Non-commutative!
