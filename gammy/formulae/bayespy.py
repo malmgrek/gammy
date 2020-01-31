@@ -122,7 +122,7 @@ def Sum(formulae, prior=None):
     """
     priors = [formula.prior for formula in formulae]
     return BayesPyFormula(
-        bases=[utils.flatten([formula.bases for formula in formulae])],
+        bases=utils.flatten([formula.bases for formula in formulae]),
         prior=concat_gaussians(priors) if prior is None else prior
     )
 
@@ -279,12 +279,12 @@ def WhiteNoise1d(
     )
 
 
-def Scalar(prior):
+def Scalar(prior=(0, 1)):
     basis = [lambda t: np.ones(len(t))]
     return BayesPyFormula(bases=[basis], prior=prior)
 
 
-def Line(prior):
+def Line(prior=(0, 1)):
     basis = [lambda t: t]
     return BayesPyFormula(bases=[basis], prior=prior)
 
