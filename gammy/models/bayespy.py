@@ -12,8 +12,11 @@ class BayesianGAM(object):
     Parameters
     ----------
     formula : BayesPyFormula
+        Formula containing the bases and prior
     theta : bp.nodes.Gaussian
+        Model parameters vector
     tau : bp.nodes.Gamma
+        Observation noise
 
     Currently tau is fixed to Gamma distribution, i.e., it is not possible
     to manually fix the noise level. Note though that one can set tight values
@@ -33,11 +36,11 @@ class BayesianGAM(object):
         return len(self.formula.bases)
 
     @property
-    def thetas(self):
-        """Nodes for the basis specific weight collections
+    def theta_marginals(self):
+        """Nodes for the basis specific marginal distributions
 
         """
-        # TODO: Test that the partial distributions are correct
+        # TODO: Test that the marginal distributions are correct
         mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(self.theta),
@@ -60,7 +63,10 @@ class BayesianGAM(object):
     def inv_mean_tau(self):
         return 1 / self.tau.get_moments()[0]
 
-    def extract_thetai(self, i):
+    def theta_marginal(self, i):
+        """Extract marginal distribution for a specific term
+
+        """
         mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(self.theta),
@@ -144,37 +150,39 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_variance_partials(self, input_data):
+    def predict_variance_marginals(self, input_data):
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
-            for X, theta in zip(Xs, self.thetas)
+            for X, theta in zip(Xs, self.theta_marginals)
         ]
         mus = [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
         sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
         return list(zip(mus, sigmas))
 
-    def predict_variance_partial(self, input_data, i):
-        # Not refactored with predict_partials for perf reasons
+    def predict_variance_marginal(self, input_data, i):
+        # Not refactored with predict_marginals for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
-        F = bp.nodes.SumMultiply("i,i", self.extract_thetai(i), X)
+        F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
         mu = np.dot(X, self.mean_theta[i])
         sigma = pipe(F, utils.solve_covariance, np.diag)
         return (mu, sigma)
 
+    def marginal_residuals(self, input_data, y):
+        """Marginal (partial) residuals
 
-    def partial_residuals(self, input_data, y):
-        partials = self.predict_variance_partials(input_data)
-        mus = [mu for (mu, _) in partials]
+        """
+        marginals = self.predict_variance_marginals(input_data)
+        mus = [mu for (mu, _) in marginals]
         return [
             y - np.sum(mus[:i] + mus[i + 1:], axis=0)
             for i in range(len(mus))
         ]
 
-    def partial_residual(self, input_data, y, i):
-        # Not refactored with partial_residuals for perf reasons
-        partials = self.predict_variance_partials(input_data)
-        mus = [mu for (mu, _) in partials]
+    def marginal_residual(self, input_data, y, i):
+        # Not refactored with marginal_residuals for perf reasons
+        marginals = self.predict_variance_marginals(input_data)
+        mus = [mu for (mu, _) in marginals]
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
 
     def _save(self, group):

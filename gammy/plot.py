@@ -39,8 +39,8 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
         ) if len(input_data.shape) > 1
         else np.linspace(grid_limits[0], grid_limits[1], gridsize)
     )
-    partials = model.predict_variance_partials(grid)
-    residuals = model.partial_residuals(input_data, y)
+    marginals = model.predict_variance_marginals(grid)
+    residuals = model.marginal_residuals(input_data, y)
 
     # Time series plot
     ax = fig.add_subplot(gs[0, :])
@@ -63,8 +63,8 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
 
     # Partial residual plots
     for i, ((mu, sigma), res, input_map, xlabel, title) in enumerate(
-        zip(partials, residuals, input_maps, xlabels, titles)
-        ):
+        zip(marginals, residuals, input_maps, xlabels, titles)
+    ):
         x = input_map(grid)
         if len(x.shape) == 1 or x.shape[1] == 1:
             ax = fig.add_subplot(gs[2 + i // 2, i % 2])
@@ -83,7 +83,7 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
                 u.reshape(-1, 1), v.reshape(-1, 1)
             ))
             # Override mu and sigma on purpose!
-            (mu, sigma) = model.predict_variance_partial(w, i)
+            (mu, sigma) = model.predict_variance_marginal(w, i)
             mu_mesh = mu.reshape(u.shape)
             ax.plot_surface(u, v, mu_mesh)
         else:
@@ -118,8 +118,8 @@ def gaussian1d_density_plot(model, grid_limits=[0.5, 1.5]):
     ax.set_title(r"$\tau$ = noise inverse variance")
     ax.grid(True)
 
-    # Plot thetas
-    for i, theta in enumerate(model.thetas):
+    # Plot marginal thetas
+    for i, theta in enumerate(model.theta_marginals):
         ax = fig.add_subplot(gs[i + 1])
         mus = theta.get_moments()[0]
         mus = np.array([mus]) if mus.shape == () else mus
