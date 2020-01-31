@@ -31,11 +31,8 @@ class BayesPyFormula():
     bases : list
         Each element is a list of basis functions and corresponds to a term
         in the additive model formula
-    priors : list
-        List of form ``[(μ1, Λ1), (μ2, Λ2), ...]`` where ``μi, Λi`` are
-        the prior mean and precision matrix (inverse of covariance),
-        respectively.
-        TODO: Change types to BayesPy objects for thinner wrapping
+    prior : tuple
+        Mean and precision matrix of the Gaussian prior distribution
 
     Example
     -------
@@ -44,12 +41,12 @@ class BayesPyFormula():
     """
 
     bases = attr.ib()
-    priors = attr.ib()
+    prior = attr.ib()
 
     def __add__(self, other):
         return BayesPyFormula(
             bases=self.bases + other.bases,
-            priors=self.priors + other.priors
+            prior=concat_gaussians([self.prior, other.prior])
         )
 
     def __mul__(self, input_map):
@@ -60,7 +57,7 @@ class BayesPyFormula():
                     lambda f: lambda t: f(t) * input_map(t)
                 )(basis) for basis in self.bases
             ],
-            priors=self.priors
+            prior=self.prior
         )
 
     def __len__(self):
@@ -72,17 +69,11 @@ class BayesPyFormula():
             bases=[
                 rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)
             ],
-            priors=self.priors
+            prior=self.prior
         )
 
     def build_theta(self):
-        # FIXME: One-dimensional theta must be defined with GaussianARD
-        return bp.nodes.Gaussian(
-            mu=np.hstack([mu for mu, _ in self.priors]),
-            Lambda=sp.linalg.block_diag(
-                *[Lambda for _, Lambda in self.priors]
-            )
-        )
+        return bp.nodes.Gaussian(self.prior[0], self.prior[1])
 
     def build_Xi(self, input_data, i):
         return design_matrix(input_data, self.bases[i])
@@ -125,11 +116,15 @@ def kron(a, b):
     -------
     BayesPyFormula
 
+    Let ``u, v`` be eigenvectors of matrices ``A, B``, respectively. Then
+    ``u ⊗ v`` is an eigenvector of ``A ⊗ B`` and ``λμ`` is the corresponding
+    eigenvalue.
+
     """
-    # TODO: Note about eigenvectors and Kronecker product
-    # NOTE: This is experimental. The bases must correspond to "zero-mean"
-    #       r.v.. Then Kronecker product of covariances corresponds
-    #       to the product r.v. of independent r.v.'s.
+    # NOTE: This is somewhat experimental. The bases must correspond to
+    #       "zero-mean" r.v.. Then Kronecker product of covariances
+    #       corresponds to the product r.v. of independent r.v.'s.
+    #       Check the formula of variance of product of independent r.v.'s.
 
     # In the same order as in a Kronecker product
     gen = (
@@ -142,20 +137,12 @@ def kron(a, b):
     )(gen)
 
     # Kronecker product of prior means and covariances
-    mu_a = np.hstack([mu for mu, _ in a.priors])
-    mu_b = np.hstack([mu for mu, _ in b.priors])
-    Lambda_a = sp.linalg.block_diag(*[
-        Lambda for _, Lambda in a.priors
-    ])
-    Lambda_b = sp.linalg.block_diag(*[
-        Lambda for _, Lambda in b.priors
-    ])
-    prior = (
-        np.kron(mu_a, mu_b), np.kron(Lambda_a, Lambda_b)
-    )
     return BayesPyFormula(
         bases=[basis],
-        priors=[prior]
+        prior=(
+            np.kron(a.prior[0], b.prior[0]),
+            np.kron(a.prior[1], b.prior[1])
+        )
     )
 
 
@@ -164,7 +151,9 @@ def kron(a, b):
 #
 
 
-def ExpSquared1d(grid, l, sigma, mu_basis=None, mu_hyper=None, energy=0.99):
+def ExpSquared1d(
+    grid, l, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=0.99
+):
     """Squared exponential model term
 
     Example
@@ -195,23 +184,23 @@ def ExpSquared1d(grid, l, sigma, mu_basis=None, mu_hyper=None, energy=0.99):
         grid=grid,
         fill_value="extrapolate"
     )
-    # Prior is white noise!
-    mu = np.zeros(len(basis))
-    Lambda = np.identity(len(basis))
+    # Default prior is white noise
     prior = (
-        mu if mu_hyper is None else np.hstack(
-            (mu_hyper[0], mu)
-        ),
-        Lambda if mu_hyper is None else sp.linalg.block_diag(
-            mu_hyper[1], Lambda
+        (np.zeros(len(basis)), np.identity(len(basis)))
+        if prior is None else prior
+    )
+    return BayesPyFormula(
+        bases=[mu_basis + basis],
+        prior=prior if mu_hyper is None else concat_gaussians(
+            [mu_hyper, prior]
         )
     )
-    bases = [mu_basis + basis]
-    return BayesPyFormula(bases=bases, priors=[prior])
 
 
-def ExpSineSquared1d(grid, l, sigma, period, mu_basis=None, mu_hyper=None,
-                     energy=0.99):
+def ExpSineSquared1d(
+    grid, l, sigma, period,
+    prior=None, mu_basis=None, mu_hyper=None, energy=0.99
+):
     mu_basis = [] if mu_basis is None else mu_basis
     basis = utils.interp1d_1darrays(
         utils.scaled_principal_eigvecsh(
@@ -227,22 +216,22 @@ def ExpSineSquared1d(grid, l, sigma, period, mu_basis=None, mu_hyper=None,
         grid=grid,
         fill_value="extrapolate"
     )
-    # Prior is white noise!
-    mu = np.zeros(len(basis))
-    Lambda = np.identity(len(basis))
+    # Default prior is white noise
     prior = (
-        mu if mu_hyper is None else np.hstack(
-            (mu_hyper[0], mu)
-        ),
-        Lambda if mu_hyper is None else sp.linalg.block_diag(
-            mu_hyper[1], Lambda
+        (np.zeros(len(basis)), np.identity(len(basis)))
+        if prior is None else prior
+    )
+    return BayesPyFormula(
+        bases=[mu_basis + basis],
+        prior=prior if mu_hyper is None else concat_gaussians(
+            [mu_hyper, prior]
         )
     )
-    bases = [mu_basis + basis]
-    return BayesPyFormula(bases=bases, priors=[prior])
 
 
-def WhiteNoise1d(grid, sigma, mu_basis=None, mu_hyper=None, energy=1.0):
+def WhiteNoise1d(
+    grid, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=1.0
+):
     mu_basis = [] if mu_basis is None else mu_basis
     basis = utils.interp1d_1darrays(
         utils.scaled_principal_eigvecsh(
@@ -252,34 +241,32 @@ def WhiteNoise1d(grid, sigma, mu_basis=None, mu_hyper=None, energy=1.0):
         grid=grid,
         fill_value="extrapolate"
     )
-    # Prior is white noise!
-    mu = np.zeros(len(basis))
-    Lambda = np.identity(len(basis))
+    # Default prior is white noise
     prior = (
-        mu if mu_hyper is None else np.hstack(
-            (mu_hyper[0], mu)
-        ),
-        Lambda if mu_hyper is None else sp.linalg.block_diag(
-            mu_hyper[1], Lambda
+        (np.zeros(len(basis)), np.identity(len(basis)))
+        if prior is None else prior
+    )
+    return BayesPyFormula(
+        bases=[mu_basis + basis],
+        prior=prior if mu_hyper is None else concat_gaussians(
+            [mu_hyper, prior]
         )
     )
-    bases = [mu_basis + basis]
-    return BayesPyFormula(bases=bases, priors=[prior])
 
 
 def Scalar(prior):
     basis = [lambda t: np.ones(len(t))]
-    return BayesPyFormula(bases=[basis], priors=[prior])
+    return BayesPyFormula(bases=[basis], prior=prior)
 
 
 def Line(prior):
     basis = [lambda t: t]
-    return BayesPyFormula(bases=[basis], priors=[prior])
+    return BayesPyFormula(bases=[basis], prior=prior)
 
 
 def Function(function, prior):
     basis = [function]
-    return BayesPyFormula(bases=[basis], priors=[prior])
+    return BayesPyFormula(bases=[basis], prior=prior)
 
 
 def ReLU(grid, prior=None):
@@ -288,7 +275,7 @@ def ReLU(grid, prior=None):
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return BayesPyFormula(bases=[relus], priors=[prior])
+    return BayesPyFormula(bases=[relus], prior=prior)
 
 
 def FlippedReLU(grid, prior=None):
@@ -297,7 +284,7 @@ def FlippedReLU(grid, prior=None):
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return BayesPyFormula(bases=[relus], priors=[prior])
+    return BayesPyFormula(bases=[relus], prior=prior)
 
 
 def TanH():
@@ -356,17 +343,14 @@ def BSpline1d(grid, order=3, extrapolate=True,
         utils.gen_spline_args_from_grid_ext(grid_ext, order, extrapolate)
     )
 
-    mu = np.zeros(len(basis)) if prior is None else prior[0]
-    Lambda = np.identity(len(basis)) if prior is None else prior[1]
+    # Default prior is white noise
     prior = (
-        mu if mu_hyper is None else np.hstack(
-            (mu_hyper[0], mu)
-        ),
-        Lambda if mu_hyper is None else sp.linalg.block_diag(
-            mu_hyper[1], Lambda
+        (np.zeros(len(basis)), np.identity(len(basis)))
+        if prior is None else prior
+    )
+    return BayesPyFormula(
+        bases=[mu_basis + basis],
+        prior=prior if mu_hyper is None else concat_gaussians(
+            [mu_hyper, prior]
         )
     )
-    bases = [mu_basis + basis]
-    return BayesPyFormula(bases=bases, priors=[prior])
-
-
