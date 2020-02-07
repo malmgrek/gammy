@@ -237,19 +237,6 @@ def rlift_basis(basis, func):
 #
 
 
-def update(formula, input_data, y, tau, theta=None, **kwargs):
-    """Updates BayesPy nodes
-
-    """
-    theta = formula.build_theta() if theta is None else theta
-    F = formula.build_F(input_data, theta)
-    Y = bp.nodes.GaussianARD(F, tau)
-    Y.observe(y)
-    Q = bp.inference.VB(Y, theta, tau)
-    Q.update(**kwargs)
-    return (theta, F, tau, Y)
-
-
 def solve_covariance(node):
     # FIXME: Works only for Gaussian nodes?
     # TODO: Test using bp.nodes.Gaussian

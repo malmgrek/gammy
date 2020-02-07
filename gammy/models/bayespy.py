@@ -6,6 +6,24 @@ from gammy import utils
 from gammy.utils import listmap, pipe
 
 
+def default_update(formula, input_data, y, tau, theta=None, **kwargs):
+    """BayesPy inference with Gaussian additive noise
+
+    The model is of form
+
+        y = X * θ + ε,      θ ~ N(μ, Λ),  ε ~ N(0, τ),  τ ~ Γ(α, β)
+
+    """
+    theta = formula.build_theta() if theta is None else theta
+    X = formula.build_X(input_data)
+    F = bp.nodes.SumMultiply("i,i", theta, X)
+    Y = bp.nodes.GaussianARD(F, tau)
+    Y.observe(y)
+    Q = bp.inference.VB(Y, theta, tau)
+    Q.update(**kwargs)
+    return (theta, tau)
+
+
 class BayesianGAM(object):
     """Generalized additive model predictor
 
@@ -17,6 +35,8 @@ class BayesianGAM(object):
         Model parameters vector
     tau : bp.nodes.Gamma
         Observation noise
+    update : function
+        BayesPy node update routine, must return (theta, tau)
 
     Currently tau is fixed to Gamma distribution, i.e., it is not possible
     to manually fix the noise level. Note though that one can set tight values
@@ -27,10 +47,19 @@ class BayesianGAM(object):
     """
     # TODO: Statistics in original coordinates?
 
-    def __init__(self, formula, tau=None, theta=None):
+    def __init__(
+        self,
+        formula,
+        tau=None,
+        theta=None,
+        update=default_update
+    ):
+        # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
+        #       would ruin everything because of mutability
         self.formula = formula
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
         self.theta = theta if theta is not None else formula.build_theta()
+        self.update = update
 
     def __len__(self):
         return len(self.formula.bases)
@@ -82,7 +111,7 @@ class BayesianGAM(object):
 
         """
         # TODO: Test that fit always gives same result (if theta reset)
-        (theta, _, tau, _) = utils.update(
+        (theta, tau) = self.update(
             formula=self.formula,
             input_data=input_data,
             y=y,
