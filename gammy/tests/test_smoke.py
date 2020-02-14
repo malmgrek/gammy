@@ -45,7 +45,7 @@ def test_gp():
     )
     formula = gammy.ExpSineSquared1d(
         np.arange(0, 2 * np.pi, 0.1),
-        l=1.0,
+        corrlen=1.0,
         sigma=1.0,
         period=2 * np.pi,
         energy=0.99
@@ -85,13 +85,13 @@ def test_kron():
     formula = gammy.Kron(
         gammy.ExpSquared1d(
             np.arange(-3, 3, 0.1),
-            l=0.5,
+            corrlen=0.5,
             sigma=4.0,
             energy=0.99
         )(x[:, 0]),
         gammy.ExpSquared1d(
             np.arange(-3, 3, 0.1),
-            l=0.5,
+            corrlen=0.5,
             sigma=4.0,
             energy=0.99
         )(x[:, 1])

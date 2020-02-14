@@ -1,6 +1,5 @@
 import functools
 
-import bayespy as bp
 import numpy as np
 import scipy.interpolate as spi
 
@@ -154,21 +153,21 @@ def squared_dist(X1, X2):
     )
 
 
-def exp_squared(X1, X2, l=1.0, sigma=1.0):
-    return sigma * np.exp(-0.5 / l ** 2 * squared_dist(X1, X2))
+def exp_squared(X1, X2, corrlen=1.0, sigma=1.0):
+    return sigma * np.exp(-0.5 / corrlen ** 2 * squared_dist(X1, X2))
 
 
-def exp_sine_squared(X1, X2, l=1.0, sigma=1.0, period=1.0):
+def exp_sine_squared(X1, X2, corrlen=1.0, sigma=1.0, period=1.0):
     return sigma * np.exp(
-        -2.0 / l ** 2 * np.sin(
+        -2.0 / corrlen ** 2 * np.sin(
             np.pi * np.sqrt(squared_dist(X1, X2)) / period
         ) ** 2
     )
 
 
-def rational_quadratic(X1, X2, l=1.0, sigma=1.0, alpha=1.0):
+def rational_quadratic(X1, X2, corrlen=1.0, sigma=1.0, alpha=1.0):
     return sigma * (
-        1 + squared_dist(X1, X2) / 2.0 / alpha / l ** 2
+        1 + squared_dist(X1, X2) / 2.0 / alpha / corrlen ** 2
     ) ** -alpha
 
 

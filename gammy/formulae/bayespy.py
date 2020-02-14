@@ -38,6 +38,11 @@ class BayesPyFormula():
     -------
     Formulas can be summed up
 
+    TODO:
+        - BaseFormula
+        - LinalgFormula
+        - BayesPyFormula
+
     """
 
     bases = attr.ib()
@@ -167,7 +172,7 @@ def Kron(a, b):
 
 
 def ExpSquared1d(
-    grid, l, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=0.99
+    grid, corrlen, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=0.99
 ):
     """Squared exponential model term
 
@@ -191,7 +196,7 @@ def ExpSquared1d(
             utils.exp_squared(
                 X1=grid.reshape(-1, 1),
                 X2=grid.reshape(-1, 1),
-                l=l,
+                corrlen=corrlen,
                 sigma=sigma
             ),
             energy=energy
@@ -213,7 +218,7 @@ def ExpSquared1d(
 
 
 def ExpSineSquared1d(
-    grid, l, sigma, period,
+    grid, corrlen, sigma, period,
     prior=None, mu_basis=None, mu_hyper=None, energy=0.99
 ):
     mu_basis = [] if mu_basis is None else mu_basis
@@ -222,7 +227,7 @@ def ExpSineSquared1d(
             utils.exp_sine_squared(
                 X1=grid.reshape(-1, 1),
                 X2=grid.reshape(-1, 1),
-                l=l,
+                corrlen=corrlen,
                 sigma=sigma,
                 period=period
             ),
