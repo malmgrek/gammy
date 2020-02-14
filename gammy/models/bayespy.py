@@ -52,14 +52,14 @@ class BayesianGAM(object):
         formula,
         tau=None,
         theta=None,
-        update=default_update
+        update=None
     ):
         # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
         #       would ruin everything because of mutability
         self.formula = formula
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
         self.theta = theta if theta is not None else formula.build_theta()
-        self.update = update
+        self.update = update if update is not None else default_update
 
     def __len__(self):
         return len(self.formula.bases)
