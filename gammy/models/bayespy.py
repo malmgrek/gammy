@@ -1,3 +1,5 @@
+import copy
+
 import bayespy as bp
 import h5py
 import numpy as np
@@ -106,8 +108,15 @@ class BayesianGAM(object):
             Lambda=bp.utils.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data, y, repeat=1000, **kwargs):
+    def fit(self, input_data, y, repeat=1000, deepcopy=True, **kwargs):
         """Update BayesPy nodes and construct a GAM predictor
+
+        Parameters
+        ----------
+        deepcopy : bool
+            Perform fitting effects using a deepcopy of ``self``.
+            Needed in case one doesn't want to update the nodes of ``self``.
+
 
         """
         # TODO: Test that fit always gives same result (if theta reset)
@@ -115,8 +124,8 @@ class BayesianGAM(object):
             formula=self.formula,
             input_data=input_data,
             y=y,
-            tau=self.tau,
-            theta=self.theta,
+            tau=(copy.deepcopy(self.tau) if deepcopy else self.tau),
+            theta=(copy.deepcopy(self.theta) if deepcopy else self.theta),
             repeat=repeat,
             **kwargs
         )
