@@ -1,5 +1,3 @@
-import copy
-
 import bayespy as bp
 import h5py
 import numpy as np
@@ -8,22 +6,8 @@ from gammy import utils
 from gammy.utils import listmap, pipe
 
 
-def default_update(formula, input_data, y, tau, theta=None, **kwargs):
-    """BayesPy inference with Gaussian additive noise
-
-    The model is of form
-
-        y = X * θ + ε,      θ ~ N(μ, Λ),  ε ~ N(0, τ),  τ ~ Γ(α, β)
-
-    """
-    theta = formula.build_theta() if theta is None else theta
-    X = formula.build_X(input_data)
-    F = bp.nodes.SumMultiply("i,i", theta, X)
-    Y = bp.nodes.GaussianARD(F, tau)
-    Y.observe(y)
-    Q = bp.inference.VB(Y, theta, tau)
-    Q.update(**kwargs)
-    return (theta, tau)
+def build_theta(formula):
+    return bp.nodes.Gaussian(*formula.prior)
 
 
 class BayesianGAM(object):
@@ -31,14 +15,12 @@ class BayesianGAM(object):
 
     Parameters
     ----------
-    formula : BayesPyFormula
-        Formula containing the bases and prior
+    formula : gammy.Formula
+        Formula object containing the bases and prior
     theta : bp.nodes.Gaussian
         Model parameters vector
     tau : bp.nodes.Gamma
         Observation noise
-    update : function
-        BayesPy node update routine, must return (theta, tau)
 
     Currently tau is fixed to Gamma distribution, i.e., it is not possible
     to manually fix the noise level. Note though that one can set tight values
@@ -53,15 +35,13 @@ class BayesianGAM(object):
         self,
         formula,
         tau=None,
-        theta=None,
-        update=None
+        theta=None
     ):
         # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
         #       would ruin everything because of mutability
         self.formula = formula
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
-        self.theta = theta if theta is not None else formula.build_theta()
-        self.update = update if update is not None else default_update
+        self.theta = theta if theta is not None else build_theta(formula)
 
     def __len__(self):
         return len(self.formula.bases)
@@ -108,34 +88,25 @@ class BayesianGAM(object):
             Lambda=bp.utils.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data, y, repeat=1000, deepcopy=True, **kwargs):
+    def fit(self, input_data, y, repeat=1000, **kwargs):
         """Update BayesPy nodes and construct a GAM predictor
 
-        Parameters
-        ----------
-        deepcopy : bool
-            Perform fitting effects using a deepcopy of ``self``.
-            Needed in case one doesn't want to update the nodes of ``self``.
+        WARNING: Currently mutates the original object's ``theta`` and ``tau``.
 
+        An option to "reset" the original object to prior is to use the method
+        ``initialize_from_prior()`` of BayesPy nodes.
 
         """
         # TODO: Test that fit always gives same result (if theta reset)
-        (theta, tau) = self.update(
-            formula=self.formula,
-            input_data=input_data,
-            y=y,
-            tau=(copy.deepcopy(self.tau) if deepcopy else self.tau),
-            theta=(copy.deepcopy(self.theta) if deepcopy else self.theta),
-            repeat=repeat,
-            **kwargs
-        )
-        return BayesianGAM(
-            formula=self.formula,
-            tau=tau,
-            theta=theta
-        )
+        X = self.formula.build_X(input_data)
+        F = bp.nodes.SumMultiply("i,i", self.theta, X)
+        Y = bp.nodes.GaussianARD(F, self.tau)
+        Y.observe(y)
+        Q = bp.inference.VB(Y, self.theta, self.tau)
+        Q.update(repeat=repeat, **kwargs)
+        return self
 
-    def predict(self, input_data):
+    def predict(self, input_data) -> np.array:
         """Predict observations
 
         Returns
@@ -147,7 +118,7 @@ class BayesianGAM(object):
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_variance(self, input_data):
+    def predict_variance(self, input_data) -> tuple:
         """Predict observations with variance
 
         Returns
@@ -238,7 +209,7 @@ class BayesianGAM(object):
     def _load(self, h5f):
         tau = self.tau
         tau._load(h5f["nodes"]["tau"])
-        theta = self.formula.build_theta()
+        theta = build_theta(self.formula)
         theta._load(h5f["nodes"]["theta"])
         return BayesianGAM(
             formula=self.formula,
