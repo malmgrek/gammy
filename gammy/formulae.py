@@ -1,5 +1,4 @@
 import attr
-import bayespy as bp
 import numpy as np
 import scipy as sp
 from scipy import interpolate
@@ -23,8 +22,8 @@ def design_matrix(input_data, basis):
 
 
 @attr.s(frozen=True)
-class BayesPyFormula():
-    """BayesianGAM model configuration settings
+class Formula():
+    """Basis manipulation and design matrix creator
 
     Parameters
     ----------
@@ -36,12 +35,7 @@ class BayesPyFormula():
 
     Example
     -------
-    Formulas can be summed up
-
-    TODO:
-        - BaseFormula
-        - LinalgFormula
-        - BayesPyFormula
+    Manipulation and operations between formulae
 
     """
 
@@ -49,14 +43,14 @@ class BayesPyFormula():
     prior = attr.ib()
 
     def __add__(self, other):
-        return BayesPyFormula(
+        return Formula(
             bases=self.bases + other.bases,
             prior=concat_gaussians([self.prior, other.prior])
         )
 
     def __mul__(self, input_map):
         # What other linear operations should be supported?
-        return BayesPyFormula(
+        return Formula(
             bases=[
                 listmap(
                     lambda f: lambda t: f(t) * input_map(t)
@@ -70,15 +64,12 @@ class BayesPyFormula():
 
     def __call__(self, *input_maps):
         # TODO: Transform basis
-        return BayesPyFormula(
+        return Formula(
             bases=[
                 rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)
             ],
             prior=self.prior
         )
-
-    def build_theta(self):
-        return bp.nodes.Gaussian(self.prior[0], self.prior[1])
 
     def build_Xi(self, input_data, i):
         return design_matrix(input_data, self.bases[i])
@@ -103,7 +94,7 @@ def Flatten(formula, prior=None):
     Bases: [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
 
     """
-    return BayesPyFormula(
+    return Formula(
         bases=[utils.flatten(formula.bases)],
         prior=formula.prior if prior is None else prior
     )
@@ -116,25 +107,25 @@ def Sum(formulae, prior=None):
 
     """
     priors = [formula.prior for formula in formulae]
-    return BayesPyFormula(
+    return Formula(
         bases=utils.flatten([formula.bases for formula in formulae]),
         prior=concat_gaussians(priors) if prior is None else prior
     )
 
 
 def Kron(a, b):
-    """Take the tensor product of two BayesPyFormula bases
+    """Take the tensor product of two Formula bases
 
     Non-commutative!
 
     Parameters
     ----------
-    a : BayesPyFormula
-    b : BayesPyFormula
+    a : Formula
+    b : Formula
 
     Returns
     -------
-    BayesPyFormula
+    Formula
 
     Let ``u, v`` be eigenvectors of matrices ``A, B``, respectively. Then
     ``u ⊗ v`` is an eigenvector of ``A ⊗ B`` and ``λμ`` is the corresponding
@@ -157,7 +148,7 @@ def Kron(a, b):
     )(gen)
 
     # Kronecker product of prior means and covariances
-    return BayesPyFormula(
+    return Formula(
         bases=[basis],
         prior=(
             np.kron(a.prior[0], b.prior[0]),
@@ -209,7 +200,7 @@ def ExpSquared1d(
         (np.zeros(len(basis)), np.identity(len(basis)))
         if prior is None else prior
     )
-    return BayesPyFormula(
+    return Formula(
         bases=[mu_basis + basis],
         prior=prior if mu_hyper is None else concat_gaussians(
             [mu_hyper, prior]
@@ -241,7 +232,7 @@ def ExpSineSquared1d(
         (np.zeros(len(basis)), np.identity(len(basis)))
         if prior is None else prior
     )
-    return BayesPyFormula(
+    return Formula(
         bases=[mu_basis + basis],
         prior=prior if mu_hyper is None else concat_gaussians(
             [mu_hyper, prior]
@@ -266,7 +257,7 @@ def WhiteNoise1d(
         (np.zeros(len(basis)), np.identity(len(basis)))
         if prior is None else prior
     )
-    return BayesPyFormula(
+    return Formula(
         bases=[mu_basis + basis],
         prior=prior if mu_hyper is None else concat_gaussians(
             [mu_hyper, prior]
@@ -276,17 +267,17 @@ def WhiteNoise1d(
 
 def Scalar(prior=(0, 1)):
     basis = [lambda t: np.ones(len(t))]
-    return BayesPyFormula(bases=[basis], prior=prior)
+    return Formula(bases=[basis], prior=prior)
 
 
 def Line(prior=(0, 1)):
     basis = [lambda t: t]
-    return BayesPyFormula(bases=[basis], prior=prior)
+    return Formula(bases=[basis], prior=prior)
 
 
 def Function(function, prior):
     basis = [function]
-    return BayesPyFormula(bases=[basis], prior=prior)
+    return Formula(bases=[basis], prior=prior)
 
 
 def ReLU(grid, prior=None):
@@ -295,7 +286,7 @@ def ReLU(grid, prior=None):
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return BayesPyFormula(bases=[relus], prior=prior)
+    return Formula(bases=[relus], prior=prior)
 
 
 def FlippedReLU(grid, prior=None):
@@ -304,7 +295,7 @@ def FlippedReLU(grid, prior=None):
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return BayesPyFormula(bases=[relus], prior=prior)
+    return Formula(bases=[relus], prior=prior)
 
 
 def TanH():
@@ -368,7 +359,7 @@ def BSpline1d(grid, order=3, extrapolate=True,
         (np.zeros(len(basis)), np.identity(len(basis)))
         if prior is None else prior
     )
-    return BayesPyFormula(
+    return Formula(
         bases=[mu_basis + basis],
         prior=prior if mu_hyper is None else concat_gaussians(
             [mu_hyper, prior]
