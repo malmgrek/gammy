@@ -7,6 +7,7 @@ from gammy.utils import compose
 class ArrayMapper():
 
     # TODO: Implement other operations that should be supported
+    # TODO: Test operations
 
     function = attr.ib(default=lambda t: t)
 
@@ -20,7 +21,7 @@ class ArrayMapper():
 
     def __add__(self, other):
         return ArrayMapper(
-            lambda t: self.function(t).__add(other.function(t))
+            lambda t: self.function(t).__add__(other.function(t))
         )
 
     def __sub__(self, other):
@@ -92,7 +93,6 @@ class ArrayMapper():
         return ArrayMapper(
             lambda t: self.function(t).reshape(*args, **kwargs)
         )
-
 
 
 x = ArrayMapper()
