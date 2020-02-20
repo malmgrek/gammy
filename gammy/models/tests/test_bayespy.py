@@ -24,24 +24,17 @@ def dummy_data():
     return (input_data, y, formula)
 
 
-@pytest.mark.parametrize("deepcopy", [
-    True, False
-])
-def test_deepcopy(deepcopy):
+def test_mutable():
+    """Currently ``BayesianGAM`` object is mutated when fitted
+
+    FIXME: Make immutable.
+
+    """
     (input_data, y, formula) = dummy_data()
     model_prefit = gammy.BayesianGAM(formula)
-    model_fitted = model_prefit.fit(input_data, y, deepcopy=deepcopy)
+    model_fitted = model_prefit.fit(input_data, y)
     assert np.array_equal(
         model_prefit.mean_theta,
         model_fitted.mean_theta
-    ) != deepcopy
-    return
-
-
-def test_repeating_fits():
-    (input_data, y, formula) = dummy_data()
-    model0 = gammy.BayesianGAM(formula).fit(input_data, y, deepcopy=True)
-    model1 = model0.fit(input_data, y, deepcopy=True)
-    model2 = model0.fit(input_data, y, deepcopy=True)
-    assert_array_equal(model1.mean_theta, model2.mean_theta)
+    )
     return
