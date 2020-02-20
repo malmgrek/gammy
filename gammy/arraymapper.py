@@ -49,36 +49,6 @@ class ArrayMapper():
             lambda t: self.function(t).__neg__()
         )
 
-    def __eq__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__eq__(other.function(t))
-        )
-
-    def __ne__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__ne__(other.function(t))
-        )
-
-    def __lt__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__lt__(other.function(t))
-        )
-
-    def __le__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__le__(other.function(t))
-        )
-
-    def __gt__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__gt__(other.function(t))
-        )
-
-    def __ge__(self, other):
-        return ArrayMapper(
-            lambda t: self.function(t).__ge__(other.function(t))
-        )
-
     def lift(self, f):
         return ArrayMapper(
             compose(f, self.function)
