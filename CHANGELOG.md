@@ -1,8 +1,24 @@
 # Change Log
 
+## 0.2.0
+
+### Change
+- `BayesPyFormula` => `Formula`
+- Formulae package => module
+
+### Fix
+- `__div__` to `__truediv__` in `ArrayMapper`
+
+### Remove
+- Broken comparison methods in `ArrayMapper`
+
+### Add
+- Unit tests for `ArrayMapper`
+
+
 ## 0.1.0
 
-### Changed
+### Change
 - `BayesPyFormula` interface: Attribute `priors` => `prior`.
   This gives more flexibility in defining priors. E.g., when summing up terms,
   sometimes one wants the final prior not to be block diagonal.
@@ -14,22 +30,22 @@
 
 ## 0.0.4
 
-### Removed
+### Remove
 - Dependence from Pandas
 
 ## 0.0.3
 
-### Fixed
+### Fix
 - Simplify `BayesPyFormula.__mul__` so that all bases are just multiplied
   with the given input map
 - All references to `sigma` now correspond to variance
 
 ## 0.0.2
 
-### Added
+### Add
 - Formulas for `BSpline1d` and `ReLU`
 
-### Changed
+### Change
 - `KeyFunction` is now called `ArrayMapper`
 
 ### Remove
@@ -38,7 +54,7 @@
 
 ## 0.0.1
 
-### Added
+### Add
 - Create package basic structure
 - `BayesPyFormula` for configuring and manipulating basis-function
   based GAM models
@@ -53,7 +69,7 @@
 - Three illustrated examples to README.md
 
 ## X.Y.Z
-### Added
-### Changed
-### Fixed
-### Removed
+### Add
+### Change
+### Fix
+### Remove
