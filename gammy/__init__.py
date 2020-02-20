@@ -1,3 +1,4 @@
+from .arraymapper import ArrayMapper, x
 from .plot import *
 from .utils import *
 from .formulae import *
