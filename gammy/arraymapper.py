@@ -34,9 +34,9 @@ class ArrayMapper():
             lambda t: self.function(t).__mul__(other.function(t))
         )
 
-    def __div__(self, other):
+    def __truediv__(self, other):
         return ArrayMapper(
-            lambda t: self.function(t).__div__(other.function(t))
+            lambda t: self.function(t).__truediv__(other.function(t))
         )
 
     def __pow__(self, n):
