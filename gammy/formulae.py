@@ -1,3 +1,5 @@
+import math
+
 import attr
 import numpy as np
 import scipy as sp
@@ -206,6 +208,64 @@ def ExpSquared1d(
             [mu_hyper, prior]
         )
     )
+
+def ExpSquaredAnalytic1d(
+    midpoint,
+    corrlen,
+    sigma,
+    prior=None,
+    mu_basis=None,
+    mu_hyper=None,
+    energy=0.99
+):
+    """Squared exponential model term, analytic basis.
+
+    Example
+    -------
+
+    .. code-block:: python
+
+        formula = ExpSquaredAnalytic1d(
+            midpoint=15,
+            corrlen=5.0,
+            sigma=1.0,
+            mu_basis=[lambda t: t],
+            mu_hyper=(0, 1e-6)
+        )
+
+    """
+    a = 1. / (4 * sigma ** 2)
+    b = 1. / (2 * corrlen ** 2)
+    c = np.sqrt(a ** 2 + 2 * a * b)
+    A = a + b + c
+    B = b / A
+
+    def create_coeff_vector(i):
+        coeffs = np.zeros(i + 1)
+        coeffs[i] = 1
+        return coeffs
+
+    mu_basis = [] if mu_basis is None else mu_basis
+    basis = [
+        lambda x, i=i: np.exp(-(c - a) * (x - midpoint) ** 2) \
+                / np.sqrt(2 ** i * math.factorial(i)) * \
+                np.polynomial.hermite.hermval(np.sqrt(2 * c) * (x - midpoint),
+                                              create_coeff_vector(i)) # TODO create i'th directly
+        for i in range(5, -1, -1)  # TODO detect range from eigenvalues
+    ]
+
+    # Default prior is white noise
+    prior = (
+        (np.zeros(len(basis)), np.identity(len(basis)))
+        if prior is None else prior
+    )
+    return Formula(
+        bases=[mu_basis + basis],
+        prior=prior if mu_hyper is None else concat_gaussians(
+            [mu_hyper, prior]
+        )
+    )
+
 
 
 def ExpSineSquared1d(
