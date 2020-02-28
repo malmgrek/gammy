@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.1
+
+### Add
+- Methods `predict_marginal` and `predict_marginals` to
+  `BayesianGAM`
+- Type hints to `BayesianGAM`
+
 ## 0.2.0
 
 ### Change
