@@ -47,7 +47,7 @@ class BayesianGAM(object):
         return len(self.formula.bases)
 
     @property
-    def theta_marginals(self):
+    def theta_marginals(self) -> list:
         """Nodes for the basis specific marginal distributions
 
         """
@@ -63,7 +63,7 @@ class BayesianGAM(object):
         ]
 
     @property
-    def mean_theta(self):
+    def mean_theta(self) -> list:
         return pipe(
             self.theta.get_moments()[0],
             lambda x: utils.unflatten(x, self.formula.bases),
@@ -71,10 +71,10 @@ class BayesianGAM(object):
         )
 
     @property
-    def inv_mean_tau(self):
+    def inv_mean_tau(self) -> np.ndarray:
         return 1 / self.tau.get_moments()[0]
 
-    def theta_marginal(self, i):
+    def theta_marginal(self, i: int):
         """Extract marginal distribution for a specific term
 
         """
@@ -88,7 +88,9 @@ class BayesianGAM(object):
             Lambda=bp.utils.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data, y, repeat=1000, **kwargs):
+    def fit(
+        self, input_data: np.ndarray, y: np.ndarray, repeat: int=1000, **kwargs
+    ):
         """Update BayesPy nodes and construct a GAM predictor
 
         WARNING: Currently mutates the original object's ``theta`` and ``tau``.
@@ -106,7 +108,7 @@ class BayesianGAM(object):
         Q.update(repeat=repeat, **kwargs)
         return self
 
-    def predict(self, input_data) -> np.array:
+    def predict(self, input_data: np.ndarray) -> np.ndarray:
         """Predict observations
 
         Returns
@@ -118,7 +120,7 @@ class BayesianGAM(object):
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_variance(self, input_data) -> tuple:
+    def predict_variance(self, input_data: np.ndarray) -> tuple:
         """Predict observations with variance
 
         Returns
@@ -135,7 +137,7 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag) + self.inv_mean_tau
         )
 
-    def predict_variance_theta(self, input_data):
+    def predict_variance_theta(self, input_data: np.ndarray) -> tuple:
         """Predict observations with variance from model parameters
 
         Returns
@@ -159,14 +161,14 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_marginals(self, input_data: np.array) -> list:
+    def predict_marginals(self, input_data: np.ndarray) -> list:
         """Predict all terms separately
 
         """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
 
-    def predict_variance_marginals(self, input_data: np.array) -> list:
+    def predict_variance_marginals(self, input_data: np.ndarray) -> list:
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
@@ -176,7 +178,7 @@ class BayesianGAM(object):
         sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
         return list(zip(mus, sigmas))
 
-    def predict_marginal(self, input_data: np.array, i: int) -> np.array:
+    def predict_marginal(self, input_data: np.ndarray, i: int) -> np.ndarray:
         """Predict a term separately
 
         """
@@ -184,7 +186,7 @@ class BayesianGAM(object):
         return np.dot(X, self.mean_theta[i])
 
     def predict_variance_marginal(
-        self, input_data: np.array, i: int
+        self, input_data: np.ndarray, i: int
     ) -> tuple:
         # Not refactored with predict_marginal for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
@@ -194,7 +196,7 @@ class BayesianGAM(object):
         return (mu, sigma)
 
     def marginal_residuals(
-        self, input_data: np.array, y: np.array
+        self, input_data: np.ndarray, y: np.ndarray
     ) -> list:
         """Marginal (partial) residuals
 
@@ -206,7 +208,9 @@ class BayesianGAM(object):
             for i in range(len(mus))
         ]
 
-    def marginal_residual(self, input_data, y, i):
+    def marginal_residual(
+        self, input_data: np.ndarray, y: np.ndarray, i: int
+    ) -> np.ndarray:
         # Not refactored with marginal_residuals for perf reasons
         marginals = self.predict_variance_marginals(input_data)
         mus = [mu for (mu, _) in marginals]
@@ -217,7 +221,7 @@ class BayesianGAM(object):
         self.theta._save(group.create_group("theta"))
         return group
 
-    def save(self, filename):
+    def save(self, filename) -> None:
         # TODO: OS independent filepaths
         with h5py.File(filename, "w") as h5f:
             group = h5f.create_group("nodes")
