@@ -159,7 +159,14 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_variance_marginals(self, input_data):
+    def predict_marginals(self, input_data: np.array) -> list:
+        """Predict all terms separately
+
+        """
+        Xs = self.formula.build_Xs(input_data)
+        return [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
+
+    def predict_variance_marginals(self, input_data: np.array) -> list:
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
@@ -169,15 +176,26 @@ class BayesianGAM(object):
         sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
         return list(zip(mus, sigmas))
 
-    def predict_variance_marginal(self, input_data, i):
-        # Not refactored with predict_marginals for perf reasons
+    def predict_marginal(self, input_data: np.array, i: int) -> np.array:
+        """Predict a term separately
+
+        """
+        X = self.formula.build_Xi(input_data, i=i)
+        return np.dot(X, self.mean_theta[i])
+
+    def predict_variance_marginal(
+        self, input_data: np.array, i: int
+    ) -> tuple:
+        # Not refactored with predict_marginal for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
         mu = np.dot(X, self.mean_theta[i])
         sigma = pipe(F, utils.solve_covariance, np.diag)
         return (mu, sigma)
 
-    def marginal_residuals(self, input_data, y):
+    def marginal_residuals(
+        self, input_data: np.array, y: np.array
+    ) -> list:
         """Marginal (partial) residuals
 
         """
