@@ -245,3 +245,39 @@ def solve_covariance(node):
 
 
 solve_precision = compose(np.linalg.inv, solve_covariance)
+
+
+def jsonify(node) -> dict:
+    """Turn a expfamily node into a JSON serializable dict
+
+    """
+    return {
+        **{
+            "u{0}".format(i):
+                ui.tolist() for (i, ui) in enumerate(node.u)
+        },
+        **{
+            "observed": node.observed
+        },
+        **{
+            "phi{0}".format(i):
+                phii.tolist() for (i, phii) in enumerate(node.phi)
+        },
+        **{
+            "f": node.f.tolist(),
+            "g": node.g.tolist()
+        }
+    }
+
+
+def set_from_json(raw: dict, node):
+    node.u = [
+        np.array(raw["u{0}".format(i)]) for i in range(len(node.u))
+    ]
+    node.observed = raw["observed"]
+    node.phi = [
+        np.array(raw["phi{0}".format(i)]) for i in range(len(node.phi))
+    ]
+    node.f = np.array(raw["f"])
+    node.g = np.array(raw["g"])
+    return node

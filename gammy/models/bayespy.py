@@ -1,3 +1,5 @@
+import json
+
 import bayespy as bp
 import h5py
 import numpy as np
@@ -216,19 +218,32 @@ class BayesianGAM(object):
         mus = [mu for (mu, _) in marginals]
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
 
-    def _save(self, group):
+    def _save_h5(self, group):
         self.tau._save(group.create_group("tau"))
         self.theta._save(group.create_group("theta"))
         return group
 
     def save(self, filename) -> None:
         # TODO: OS independent filepaths
-        with h5py.File(filename, "w") as h5f:
-            group = h5f.create_group("nodes")
-            self._save(group)
+        file_ext = filename.split(".")[-1]
+        if file_ext in ("h5", "hdf5"):
+            with h5py.File(filename, "w") as h5f:
+                group = h5f.create_group("nodes")
+                self._save_h5(group)
+        elif file_ext == "json":
+            with open(filename, "w+") as jsonf:
+                json.dump(
+                    obj=dict(
+                        theta=utils.jsonify(self.theta),
+                        tau=utils.jsonify(self.tau)
+                    ),
+                    fp=jsonf
+                )
+        else:
+            raise ValueError("Unknown file type: {0}".format(file_ext))
         return
 
-    def _load(self, h5f):
+    def _load_h5(self, h5f):
         tau = self.tau
         tau._load(h5f["nodes"]["tau"])
         theta = build_theta(self.formula)
@@ -239,7 +254,22 @@ class BayesianGAM(object):
             theta=theta
         )
 
+    def _load_json(self, jsonf):
+        raw = json.load(jsonf)
+        return BayesianGAM(
+            formula=self.formula,
+            tau=utils.set_from_json(raw["tau"], self.tau),
+            theta=utils.set_from_json(raw["theta"], self.theta)
+        )
+
     def load(self, filename):
         # TODO: OS independent filepaths
-        with h5py.File(filename, "r") as h5f:
-            return self._load(h5f)
+        file_ext = filename.split(".")[-1]
+        if file_ext in ("h5", "hdf5"):
+            with h5py.File(filename, "r") as h5f:
+                return self._load_h5(h5f)
+        elif file_ext == "json":
+            with open(filename, "r") as jsonf:
+                return self._load_json(jsonf)
+        else:
+            raise ValueError("Unknown file type: {0}".format(file_ext))
