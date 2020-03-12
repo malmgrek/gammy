@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.2
+
+### Add
+- Support serializing models to JSON
+
 ## 0.2.1
 
 ### Add
