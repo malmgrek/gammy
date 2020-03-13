@@ -91,7 +91,12 @@ class BayesianGAM(object):
         )
 
     def fit(
-        self, input_data: np.ndarray, y: np.ndarray, repeat: int=1000, **kwargs
+        self,
+        input_data: np.ndarray,
+        y: np.ndarray,
+        repeat: int=1000,
+        verbose: bool=False,
+        **kwargs
     ):
         """Update BayesPy nodes and construct a GAM predictor
 
@@ -107,7 +112,7 @@ class BayesianGAM(object):
         Y = bp.nodes.GaussianARD(F, self.tau)
         Y.observe(y)
         Q = bp.inference.VB(Y, self.theta, self.tau)
-        Q.update(repeat=repeat, **kwargs)
+        Q.update(repeat=repeat, verbose=verbose, **kwargs)
         return self
 
     def predict(self, input_data: np.ndarray) -> np.ndarray:
