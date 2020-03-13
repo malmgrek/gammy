@@ -1,5 +1,10 @@
 # Change Log
 
+## 0.2.3
+
+### Add
+- Parameter `verbose` to `BayesianGAM.fit` defaulting to `False`
+
 ## 0.2.2
 
 ### Add
