@@ -73,6 +73,10 @@ class BayesianGAM(object):
         )
 
     @property
+    def covariance_theta(self) -> np.ndarray:
+        return utils.solve_covariance(self.theta)
+
+    @property
     def inv_mean_tau(self) -> np.ndarray:
         return 1 / self.tau.get_moments()[0]
 
