@@ -271,6 +271,9 @@ def jsonify(node) -> dict:
 
 
 def set_from_json(raw: dict, node):
+    """Set BayesPy node attributes from JSON
+
+    """
     node.u = [
         np.array(raw["u{0}".format(i)]) for i in range(len(node.u))
     ]

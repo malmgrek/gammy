@@ -232,7 +232,10 @@ class BayesianGAM(object):
         self.theta._save(group.create_group("theta"))
         return group
 
-    def save(self, filename) -> None:
+    def save(self, filename: str) -> None:
+        """Save the model to disk
+
+        """
         # TODO: OS independent filepaths
         file_ext = filename.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
@@ -250,7 +253,6 @@ class BayesianGAM(object):
                 )
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
-        return
 
     def _load_h5(self, h5f):
         tau = self.tau
@@ -271,8 +273,12 @@ class BayesianGAM(object):
             theta=utils.set_from_json(raw["theta"], self.theta)
         )
 
-    def load(self, filename):
-        # TODO: OS independent filepaths
+    def load(self, filename: str):
+        """Load model from disk
+
+        TODO: OS independent filepaths
+
+        """
         file_ext = filename.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
             with h5py.File(filename, "r") as h5f:
