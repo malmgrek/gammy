@@ -15,7 +15,7 @@ from gammy.utils import pipe
 
 
 def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
-                    xlabels=None, titles=None, ylabel=None, gridsize=20,
+                    xlabels=None, titles=None, ylabel=None, gridsize=20, color="r",
                     **kwargs):
     """Generic validation plot for a GAM
 
@@ -47,14 +47,14 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
     (mu, sigma_theta) = model.predict_variance_theta(input_data)
     lower = mu - 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
     upper = mu + 2 * np.sqrt(sigma_theta + model.inv_mean_tau)
-    ax.plot(index, y, linewidth=0, marker="o", alpha=0.3)
+    ax.plot(index, y, linewidth=0, marker="o", alpha=0.3, color=color)
     ax.plot(index, mu, color="k")
     ax.fill_between(index, lower, upper, color="k", alpha=0.3)
     ax.grid(True)
 
     # XY-plot
     ax = fig.add_subplot(gs[1, :])
-    ax.plot(mu, y, alpha=0.3, marker="o", lw=0)
+    ax.plot(mu, y, alpha=0.3, marker="o", lw=0, color=color)
     ax.plot([mu.min(), mu.max()], [mu.min(), mu.max()], c="k", label="x=y")
     ax.legend(loc="best")
     ax.grid(True)
@@ -72,7 +72,7 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
                 mu - 2 * np.sqrt(sigma),
                 mu + 2 * np.sqrt(sigma)
             )
-            ax.scatter(input_map(input_data), res, **kwargs)
+            ax.scatter(input_map(input_data), res, color=color, **kwargs)
             ax.plot(x, mu, c='k', lw=2)
             ax.fill_between(x, lower, upper, alpha=0.3, color="k")
             ax.set_xlabel(xlabel)
