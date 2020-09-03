@@ -73,6 +73,14 @@ def flatten(x):
 def unflatten(x, y):
     """Unflatten according to a reference
 
+    Example
+    -------
+
+    .. code-block:: python
+
+        unflatten([1, 2, 3], [["a", "b"], ["c"]])
+        # [[1, 2], [3]]
+
     """
     def func(cum, this):
         x_crop, res = cum
@@ -237,8 +245,7 @@ def rlift_basis(basis, func):
 
 
 def solve_covariance(node):
-    # FIXME: Works only for Gaussian nodes?
-    # TODO: Test using bp.nodes.Gaussian
+    # TODO: Test on Gaussian and other nodes
     u = node.get_moments()
     cov = u[1] - np.outer(u[0], u[0])
     return cov if cov.shape != (1, 1) else np.array(cov.sum())

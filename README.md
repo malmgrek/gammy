@@ -1,31 +1,45 @@
 # Gammy – Generalized additive models in Python with a Bayesian twist
 
-Generalized additive model is a predictive model which is defined
-as a sum of terms which are calibrated using observation data. This
+A Generalized additive model is a predictive mathematical model defined
+as a sum of terms that are calibrated (fitted) with observation data. This
 package provides a hopefully pleasant interface for configuring and fitting
 such models. Bayesian interpretation of model parameters is promoted.
 
 
 ## Summary
 
-Generalized additive models provide a surprisingly general framework for
-building predictive models for both production software and research work.
-This module provides tools for building the model terms as decompositions
-of various basis functions. It is possible to model the terms as
-Gaussian processes (with reduced dimensionality) of various kernels and
-piecewise linear functions. Of course, very simple terms like lines and
+Generalized additive models form a surprisingly general framework for building
+models for both production software and scientific research. This Python package
+offers tools for building the model terms as decompositions of various basis
+functions. It is possible to model the terms e.g. as Gaussian processes (with
+reduced dimensionality) of various kernels, as piecewise linear functions, and
+as B-splines, among others. Of course, very simple terms like lines and
 constants are also supported (these are just very simple basis functions).
 
-The uncertainty in the weight parameter distributions is modeled using
-Bayesian statistic with the help of the superb package [BayesPy](http://www.bayespy.org/index.html).
+The uncertainty in the weight parameter distributions is modeled using Bayesian
+statistic with the help of the superb package
+[BayesPy](http://www.bayespy.org/index.html).
 
-The work is in very early stage, so many features are still missing.
+The work is on an early stage, so many features are still missing.
 
 
 ### Projects with GAM functionalities
 
 - [PyGAM](https://pygam.readthedocs.io/en/latest/)
 - [Statsmodels](https://www.statsmodels.org/dev/gam.html)
+
+
+**Table of Contents**
+
+- [Examples](#examples)
+    - [Polynomial regression on 'roids](#polynomial-regression-on-roids)
+        - [Predicting with model](#predicting-with-model)
+        - [Plotting results](#plotting-results)
+        - [Saving model on hard disk for later use (HDF5)](#saving-model-on-hard-disk-for-later-use-hdf5)
+    - [Gaussian process regression ("kriging")](#gaussian-process-regression-kriging)
+    - [Multivariate Gaussian process regression](#multivariate-gaussian-process-regression)
+    - [B-Spline basis](#b-spline-basis)
+- [To-be-added features](#to-be-added-features)
 
 
 ## Examples
@@ -336,6 +350,7 @@ fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 
 ## To-be-added features
 
+- **TODO** Support indicator models in plotting
 - **TODO** Fixed ordering for GP related basis functions.
 - **TODO** Hyperpriors for model parameters – Start from diagonal precisions.
            Instead of `(μ, Λ)` pairs, the arguments could be just
