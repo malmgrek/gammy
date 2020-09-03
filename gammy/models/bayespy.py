@@ -1,3 +1,6 @@
+"""BayesPy based GAM model"""
+
+
 import json
 
 import bayespy as bp
@@ -8,7 +11,7 @@ from gammy import utils
 from gammy.utils import listmap, pipe
 
 
-def build_theta(formula):
+def build_gaussian_theta(formula):
     return bp.nodes.Gaussian(*formula.prior)
 
 
@@ -22,16 +25,25 @@ class BayesianGAM(object):
     theta : bp.nodes.Gaussian
         Model parameters vector
     tau : bp.nodes.Gamma
-        Observation noise
+        Observation noise precision
 
-    Currently tau is fixed to Gamma distribution, i.e., it is not possible
-    to manually fix the noise level. Note though that one can set tight values
-    for `α, β` in `Gamma(α, β)`, recalling that `mean = α / β` and
-    `variance = α / β ** 2`. The upside is that by estimating the noise level,
-    one gets a nice prediction uncertainty estimate.
+    NOTE: Currently tau is fixed to Gamma distribution, i.e., it is not
+    possible to manually define the noise level. Note though that one can
+    set tight values for `α, β` in `Gamma(α, β)`, recalling that `mean = α / β`
+    and `variance = α / β ** 2`. The upside is that by estimating the noise
+    level, one gets a nice prediction uncertainty estimate.
+
+    NOTE: Currently Gaussian requirement deeply built in. Tau being Gamma
+    implies, by conjugacy, that theta must be Gaussian.
+
+    NOTE: Does not support scalar valued Gaussian r.v.. Could be implemented
+    using GaussianARD but this would require a lot of refactoring for such a
+    small feature -- after all one can define an auxiliary bias term with a
+    very tight prior.
+
+    TODO: Statistics for basis function evaluations at grid points.
 
     """
-    # TODO: Statistics in original coordinates?
 
     def __init__(
         self,
@@ -43,7 +55,9 @@ class BayesianGAM(object):
         #       would ruin everything because of mutability
         self.formula = formula
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
-        self.theta = theta if theta is not None else build_theta(formula)
+        self.theta = (
+            theta if theta is not None else build_gaussian_theta(formula)
+        )
 
     def __len__(self):
         return len(self.formula.bases)
@@ -66,6 +80,9 @@ class BayesianGAM(object):
 
     @property
     def mean_theta(self) -> list:
+        """Transforms theta to similarly nested list as bases
+
+        """
         return pipe(
             self.theta.get_moments()[0],
             lambda x: utils.unflatten(x, self.formula.bases),
@@ -110,7 +127,6 @@ class BayesianGAM(object):
         ``initialize_from_prior()`` of BayesPy nodes.
 
         """
-        # TODO: Test that fit always gives same result (if theta reset)
         X = self.formula.build_X(input_data)
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
         Y = bp.nodes.GaussianARD(F, self.tau)
@@ -232,18 +248,17 @@ class BayesianGAM(object):
         self.theta._save(group.create_group("theta"))
         return group
 
-    def save(self, filename: str) -> None:
+    def save(self, filepath: str) -> None:
         """Save the model to disk
 
         """
-        # TODO: OS independent filepaths
-        file_ext = filename.split(".")[-1]
+        file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
-            with h5py.File(filename, "w") as h5f:
+            with h5py.File(filepath, "w") as h5f:
                 group = h5f.create_group("nodes")
                 self._save_h5(group)
         elif file_ext == "json":
-            with open(filename, "w+") as jsonf:
+            with open(filepath, "w+") as jsonf:
                 json.dump(
                     obj=dict(
                         theta=utils.jsonify(self.theta),
@@ -254,7 +269,7 @@ class BayesianGAM(object):
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
 
-    def _load_h5(self, h5f):
+    def _load_h5(self, h5f, build_theta=build_gaussian_theta):
         tau = self.tau
         tau._load(h5f["nodes"]["tau"])
         theta = build_theta(self.formula)
@@ -273,18 +288,16 @@ class BayesianGAM(object):
             theta=utils.set_from_json(raw["theta"], self.theta)
         )
 
-    def load(self, filename: str):
+    def load(self, filepath: str, **kwargs):
         """Load model from disk
 
-        TODO: OS independent filepaths
-
         """
-        file_ext = filename.split(".")[-1]
+        file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
-            with h5py.File(filename, "r") as h5f:
-                return self._load_h5(h5f)
+            with h5py.File(filepath, "r") as h5f:
+                return self._load_h5(h5f, **kwargs)
         elif file_ext == "json":
-            with open(filename, "r") as jsonf:
+            with open(filepath, "r") as jsonf:
                 return self._load_json(jsonf)
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
