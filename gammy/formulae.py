@@ -1,3 +1,8 @@
+"""This module defines the formula type"""
+
+
+from typing import List
+
 import attr
 import numpy as np
 import scipy as sp
@@ -49,7 +54,6 @@ class Formula():
         )
 
     def __mul__(self, input_map):
-        # What other linear operations should be supported?
         return Formula(
             bases=[
                 listmap(
@@ -60,6 +64,9 @@ class Formula():
         )
 
     def __len__(self):
+        """Number of terms in the formula
+
+        """
         return len(self.bases)
 
     def __call__(self, *input_maps):
@@ -72,14 +79,23 @@ class Formula():
         )
 
     def build_Xi(self, input_data, i):
+        """A column block of the design matrix
+
+        """
         return design_matrix(input_data, self.bases[i])
 
     def build_Xs(self, input_data):
+        """All column blocks as list
+
+        """
         return [
             self.build_Xi(input_data, i) for i, _ in enumerate(self.bases)
         ]
 
     def build_X(self, input_data):
+        """Design matrix
+
+        """
         return np.hstack(self.build_Xs(input_data))
 
 
@@ -88,8 +104,8 @@ class Formula():
 #
 
 
-def Flatten(formula, prior=None):
-    """Flatten formula
+def Flatten(formula: Formula, prior=None):
+    """Flatten the bases of a given formula
 
     Bases: [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
 
@@ -100,10 +116,12 @@ def Flatten(formula, prior=None):
     )
 
 
-def Sum(formulae, prior=None):
-    """Sum (i.e. concatenate) formulae
+def Sum(formulae: List[Formula], prior=None):
+    """Sum (i.e. concatenate) many formulae
 
     Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
+
+    NOTE: Differs from `Flatten`
 
     """
     priors = [formula.prior for formula in formulae]
@@ -114,7 +132,7 @@ def Sum(formulae, prior=None):
 
 
 def Kron(a, b):
-    """Take the tensor product of two Formula bases
+    """Tensor product of two Formula bases
 
     Non-commutative!
 

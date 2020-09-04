@@ -1,3 +1,6 @@
+"""Miscellaneous utilities"""
+
+
 import functools
 
 import numpy as np
