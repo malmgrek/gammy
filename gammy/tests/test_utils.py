@@ -1,9 +1,19 @@
 """Unit tests for utils"""
 
 
+import bayespy as bp
+import numpy as np
+from numpy import array_equal
+from numpy.testing import (
+    assert_allclose,
+    assert_array_equal
+)
 import pytest
 
 from gammy import utils
+
+
+np.random.seed(42)
 
 
 @pytest.mark.parametrize("f,g,xs", [
@@ -41,17 +51,112 @@ def test_compose(fs, xs, g):
     return
 
 
-def test_lift():
+@pytest.mark.parametrize("x,y,expected", [
+    (
+        [[], 1, None],
+        [["a", "b"], [1]],
+        [[[], 1], [None]]
+    ),
+    (
+        [], [], []
+    ),
+    (
+        [1, 2, 3], [], []
+    ),
+    (
+        [1], [[()]], [[1]]
+    )
+])
+def test_unflatten(x, y, expected):
+    assert utils.unflatten(x, y) == expected
     return
 
 
-def test_rlift():
+@pytest.mark.parametrize("x,y,expected", [
+    (
+        np.array([
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9]
+        ]),
+        [
+            np.array([
+                [1, 1],
+                [1, 1]
+            ]),
+            np.array([[1]])
+        ],
+        [
+            np.array([
+                [1, 2],
+                [4, 5]
+            ]),
+            np.array([[9]])
+        ]
+    ),
+    (
+        np.array([
+            [1, 2],
+            [3, 4]
+        ]),
+        [
+            np.array([
+                [np.nan, np.nan],
+                [np.nan, np.inf]
+            ]),
+            np.array([])
+        ],
+        [
+            np.array([
+                [1, 2],
+                [3, 4]
+            ])
+        ]
+    )
+])
+def test_extract_diag_blocks(x, y, expected):
+    assert all([
+        array_equal(*args) for args in zip(
+            expected,
+            utils.extract_diag_blocks(x, y)
+        )
+    ])
     return
 
 
-def test_unflatten():
+@pytest.mark.parametrize("mu,Sigma", [
+    (
+        np.random.rand(23),
+        utils.pipe(
+            np.random.randn(23, 23),
+            lambda A: np.dot(A.T, A)
+        )
+    )
+])
+def test_solve_covariance(mu, Sigma):
+    node = bp.nodes.Gaussian(mu, np.linalg.inv(Sigma))
+    assert_allclose(
+        utils.solve_covariance(node),
+        Sigma
+    )
     return
 
 
-def test_solve_covariance():
+@pytest.mark.parametrize("order,expected", [
+    (
+        1, np.array([0, 1, 2, 3]),
+    ),
+    (
+        2, np.array([-1, 0, 1, 2, 3, 4])
+    ),
+    (
+        3, np.array([-2, -1, 0, 1, 2, 3, 4, 5])
+    )
+])
+def test_extend_spline_grid(order, expected):
+    grid = np.array([0, 1, 2, 3])
+    assert_array_equal(
+        utils.extend_spline_grid(grid, order),
+        expected
+    )
     return
