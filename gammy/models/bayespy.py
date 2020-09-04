@@ -2,16 +2,18 @@
 
 
 import json
+from typing import (Callable, List, Tuple)
 
 import bayespy as bp
 import h5py
 import numpy as np
 
+import gammy
 from gammy import utils
 from gammy.utils import listmap, pipe
 
 
-def build_gaussian_theta(formula):
+def build_gaussian_theta(formula: gammy.formulae.Formula):
     return bp.nodes.Gaussian(*formula.prior)
 
 
@@ -46,10 +48,10 @@ class BayesianGAM(object):
     """
 
     def __init__(
-        self,
-        formula,
-        tau=None,
-        theta=None
+            self,
+            formula,
+            tau=None,
+            theta=None
     ):
         # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
         #       would ruin everything because of mutability
@@ -59,14 +61,14 @@ class BayesianGAM(object):
             theta if theta is not None else build_gaussian_theta(formula)
         )
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Number of model parameters
 
         """
         return len(utils.flatten(self.formula.bases))
 
     @property
-    def theta_marginals(self) -> list:
+    def theta_marginals(self) -> List:
         """Nodes for the basis specific marginal distributions
 
         """
@@ -82,7 +84,7 @@ class BayesianGAM(object):
         ]
 
     @property
-    def mean_theta(self) -> list:
+    def mean_theta(self) -> List:
         """Transforms theta to similarly nested list as bases
 
         """
@@ -150,7 +152,9 @@ class BayesianGAM(object):
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_variance(self, input_data: np.ndarray) -> tuple:
+    def predict_variance(
+            self, input_data: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Predict observations with variance
 
         Returns
@@ -167,7 +171,9 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag) + self.inv_mean_tau
         )
 
-    def predict_variance_theta(self, input_data: np.ndarray) -> tuple:
+    def predict_variance_theta(
+            self, input_data: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Predict observations with variance from model parameters
 
         Returns
@@ -191,14 +197,14 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_marginals(self, input_data: np.ndarray) -> list:
+    def predict_marginals(self, input_data: np.ndarray) -> List:
         """Predict all terms separately
 
         """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
 
-    def predict_variance_marginals(self, input_data: np.ndarray) -> list:
+    def predict_variance_marginals(self, input_data: np.ndarray) -> List:
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
@@ -216,8 +222,10 @@ class BayesianGAM(object):
         return np.dot(X, self.mean_theta[i])
 
     def predict_variance_marginal(
-        self, input_data: np.ndarray, i: int
-    ) -> tuple:
+            self,
+            input_data: np.ndarray,
+            i: int
+    ) -> Tuple[np.ndarray, np.ndarray]:
         # Not refactored with predict_marginal for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
@@ -226,8 +234,8 @@ class BayesianGAM(object):
         return (mu, sigma)
 
     def marginal_residuals(
-        self, input_data: np.ndarray, y: np.ndarray
-    ) -> list:
+            self, input_data: np.ndarray, y: np.ndarray
+    ) -> List:
         """Marginal (partial) residuals
 
         """
@@ -239,7 +247,10 @@ class BayesianGAM(object):
         ]
 
     def marginal_residual(
-        self, input_data: np.ndarray, y: np.ndarray, i: int
+            self,
+            input_data: np.ndarray,
+            y: np.ndarray,
+            i: int
     ) -> np.ndarray:
         # Not refactored with marginal_residuals for perf reasons
         marginals = self.predict_variance_marginals(input_data)
@@ -272,7 +283,11 @@ class BayesianGAM(object):
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
 
-    def _load_h5(self, h5f, build_theta=build_gaussian_theta):
+    def _load_h5(
+            self,
+            h5f: str,
+            build_theta: Callable=build_gaussian_theta
+    ):
         tau = self.tau
         tau._load(h5f["nodes"]["tau"])
         theta = build_theta(self.formula)
@@ -283,7 +298,7 @@ class BayesianGAM(object):
             theta=theta
         )
 
-    def _load_json(self, jsonf):
+    def _load_json(self, jsonf: str):
         raw = json.load(jsonf)
         return BayesianGAM(
             formula=self.formula,

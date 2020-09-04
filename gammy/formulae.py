@@ -1,7 +1,7 @@
 """This module defines the formula type"""
 
 
-from typing import List
+from typing import (Callable, List, Tuple)
 
 import attr
 import numpy as np
@@ -12,7 +12,7 @@ from gammy import utils
 from gammy.utils import listmap, rlift_basis
 
 
-def concat_gaussians(gaussians: list):
+def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
     # gaussians = [(μ1, Λ1), (μ2, Λ2)]
     return (
         np.hstack([g[0] for g in gaussians]),
@@ -20,7 +20,7 @@ def concat_gaussians(gaussians: list):
     )
 
 
-def design_matrix(input_data, basis):
+def design_matrix(input_data: np.ndarray, basis: List[Callable]):
     return np.hstack([
         f(input_data).reshape(-1, 1) for f in basis
     ])
@@ -104,7 +104,7 @@ class Formula():
 #
 
 
-def Flatten(formula: Formula, prior=None):
+def Flatten(formula: Formula, prior=None) -> Formula:
     """Flatten the bases of a given formula
 
     Bases: [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
@@ -116,7 +116,7 @@ def Flatten(formula: Formula, prior=None):
     )
 
 
-def Sum(formulae: List[Formula], prior=None):
+def Sum(formulae: List[Formula], prior=None) -> Formula:
     """Sum (i.e. concatenate) many formulae
 
     Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
@@ -131,7 +131,7 @@ def Sum(formulae: List[Formula], prior=None):
     )
 
 
-def Kron(a, b):
+def Kron(a: Formula, b: Formula) -> Formula:
     """Tensor product of two Formula bases
 
     Non-commutative!
@@ -181,8 +181,14 @@ def Kron(a, b):
 
 
 def ExpSquared1d(
-    grid, corrlen, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=0.99
-):
+        grid: np.ndarray,
+        corrlen: float,
+        sigma: float,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None,
+        energy: float=0.99
+) -> Formula:
     """Squared exponential model term
 
     Example
@@ -227,9 +233,15 @@ def ExpSquared1d(
 
 
 def ExpSineSquared1d(
-    grid, corrlen, sigma, period,
-    prior=None, mu_basis=None, mu_hyper=None, energy=0.99
-):
+        grid: np.ndarray,
+        corrlen: float,
+        sigma: float,
+        period: float,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None,
+        energy: float=0.99
+) -> Formula:
     mu_basis = [] if mu_basis is None else mu_basis
     basis = utils.interp1d_1darrays(
         utils.scaled_principal_eigvecsh(
@@ -259,8 +271,13 @@ def ExpSineSquared1d(
 
 
 def WhiteNoise1d(
-    grid, sigma, prior=None, mu_basis=None, mu_hyper=None, energy=1.0
-):
+        grid: np.ndarray,
+        sigma: float,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None,
+        energy: float=1.0
+) -> Formula:
     mu_basis = [] if mu_basis is None else mu_basis
     basis = utils.interp1d_1darrays(
         utils.scaled_principal_eigvecsh(
@@ -283,22 +300,22 @@ def WhiteNoise1d(
     )
 
 
-def Scalar(prior=(0, 1)):
+def Scalar(prior: Tuple[np.ndarray]=(0, 1)) -> Formula:
     basis = [lambda t: np.ones(len(t))]
     return Formula(bases=[basis], prior=prior)
 
 
-def Line(prior=(0, 1)):
+def Line(prior: Tuple[np.ndarray]=(0, 1)) -> Formula:
     basis = [lambda t: t]
     return Formula(bases=[basis], prior=prior)
 
 
-def Function(function, prior):
+def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
     basis = [function]
     return Formula(bases=[basis], prior=prior)
 
 
-def ReLU(grid, prior=None):
+def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
     relus = listmap(lambda c: lambda t: (t > c) * (c - t))(grid[1:-1])
     prior = (
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
@@ -307,7 +324,7 @@ def ReLU(grid, prior=None):
     return Formula(bases=[relus], prior=prior)
 
 
-def FlippedReLU(grid, prior=None):
+def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
     relus = listmap(lambda c: lambda t: (t < c) * (c - t))(grid[1:-1])
     prior = (
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
@@ -316,16 +333,22 @@ def FlippedReLU(grid, prior=None):
     return Formula(bases=[relus], prior=prior)
 
 
-def TanH():
+def TanH() -> Formula:
     raise NotImplementedError
 
 
-def Gaussian1d():
+def Gaussian1d() -> Formula:
     raise NotImplementedError
 
 
-def BSpline1d(grid, order=3, extrapolate=True,
-              prior=None, mu_basis=None, mu_hyper=None):
+def BSpline1d(
+        grid: np.ndarray,
+        order: int=3,
+        extrapolate: bool=True,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None
+) -> Formula:
     """B-spline basis on a fixed grid
 
     Parameters
@@ -339,9 +362,10 @@ def BSpline1d(grid, order=3, extrapolate=True,
 
     Number of spline basis functions is always ``N = len(grid) + order - 2``
 
+    TODO: Verify that this doesn't break when scaling the grid
+          (extrapolation + damping)
+
     """
-    # TODO: Verify that this doesn't break when scaling the grid
-    #       (extrapolation + damping)
 
     mu_basis = [] if mu_basis is None else mu_basis
     grid_ext = utils.extend_spline_grid(grid, order)

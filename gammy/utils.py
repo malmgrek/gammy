@@ -2,6 +2,7 @@
 
 
 import functools
+from typing import (Callable, Dict, Generator, Iterable, List)
 
 import numpy as np
 import scipy.interpolate as spi
@@ -12,7 +13,7 @@ import scipy.interpolate as spi
 #
 
 
-def curryish(f):
+def curryish(f: Callable) -> Callable:
 
     def g(*args, **kwargs):
         return functools.partial(f, *args, **kwargs)
@@ -20,7 +21,7 @@ def curryish(f):
     return g
 
 
-def compose2(f, g):
+def compose2(f: Callable, g: Callable) -> Callable:
 
     def h(*args, **kwargs):
         return f(g(*args, **kwargs))
@@ -28,12 +29,18 @@ def compose2(f, g):
     return h
 
 
-def lift(func):
-    # Could add func's *args, **kwargs here
+def lift(func: Callable) -> Callable:
+    """Transforms a function into an operator
+
+    lift :: (a -> b) -> ((c -> a) -> (c -> b))
+
+    NOTE: Could add func's *args and **kwargs as arguments
+
+    """
     return lambda f: compose2(func, f)
 
 
-def lift2(func):
+def lift2(func: Callable) -> Callable:
     return (
         lambda f, g: (
             lambda *args, **kwargs: func(
@@ -43,15 +50,18 @@ def lift2(func):
     )
 
 
-def rlift(func):
+def rlift(func: Callable) -> Callable:
+    """Lift from right
+
+    """
     return lambda f: compose2(f, func)
 
 
-def compose(*funcs):
+def compose(*funcs: Callable) -> Callable:
     return functools.partial(functools.reduce, compose2)(funcs)
 
 
-def pipe(arg, *funcs):
+def pipe(arg, *funcs: Callable) -> Callable:
     return compose(*funcs[::-1])(arg)
 
 
@@ -66,14 +76,14 @@ tuplefilter = curryish(compose(tuple, filter))
 #
 
 
-def flatten(x):
+def flatten(x: List) -> List:
     """Flatten a list of lists once
 
     """
     return functools.reduce(lambda cum, this: cum + this, x, [])
 
 
-def unflatten(x, y):
+def unflatten(x: List, y: List) -> List:
     """Unflatten according to a reference
 
     Example
@@ -94,7 +104,7 @@ def unflatten(x, y):
     return functools.reduce(func, list(y), [list(x), []])[-1]
 
 
-def extract_diag_blocks(x, y):
+def extract_diag_blocks(x: np.ndarray, y: List) -> List:
     """Extract diagonal blocks from a matrix according to a reference
 
     """
@@ -109,7 +119,11 @@ def extract_diag_blocks(x, y):
     return functools.reduce(func, list(y), [x, []])[-1]
 
 
-def extend_spline_grid(grid, order):
+def extend_spline_grid(grid: np.ndarray, order: int) -> np.ndarray:
+    if order < 1:
+        raise ValueError(
+            "Spline order = n + 1 where n >= 0 is the polynomial degree"
+        )
     return grid if order == 1 else pipe(
         grid,
         lambda x: np.append(
@@ -121,7 +135,11 @@ def extend_spline_grid(grid, order):
     )
 
 
-def gen_spline_args_from_grid_ext(grid_ext, order, extrapolate):
+def gen_spline_args_from_grid_ext(
+        grid_ext: np.ndarray,
+        order: int,
+        extrapolate: bool
+) -> Generator:
     n = len(grid_ext) - order  # Number of basis functions
     (i_left, i_right) = (
         (1, n - 1) if order == 1 else (order - 1, n - order + 1)
@@ -140,9 +158,12 @@ def gen_spline_args_from_grid_ext(grid_ext, order, extrapolate):
 #
 # Basis function generation tools
 #
+# TODO/FIXME: The linear-algebraic stuff below remains unfortunately largely
+# untested.
+#
 
 
-def squared_dist(X1, X2):
+def squared_dist(X1: np.ndarray, X2: np.ndarray) -> np.ndarray:
     """Squared distance matrix for column array of N-dimensional points
 
     Example
@@ -164,11 +185,22 @@ def squared_dist(X1, X2):
     )
 
 
-def exp_squared(X1, X2, corrlen=1.0, sigma=1.0):
+def exp_squared(
+        X1: np.ndarray,
+        X2: np.ndarray,
+        corrlen: float=1.0,
+        sigma: float=1.0
+) -> np.ndarray:
     return sigma * np.exp(-0.5 / corrlen ** 2 * squared_dist(X1, X2))
 
 
-def exp_sine_squared(X1, X2, corrlen=1.0, sigma=1.0, period=1.0):
+def exp_sine_squared(
+        X1: np.ndarray,
+        X2: np.ndarray,
+        corrlen: float=1.0,
+        sigma: float=1.0,
+        period: float=1.0
+) -> np.ndarray:
     return sigma * np.exp(
         -2.0 / corrlen ** 2 * np.sin(
             np.pi * np.sqrt(squared_dist(X1, X2)) / period
@@ -176,17 +208,23 @@ def exp_sine_squared(X1, X2, corrlen=1.0, sigma=1.0, period=1.0):
     )
 
 
-def rational_quadratic(X1, X2, corrlen=1.0, sigma=1.0, alpha=1.0):
+def rational_quadratic(
+        X1: np.ndarray,
+        X2: np.ndarray,
+        corrlen: float=1.0,
+        sigma: float=1.0,
+        alpha: float=1.0
+) -> np.ndarray:
     return sigma * (
         1 + squared_dist(X1, X2) / 2.0 / alpha / corrlen ** 2
     ) ** -alpha
 
 
-def white_noise(n_dims, sigma=1.0):
+def white_noise(n_dims: int, sigma: float=1.0) -> np.ndarray:
     return sigma * np.identity(n_dims)
 
 
-def scaled_principal_eigvecsh(H, energy=0.99):
+def scaled_principal_eigvecsh(H: np.ndarray, energy: float=0.99) -> np.ndarray:
     """Most important eigenvectors of a hermitian matrix
 
     Descending order with respect of the corresponding eigenvalues. Each
@@ -222,7 +260,7 @@ def scaled_principal_eigvecsh(H, energy=0.99):
     )
 
 
-def interp1d_1darrays(v, grid, **kwargs):
+def interp1d_1darrays(v: np.ndarray, grid: np.ndarray, **kwargs) -> List:
     """Create list of interpolators from a given array
 
     Parameters
@@ -232,13 +270,11 @@ def interp1d_1darrays(v, grid, **kwargs):
 
     """
     return [
-        spi.interp1d(
-            grid, v[:, i], **kwargs) for i in range(v.shape[1]
-        )
+        spi.interp1d(grid, v[:, i], **kwargs) for i in range(v.shape[1])
     ]
 
 
-def rlift_basis(basis, func):
+def rlift_basis(basis: List[Callable], func: Callable) -> List:
     return listmap(rlift(func))(basis)
 
 
@@ -247,8 +283,7 @@ def rlift_basis(basis, func):
 #
 
 
-def solve_covariance(node):
-    # TODO: Test on Gaussian and other nodes
+def solve_covariance(node) -> np.ndarray:
     u = node.get_moments()
     cov = u[1] - np.outer(u[0], u[0])
     return cov if cov.shape != (1, 1) else np.array(cov.sum())
@@ -257,7 +292,7 @@ def solve_covariance(node):
 solve_precision = compose(np.linalg.inv, solve_covariance)
 
 
-def jsonify(node) -> dict:
+def jsonify(node) -> Dict:
     """Turn a expfamily node into a JSON serializable dict
 
     """
@@ -280,7 +315,7 @@ def jsonify(node) -> dict:
     }
 
 
-def set_from_json(raw: dict, node):
+def set_from_json(raw: Dict, node):
     """Set BayesPy node attributes from JSON
 
     """
