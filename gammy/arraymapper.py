@@ -5,9 +5,21 @@ from gammy.utils import compose
 
 @attr.s
 class ArrayMapper():
+    """Convenience tool for handling input mappings
 
-    # TODO: Implement other operations that should be supported
-    # TODO: Test operations
+    When working with basis function regression, when building the
+    design matrix, one needs the information 'how eact term maps input array'.
+    This class helps writing human-readable model definitions that explicitly
+    show how inputs are mapped. For example,
+
+        ``formula = a(x[:, 0]) * x[:, 1] + x[:, 2] ** 2``
+
+    is a valid definition as long as ``a`` is an instance of
+    :class:`gammy.Formula` and ``x`` is an instance of :class:`ArrayMapper`.
+
+    TODO: Think if some natural methods are still missing?
+
+    """
 
     function = attr.ib(default=lambda t: t)
 
