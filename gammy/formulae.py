@@ -157,7 +157,7 @@ def Kron(a, b):
 
     # In the same order as in a Kronecker product
     gen = (
-        (f, g) for g in utils.flatten(b.bases) for f in utils.flatten(a.bases)
+        (f, g) for f in utils.flatten(a.bases) for g in utils.flatten(b.bases)
     )
 
     # Outer product of bases
