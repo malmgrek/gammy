@@ -1,14 +1,25 @@
 # Change Log
 
+## 0.3.0
+
+### Add
+- Type hints for most functions
+- Unit testing module for modules `formulae`, `utils`
+- Unit tests for `BayesianGAM`
+- Docstrings
+
+
 ## 0.2.3
 
 ### Add
 - Parameter `verbose` to `BayesianGAM.fit` defaulting to `False`
 
+
 ## 0.2.2
 
 ### Add
 - Support serializing models to JSON
+
 
 ## 0.2.1
 
@@ -16,6 +27,7 @@
 - Methods `predict_marginal` and `predict_marginals` to
   `BayesianGAM`
 - Type hints to `BayesianGAM`
+
 
 ## 0.2.0
 
@@ -41,14 +53,16 @@
   sometimes one wants the final prior not to be block diagonal.
 - Naming `*partial*` => `*marginal*` in `BayesianGAM`
 
-### Added
+### Add
 - `Sum` and `Flatten` transformations for `BayesPyFormula`
 - Smoke tests corresponding the README examples
+
 
 ## 0.0.4
 
 ### Remove
 - Dependence from Pandas
+
 
 ## 0.0.3
 
@@ -56,6 +70,7 @@
 - Simplify `BayesPyFormula.__mul__` so that all bases are just multiplied
   with the given input map
 - All references to `sigma` now correspond to variance
+
 
 ## 0.0.2
 
@@ -68,6 +83,7 @@
 ### Remove
 - `attr` frozen class feature from `BayesianGAM` in order to be able
   to define `theta` as the prior distribution by default in the initialization
+
 
 ## 0.0.1
 
