@@ -69,11 +69,25 @@ def assert_nodes_equal(a, b):
 
 
 @pytest.mark.parametrize("data,expected", [
+    # NOTE: Currently we are testing here just the dummy
+    # polynomial model. I didn't see it necessary copying a large
+    # set of data regarding a more complex model as that test would
+    # be model validation, not testing that the class works.
     (
-        polynomial(),
+        utils.pipe(
+            polynomial(),
+            lambda data: (
+                data[0],
+                data[1],
+                gammy.BayesianGAM(data[2]).fit(data[0], data[1])
+            )
+        ),
         {
             "__len__": 2,
-            "theta_marginals": [np.array([7.]), np.array([[49.00071654]])],
+            "theta_marginals": [
+                [np.array([ 7.]), np.array([[ 49.00071654]])],
+                [np.array([ 2.]), np.array([[ 4.00026276]])]
+            ],
             "mean_theta": [np.array([7.]), np.array([2.])],
             "covariance_theta": np.array([
                 [ 0.0007166, -0.0003583 ],
@@ -126,104 +140,94 @@ def assert_nodes_equal(a, b):
         },
     )
 ])
-def test_bayesian_gam(data, expected):
-
-    (input_data, y, formula) = data
-    model = gammy.BayesianGAM(formula).fit(input_data, y)
-
-    assert len(model) == expected["__len__"]
-
-    assert_allclose(
-        model.theta_marginals[0].get_moments(),
-        expected["theta_marginals"]
-    )
-
-    assert_allclose(model.mean_theta, expected["mean_theta"])
-
-    assert_allclose(
-        model.covariance_theta,
-        expected["covariance_theta"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.inv_mean_tau,
-        expected["inv_mean_tau"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.theta_marginal(1).get_moments(),
-        expected["theta_marginal"]
-    )
-    assert_allclose(
-        model.theta_marginal(1).get_moments(),
-        model.theta_marginals[1].get_moments()
-    )
-
-    assert_allclose(model.predict(input_data), expected["predict"])
-
-    assert_allclose(
-        model.predict_variance(input_data),
-        expected["predict_variance"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.predict_variance_theta(input_data),
-        expected["predict_variance_theta"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.predict_marginals(input_data),
-        expected["predict_marginals"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.predict_variance_marginals(input_data),
-        expected["predict_variance_marginals"],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.predict_marginal(input_data, 0),
-        expected["predict_marginals"][0],
-        atol=1e-8
-    )
-    assert_allclose(
-        model.predict_marginal(input_data, 1),
-        expected["predict_marginals"][1],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.predict_variance_marginal(input_data, 0),
-        expected["predict_variance_marginals"][0],
-        atol=1e-8
-    )
-    assert_allclose(
-        model.predict_variance_marginal(input_data, 1),
-        expected["predict_variance_marginals"][1],
-        atol=1e-8
-    )
-
-    assert_allclose(
-        model.marginal_residuals(input_data, y),
-        expected["marginal_residuals"],
+@pytest.mark.parametrize("require", [
+    lambda x, y, m, e: assert_allclose(
+        len(m),
+        e["__len__"],
         atol=1e-10
-    )
-
-    assert_allclose(
-        model.marginal_residual(input_data, y, 0),
-        expected["marginal_residuals"][0]
-    )
-    assert_allclose(
-        model.marginal_residual(input_data, y, 1),
-        expected["marginal_residuals"][1]
-    )
-
+    ),
+    lambda x, y, m, e: assert_allclose(
+        utils.listmap(
+            lambda i: m.theta_marginals[i].get_moments()
+        )(range(len(m.formula))),
+        e["theta_marginals"]
+    ),
+    lambda x, y, m, e: assert_allclose(m.mean_theta, e["mean_theta"]),
+    lambda x, y, m, e: assert_allclose(
+        m.covariance_theta,
+        e["covariance_theta"],
+        atol=1e-8
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.inv_mean_tau,
+        e["inv_mean_tau"],
+        atol=1e-9
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.theta_marginal(1).get_moments(),
+        e["theta_marginal"],
+        atol=1e-12
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.theta_marginal(1).get_moments(),
+        m.theta_marginals[1].get_moments(),
+        atol=1e-12
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.predict(x),
+        e["predict"],
+        atol=1e-12
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.predict_variance(x),
+        e["predict_variance"],
+        atol=1e-8
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.predict_variance_theta(x),
+        e["predict_variance_theta"],
+        atol=1e-12
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.predict_marginals(x),
+        e["predict_marginals"],
+        atol=1e-12
+    ),
+    lambda x, y, m, e: assert_allclose(
+        m.predict_variance_marginals(x),
+        e["predict_variance_marginals"],
+        atol=1e-8
+    ),
+    lambda x, y, m, e: utils.listmap(
+        lambda i: assert_allclose(
+            m.predict_marginal(x, i),
+            e["predict_marginals"][i],
+            atol=1e-12
+        )
+    )(range(len(m.formula))),
+    lambda x, y, m, e: utils.listmap(
+        lambda i: assert_allclose(
+            m.predict_variance_marginal(x, i),
+            e["predict_variance_marginals"][i],
+            atol=1e-8
+        )
+    )(range(len(m.formula))),
+    lambda x, y, m, e: assert_allclose(
+        m.marginal_residuals(x, y),
+        e["marginal_residuals"],
+        atol=1e-12
+    ),
+    lambda x, y, m, e: utils.listmap(
+        lambda i: assert_allclose(
+            m.marginal_residual(x, y, i),
+            e["marginal_residuals"][i],
+            atol=1e-12
+        )
+    )(range(len(m.formula)))
+])
+def test_bayesian_gam(data, expected, require):
+    (input_data, y, model) = data
+    require(input_data, y, model, expected)
     return
 
 

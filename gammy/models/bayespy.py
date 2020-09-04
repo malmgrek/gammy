@@ -60,7 +60,10 @@ class BayesianGAM(object):
         )
 
     def __len__(self):
-        return len(self.formula.bases)
+        """Number of model parameters
+
+        """
+        return len(utils.flatten(self.formula.bases))
 
     @property
     def theta_marginals(self) -> list:

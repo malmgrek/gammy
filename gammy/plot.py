@@ -24,11 +24,11 @@ def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
     index = np.arange(len(input_data)) if index is None else index
 
     # Figure definitions
-    N = len(model)
+    N = len(model.formula)
     fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N // 2 + 3, 2)
-    xlabels = xlabels or [None] * len(model)
-    titles = titles or [None] * len(model)
+    xlabels = xlabels or [None] * len(model.formula)
+    titles = titles or [None] * len(model.formula)
 
     # Data and predictions
     grid = (
@@ -105,7 +105,7 @@ def gaussian1d_density_plot(model, grid_limits=[0.5, 1.5]):
         where `mu` is the expectation of `tau`.
 
     """
-    N = len(model)
+    N = len(model.formula)
     fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N + 1, 1)
 
@@ -161,7 +161,7 @@ def basis_plot(model, grid_limits, input_maps, gridsize=20):
 
     """
     # Figure definition
-    N = len(model)
+    N = len(model.formula)
     fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N, 1)
 
