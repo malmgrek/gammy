@@ -350,6 +350,8 @@ fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 
 ## To-be-added features
 
+- **TODO** Quick model template functions (e.g. splines, GPs)
+- **TODO** Shorter overview and examples in README. Other docs inside `docs`.
 - **TODO** Support indicator models in plotting
 - **TODO** Fixed ordering for GP related basis functions.
 - **TODO** Hyperpriors for model parameters – Start from diagonal precisions.

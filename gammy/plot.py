@@ -14,9 +14,20 @@ from gammy import utils
 from gammy.utils import pipe
 
 
-def validation_plot(model, input_data, y, grid_limits, input_maps, index=None,
-                    xlabels=None, titles=None, ylabel=None, gridsize=20, color="r",
-                    **kwargs):
+def validation_plot(
+        model,
+        input_data,
+        y,
+        grid_limits,
+        input_maps,
+        index=None,
+        xlabels=None,
+        titles=None,
+        ylabel=None,
+        gridsize=20,
+        color="r",
+        **kwargs
+):
     """Generic validation plot for a GAM
 
     """
