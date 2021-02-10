@@ -72,7 +72,6 @@ np.random.seed(42)
 n = 30
 input_data = 10 * np.random.rand(n)
 y = 5 * input_data + 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
-)
 ```
 
 The object `x` is just a convenience tool for defining input data maps
@@ -202,23 +201,26 @@ y = reduce(lambda u, v: u + v, [
     1.0 * (input_data > c) for c in [0, 0.2, 0.4, 0.6, 0.8]
 ])
 
+grid = np.arange(0, 1, 0.001)
+corrlen = 0.01
+sigma = 2
 a = gammy.ExpSquared1d(
-    grid=np.arange(0, 1, 0.001),
-    corrlen=0.01,
-    sigma=2,
-    energy=0.99
+    grid=grid,
+    corrlen=corrlen,
+    sigma=sigma,
+    energy=0.999
 )(x)
 b = gammy.RationalQuadratic1d(
-    grid=np.arange(0, 1, 0.001),
-    corrlen=0.01,
+    grid=grid,
+    corrlen=corrlen,
     alpha=1,
-    sigma=2,
+    sigma=sigma,
     energy=0.99
 )(x)
 c = gammy.OrnsteinUhlenbeck1d(
-    grid=np.arange(0, 1, 0.001),
-    corrlen=0.1,
-    sigma=2,
+    grid=grid,
+    corrlen=corrlen,
+    sigma=sigma,
     energy=0.99
 )(x)
 
@@ -233,7 +235,39 @@ ornstein_uhlenbeck = gammy.BayesianGAM(c).fit(input_data, y)
 
 #### Define custom kernel
 
-TODO
+It is straightforward to define custom formulas from "positive semidefinite" covariance kernel functions.
+
+``` python
+
+def kernel(x1, x2):
+    """Kernel for min(x, x')
+    
+    """
+    r = lambda t: t.repeat(*t.shape)
+    return np.minimum(r(x1), r(x2).T)
+
+
+grid = np.arange(0, 1, 0.001)
+
+Minimum = gammy.create_from_kernel1d(kernel)
+a = Minimum(grid=grid, energy=0.999)(x)
+
+# Let's compare to exp squared
+b = gammy.ExpSquared1d(grid=grid, corrlen=0.05, sigma=1, energy=0.999)(x)
+
+
+def sample(X):
+    return np.dot(X, np.random.randn(X.shape[1]))
+
+
+ax = plt.figure().gca()
+ax.plot(grid, sample(a.build_X(grid)), label="Custom")
+ax.plot(grid, sample(b.build_X(grid)), label="Exp. squared")
+ax.legend()
+
+```
+
+![alt text](./doc/source/images/example1-3.png "Samples plot")
 
 ### Multivariate Gaussian process regression
 
