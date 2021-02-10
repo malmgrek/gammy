@@ -305,12 +305,9 @@ Constructing B-Spline based 1-D basis functions is also supported.
 
 ```python
 # Define dummy data
-input_data = 10 * np.random.rand(30)
-y = (
-    2.0 * input_data ** 2 +
-    7 +
-    10 * np.random.randn(len(input_data))
-)
+n = 30
+input_data = 10 * np.random.rand(n)
+y = 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
 
 
 # Define model

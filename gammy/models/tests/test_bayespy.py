@@ -3,8 +3,7 @@ import pytest
 import numpy as np
 from numpy.testing import (
     assert_array_equal,
-    assert_allclose,
-    assert_equal
+    assert_almost_equal
 )
 
 import gammy
@@ -141,87 +140,88 @@ def assert_nodes_equal(a, b):
     )
 ])
 @pytest.mark.parametrize("require", [
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         len(m),
         e["__len__"],
-        atol=1e-10
+        decimal=10,
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         utils.listmap(
             lambda i: m.theta_marginals[i].get_moments()
         )(range(len(m.formula))),
-        e["theta_marginals"]
+        e["theta_marginals"],
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(m.mean_theta, e["mean_theta"]),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(m.mean_theta, e["mean_theta"]),
+    lambda x, y, m, e: assert_almost_equal(
         m.covariance_theta,
         e["covariance_theta"],
-        atol=1e-8
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.inv_mean_tau,
         e["inv_mean_tau"],
-        atol=1e-9
+        decimal=9
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.theta_marginal(1).get_moments(),
         e["theta_marginal"],
-        atol=1e-12
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.theta_marginal(1).get_moments(),
         m.theta_marginals[1].get_moments(),
-        atol=1e-12
+        decimal=12
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.predict(x),
         e["predict"],
-        atol=1e-12
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.predict_variance(x),
         e["predict_variance"],
-        atol=1e-8
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.predict_variance_theta(x),
         e["predict_variance_theta"],
-        atol=1e-12
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.predict_marginals(x),
         e["predict_marginals"],
-        atol=1e-12
+        decimal=8
     ),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.predict_variance_marginals(x),
         e["predict_variance_marginals"],
-        atol=1e-8
+        decimal=8
     ),
     lambda x, y, m, e: utils.listmap(
-        lambda i: assert_allclose(
+        lambda i: assert_almost_equal(
             m.predict_marginal(x, i),
             e["predict_marginals"][i],
-            atol=1e-12
+            decimal=8
         )
     )(range(len(m.formula))),
     lambda x, y, m, e: utils.listmap(
-        lambda i: assert_allclose(
+        lambda i: assert_almost_equal(
             m.predict_variance_marginal(x, i),
             e["predict_variance_marginals"][i],
-            atol=1e-8
+            decimal=8
         )
     )(range(len(m.formula))),
-    lambda x, y, m, e: assert_allclose(
+    lambda x, y, m, e: assert_almost_equal(
         m.marginal_residuals(x, y),
         e["marginal_residuals"],
-        atol=1e-12
+        decimal=8
     ),
     lambda x, y, m, e: utils.listmap(
-        lambda i: assert_allclose(
+        lambda i: assert_almost_equal(
             m.marginal_residual(x, y, i),
             e["marginal_residuals"][i],
-            atol=1e-12
+            decimal=8
         )
     )(range(len(m.formula)))
 ])
