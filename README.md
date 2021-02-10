@@ -3,7 +3,7 @@
 A Generalized additive model is a predictive mathematical model defined
 as a sum of terms that are calibrated (fitted) with observation data. This
 package provides a hopefully pleasant interface for configuring and fitting
-such models. Bayesian interpretation of model parameters is promoted.
+such models. Bayesian interpretation of model parameters is promoted and minimalist set of features.
 
 
 ## Summary
@@ -23,12 +23,13 @@ statistic with the help of the superb package
 The work is on an early stage, so many features are still missing.
 
 
-### Projects with GAM functionalities
+### Other projects with GAM functionalities
 
 - [PyGAM](https://pygam.readthedocs.io/en/latest/)
 - [Statsmodels](https://www.statsmodels.org/dev/gam.html)
 
 
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [Examples](#examples)
@@ -37,9 +38,13 @@ The work is on an early stage, so many features are still missing.
         - [Plotting results](#plotting-results)
         - [Saving model on hard disk for later use (HDF5)](#saving-model-on-hard-disk-for-later-use-hdf5)
     - [Gaussian process regression ("kriging")](#gaussian-process-regression-kriging)
+        - [More kernel functions for GPs](#more-kernel-functions-for-gps)
+        - [Define custom kernel](#define-custom-kernel)
     - [Multivariate Gaussian process regression](#multivariate-gaussian-process-regression)
     - [B-Spline basis](#b-spline-basis)
 - [To-be-added features](#to-be-added-features)
+
+<!-- markdown-toc end -->
 
 
 ## Examples
@@ -55,6 +60,8 @@ import pandas as pd
 
 import gammy
 from gammy.utils import pipe
+
+# NOTE: Used repetitively in defining model terms!
 from gammy.arraymapper import x
 
 
@@ -64,11 +71,7 @@ np.random.seed(42)
 # Define dummy data
 n = 30
 input_data = 10 * np.random.rand(n)
-y = (
-    5 * input_data +
-    2.0 * input_data ** 2 +
-    7 +
-    10 * np.random.randn(len(input_data))
+y = 5 * input_data + 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
 )
 ```
 
@@ -79,8 +82,8 @@ as if they were just Numpy arrays.
 # Define model
 a = gammy.Scalar(prior=(0, 1e-6))
 b = gammy.Scalar(prior=(0, 1e-6))
-intercept = gammy.Scalar(prior=(0, 1e-6))
-formula = a * x + b * x ** 2 + intercept
+bias = gammy.Scalar(prior=(0, 1e-6))
+formula = a * x + b * x ** 2 + bias
 model = gammy.BayesianGAM(formula).fit(input_data, y)
 ```
 
@@ -111,7 +114,7 @@ fig = gammy.plot.validation_plot(
     y,
     grid_limits=[0, 10],
     input_maps=[x, x, x],
-    titles=["a", "b", "intercept"]
+    titles=["a", "b", "bias"]
 )
 ```
 
@@ -150,16 +153,10 @@ model = BayesianGAM(formula).load("/home/foobar/test.hdf5")
 ```python
 # Create some data
 n = 50
-input_data = np.vstack(
-    (
-        2 * np.pi * np.random.rand(n),
-        np.random.rand(n),
-    )
-).T
+input_data = np.vstack((2 * np.pi * np.random.rand(n), np.random.rand(n))).T
 y = (
-    np.abs(np.cos(input_data[:, 0])) * input_data[:, 1] +
-    1 +
-    0.1 * np.random.randn(n)
+    np.abs(np.cos(input_data[:, 0])) * input_data[:, 1] 
+    + 1 + 0.1 * np.random.randn(n)
 )
 
 
@@ -171,8 +168,8 @@ a = gammy.ExpSineSquared1d(
     period=2 * np.pi,
     energy=0.99
 )
-intercept = gammy.Scalar(prior=(0, 1e-6))
-formula = a(x[:, 0]) * x[:, 1] + intercept
+bias = gammy.Scalar(prior=(0, 1e-6))
+formula = a(x[:, 0]) * x[:, 1] + bias
 model = gammy.BayesianGAM(formula).fit(input_data, y)
 
 
@@ -194,6 +191,49 @@ fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ![alt text](./doc/source/images/example1-0.png "Validation plot")
 ![alt text](./doc/source/images/example1-1.png "1-D density plot")
 
+#### More kernel functions for GPs
+
+``` python
+
+input_data = np.arange(0, 1, 0.01)
+
+# Staircase function with 5 steps from 0...1
+y = reduce(lambda u, v: u + v, [
+    1.0 * (input_data > c) for c in [0, 0.2, 0.4, 0.6, 0.8]
+])
+
+a = gammy.ExpSquared1d(
+    grid=np.arange(0, 1, 0.001),
+    corrlen=0.01,
+    sigma=2,
+    energy=0.99
+)(x)
+b = gammy.RationalQuadratic1d(
+    grid=np.arange(0, 1, 0.001),
+    corrlen=0.01,
+    alpha=1,
+    sigma=2,
+    energy=0.99
+)(x)
+c = gammy.OrnsteinUhlenbeck1d(
+    grid=np.arange(0, 1, 0.001),
+    corrlen=0.1,
+    sigma=2,
+    energy=0.99
+)(x)
+
+exponential_squared = gammy.BayesianGAM(a).fit(input_data, y)
+rational_quadratic = gammy.BayesianGAM(b).fit(input_data, y)
+ornstein_uhlenbeck = gammy.BayesianGAM(c).fit(input_data, y)
+# Plot boilerplate ...
+
+```
+
+![alt text](./doc/source/images/example1-2.png "Residual plot")
+
+#### Define custom kernel
+
+TODO
 
 ### Multivariate Gaussian process regression
 
@@ -205,15 +245,11 @@ Let us first create some artificial data using the MATLAB function!
 ```python
 # Create some data
 n = 100
-input_data = np.vstack(
-    (
-        6 * np.random.rand(n) - 3,
-        6 * np.random.rand(n) - 3,
-    )
-).T
+input_data = np.vstack((6 * np.random.rand(n) - 3, 6 * np.random.rand(n) - 3)).T
+
 
 def peaks(x, y):
-    """The function in Mathworks logo
+    """The MATLAB function
 
     """
     return (
@@ -222,6 +258,7 @@ def peaks(x, y):
         1 / 3 * np.exp(-(x + 1) ** 2 - y ** 2)
     )
 
+
 y = peaks(input_data[:, 0], input_data[:, 1]) + 4 + 0.3 * np.random.randn(n)
 ```
 
@@ -229,7 +266,6 @@ There is support for forming two-dimensional basis functions given two
 one-dimensional formulas. The new combined basis is essentially the outer
 product of the given bases. The underlying weight prior distribution priors and
 covariances are constructed using the Kronecker product.
-
 
 ```python
 # Define model
@@ -246,8 +282,8 @@ b = gammy.ExpSquared1d(
     energy=0.99
 )(x[:, 1]) # note that we need to define the input map at this point!
 A = gammy.Kron(a, b)
-intercept = gammy.Scalar(prior=(0, 1e-6))
-formula = A + intercept
+bias = gammy.Scalar(prior=(0, 1e-6))
+formula = A + bias
 model = gammy.BayesianGAM(formula).fit(input_data, y)
 ```
 
@@ -260,7 +296,6 @@ formula = gammy.kron(gammy.kron(a, b), c)
 ```
 
 Finally, plot results.
-
 
 ```python
 # Plot results
@@ -293,7 +328,6 @@ Z = peaks(X, Y) + 4
 fig = plt.figure()
 ax = fig.gca(projection="3d")
 ax.plot_surface(X, Y, Z, color="r", antialiased=False)
-# ax.scatter3D(input_data[:, 0], input_data[:, 1], y)
 ```
 
 ![alt text](./doc/source/images/peaks.png "Peaks")
