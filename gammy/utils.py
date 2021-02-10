@@ -220,12 +220,23 @@ def rational_quadratic(
     ) ** -alpha
 
 
+def ornstein_uhlenbeck(
+        X1: np.ndarray,
+        X2: np.ndarray,
+        corrlen: float=1.0,
+        sigma: float=1.0
+):
+    return sigma * np.exp(
+        -np.sqrt(squared_dist(X1, X2)) / corrlen
+    )
+
+
 def white_noise(n_dims: int, sigma: float=1.0) -> np.ndarray:
     return sigma * np.identity(n_dims)
 
 
 def scaled_principal_eigvecsh(H: np.ndarray, energy: float=0.99) -> np.ndarray:
-    """Most important eigenvectors of a hermitian matrix
+    """Most important eigenvectors of a Hermitian matrix
 
     Descending order with respect of the corresponding eigenvalues. Each
     vector scaled with ``sqrt(λ)``.

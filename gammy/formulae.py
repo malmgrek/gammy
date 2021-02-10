@@ -180,6 +180,48 @@ def Kron(a: Formula, b: Formula) -> Formula:
 #
 
 
+def create_from_kernel1d(kernel: Callable) -> Callable:
+
+    def _Formula(
+            grid: np.ndarray,
+            prior: Tuple[np.ndarray]=None,
+            mu_basis: List[Callable]=None,
+            mu_hyper: Tuple[np.ndarray]=None,
+            energy: float=.99,
+            **kernel_kwargs
+    ) -> Formula:
+
+        mu_basis = [] if mu_basis is None else mu_basis
+        basis = utils.interp1d_1darrays(
+            utils.scaled_principal_eigvecsh(
+                kernel(
+                    X1=grid.reshape(-1, 1),
+                    X2=grid.reshape(-1, 1),
+                    **kernel_kwargs
+                ),
+                energy=energy
+            ),
+            grid=grid,
+            fill_value="extrapolate"
+        )
+
+        # Default prior is white noise for the problem with
+        # the constructed basis functions
+        prior = (
+            (np.zeros(len(basis)), np.identity(len(basis)))
+            if prior is None else prior
+        )
+
+        return Formula(
+            bases=[mu_basis + basis],
+            prior=prior if mu_hyper is None else concat_gaussians(
+                [mu_hyper, prior]
+            )
+        )
+
+    return _Formula
+
+
 def ExpSquared1d(
         grid: np.ndarray,
         corrlen: float,
@@ -189,7 +231,7 @@ def ExpSquared1d(
         mu_hyper: Tuple[np.ndarray]=None,
         energy: float=0.99
 ) -> Formula:
-    """Squared exponential model term
+    """Squared exponential kernel formula
 
     Example
     -------
@@ -205,30 +247,18 @@ def ExpSquared1d(
         )
 
     """
-    mu_basis = [] if mu_basis is None else mu_basis
-    basis = utils.interp1d_1darrays(
-        utils.scaled_principal_eigvecsh(
-            utils.exp_squared(
-                X1=grid.reshape(-1, 1),
-                X2=grid.reshape(-1, 1),
-                corrlen=corrlen,
-                sigma=sigma
-            ),
-            energy=energy
-        ),
+    kernel_kwargs = {
+        "corrlen": corrlen,
+        "sigma": sigma
+    }
+    _Formula = create_from_kernel1d(utils.exp_squared)
+    return _Formula(
         grid=grid,
-        fill_value="extrapolate"
-    )
-    # Default prior is white noise
-    prior = (
-        (np.zeros(len(basis)), np.identity(len(basis)))
-        if prior is None else prior
-    )
-    return Formula(
-        bases=[mu_basis + basis],
-        prior=prior if mu_hyper is None else concat_gaussians(
-            [mu_hyper, prior]
-        )
+        prior=prior,
+        mu_basis=mu_basis,
+        mu_hyper=mu_hyper,
+        energy=energy,
+        **kernel_kwargs
     )
 
 
@@ -242,31 +272,51 @@ def ExpSineSquared1d(
         mu_hyper: Tuple[np.ndarray]=None,
         energy: float=0.99
 ) -> Formula:
-    mu_basis = [] if mu_basis is None else mu_basis
-    basis = utils.interp1d_1darrays(
-        utils.scaled_principal_eigvecsh(
-            utils.exp_sine_squared(
-                X1=grid.reshape(-1, 1),
-                X2=grid.reshape(-1, 1),
-                corrlen=corrlen,
-                sigma=sigma,
-                period=period
-            ),
-            energy=energy
-        ),
+    """Squared sine exponential kernel formula for periodic terms
+
+    """
+    kernel_kwargs = {
+        "corrlen": corrlen,
+        "sigma": sigma,
+        "period": period
+    }
+    _Formula = create_from_kernel1d(utils.exp_sine_squared)
+    return _Formula(
         grid=grid,
-        fill_value="extrapolate"
+        prior=prior,
+        mu_basis=mu_basis,
+        mu_hyper=mu_hyper,
+        energy=energy,
+        **kernel_kwargs
     )
-    # Default prior is white noise
-    prior = (
-        (np.zeros(len(basis)), np.identity(len(basis)))
-        if prior is None else prior
-    )
-    return Formula(
-        bases=[mu_basis + basis],
-        prior=prior if mu_hyper is None else concat_gaussians(
-            [mu_hyper, prior]
-        )
+
+
+def RationalQuadratic1d(
+        grid: np.ndarray,
+        corrlen: float,
+        sigma: float,
+        alpha: float,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None,
+        energy: float=0.99
+) -> Formula:
+    """Rational quadratic kernel formula
+
+    """
+    kernel_kwargs = {
+        "corrlen": corrlen,
+        "sigma": sigma,
+        "alpha": alpha
+    }
+    _Formula = create_from_kernel1d(utils.rational_quadratic)
+    return _Formula(
+        grid=grid,
+        prior=prior,
+        mu_basis=mu_basis,
+        mu_hyper=mu_hyper,
+        energy=energy,
+        **kernel_kwargs
     )
 
 
@@ -278,25 +328,48 @@ def WhiteNoise1d(
         mu_hyper: Tuple[np.ndarray]=None,
         energy: float=1.0
 ) -> Formula:
-    mu_basis = [] if mu_basis is None else mu_basis
-    basis = utils.interp1d_1darrays(
-        utils.scaled_principal_eigvecsh(
-            utils.white_noise(n_dims=len(grid), sigma=sigma),
-            energy=energy
-        ),
+    """White noise kernel formula
+
+    """
+    kernel_kwargs = {
+        "n_dims": len(grid),
+        "sigma": sigma
+    }
+    _Formula = create_from_kernel1d(utils.white_noise)
+    return _Formula(
         grid=grid,
-        fill_value="extrapolate"
+        prior=prior,
+        mu_basis=mu_basis,
+        mu_hyper=mu_hyper,
+        energy=energy,
+        **kernel_kwargs
     )
-    # Default prior is white noise
-    prior = (
-        (np.zeros(len(basis)), np.identity(len(basis)))
-        if prior is None else prior
-    )
-    return Formula(
-        bases=[mu_basis + basis],
-        prior=prior if mu_hyper is None else concat_gaussians(
-            [mu_hyper, prior]
-        )
+
+
+def OrnsteinUhlenbeck1d(
+        grid: np.ndarray,
+        corrlen: float,
+        sigma: float,
+        prior: Tuple[np.ndarray]=None,
+        mu_basis: List[Callable]=None,
+        mu_hyper: Tuple[np.ndarray]=None,
+        energy: float=0.99
+) -> Formula:
+    """Rational quadratic kernel formula
+
+    """
+    kernel_kwargs = {
+        "corrlen": corrlen,
+        "sigma": sigma,
+    }
+    _Formula = create_from_kernel1d(utils.ornstein_uhlenbeck)
+    return _Formula(
+        grid=grid,
+        prior=prior,
+        mu_basis=mu_basis,
+        mu_hyper=mu_hyper,
+        energy=energy,
+        **kernel_kwargs
     )
 
 
