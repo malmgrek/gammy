@@ -163,7 +163,7 @@ def gen_spline_args_from_grid_ext(
 #
 
 
-def squared_dist(X1: np.ndarray, X2: np.ndarray) -> np.ndarray:
+def squared_dist(x1: np.ndarray, x2: np.ndarray) -> np.ndarray:
     """Squared distance matrix for column array of N-dimensional points
 
     Example
@@ -171,63 +171,63 @@ def squared_dist(X1: np.ndarray, X2: np.ndarray) -> np.ndarray:
 
     .. code-block:: python
 
-        X = np.array([[0], [1], [2]])
-        squared_dist(X, X)
+        x = np.array([[0], [1], [2]])
+        squared_dist(x, x)
         # array([[0, 1, 4],
         #        [1, 0, 1],
         #        [4, 1, 0]])
 
     """
     return (
-        np.sum(X1 ** 2, 1).reshape(-1, 1) +
-        np.sum(X2 ** 2, 1) -
-        2 * np.dot(X1, X2.T)
+        np.sum(x1 ** 2, 1).reshape(-1, 1) +
+        np.sum(x2 ** 2, 1) -
+        2 * np.dot(x1, x2.T)
     )
 
 
 def exp_squared(
-        X1: np.ndarray,
-        X2: np.ndarray,
+        x1: np.ndarray,
+        x2: np.ndarray,
         corrlen: float=1.0,
         sigma: float=1.0
 ) -> np.ndarray:
-    return sigma * np.exp(-0.5 / corrlen ** 2 * squared_dist(X1, X2))
+    return sigma * np.exp(-0.5 / corrlen ** 2 * squared_dist(x1, x2))
 
 
 def exp_sine_squared(
-        X1: np.ndarray,
-        X2: np.ndarray,
+        x1: np.ndarray,
+        x2: np.ndarray,
         corrlen: float=1.0,
         sigma: float=1.0,
         period: float=1.0
 ) -> np.ndarray:
     return sigma * np.exp(
         -2.0 / corrlen ** 2 * np.sin(
-            np.pi * np.sqrt(squared_dist(X1, X2)) / period
+            np.pi * np.sqrt(squared_dist(x1, x2)) / period
         ) ** 2
     )
 
 
 def rational_quadratic(
-        X1: np.ndarray,
-        X2: np.ndarray,
+        x1: np.ndarray,
+        x2: np.ndarray,
         corrlen: float=1.0,
         sigma: float=1.0,
         alpha: float=1.0
 ) -> np.ndarray:
     return sigma * (
-        1 + squared_dist(X1, X2) / 2.0 / alpha / corrlen ** 2
+        1 + squared_dist(x1, x2) / 2.0 / alpha / corrlen ** 2
     ) ** -alpha
 
 
 def ornstein_uhlenbeck(
-        X1: np.ndarray,
-        X2: np.ndarray,
+        x1: np.ndarray,
+        x2: np.ndarray,
         corrlen: float=1.0,
         sigma: float=1.0
 ):
     return sigma * np.exp(
-        -np.sqrt(squared_dist(X1, X2)) / corrlen
+        -np.sqrt(squared_dist(x1, x2)) / corrlen
     )
 
 

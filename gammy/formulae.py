@@ -195,8 +195,8 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
         basis = utils.interp1d_1darrays(
             utils.scaled_principal_eigvecsh(
                 kernel(
-                    X1=grid.reshape(-1, 1),
-                    X2=grid.reshape(-1, 1),
+                    x1=grid.reshape(-1, 1),
+                    x2=grid.reshape(-1, 1),
                     **kernel_kwargs
                 ),
                 energy=energy
