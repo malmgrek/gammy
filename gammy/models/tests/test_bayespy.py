@@ -146,10 +146,13 @@ def assert_nodes_equal(a, b):
         decimal=10,
     ),
     lambda x, y, m, e: assert_almost_equal(
-        utils.listmap(
-            lambda i: m.theta_marginals[i].get_moments()
-        )(range(len(m.formula))),
-        e["theta_marginals"],
+        # Wrap with array constructor with object data type to avoid
+        # DeprecationWarning because it isn't handled within asserter
+        np.array(
+            [theta.get_moments() for theta in m.theta_marginals],
+            dtype=object
+        ),
+        np.array(e["theta_marginals"], dtype=object),
         decimal=8
     ),
     lambda x, y, m, e: assert_almost_equal(m.mean_theta, e["mean_theta"]),
@@ -164,13 +167,17 @@ def assert_nodes_equal(a, b):
         decimal=9
     ),
     lambda x, y, m, e: assert_almost_equal(
-        m.theta_marginal(1).get_moments(),
-        e["theta_marginal"],
+        # Wrap with array constructor with object data type to avoid
+        # DeprecationWarning because it isn't handled within asserter
+        np.array(m.theta_marginal(1).get_moments(), dtype=object),
+        np.array(e["theta_marginal"], dtype=object),
         decimal=8
     ),
     lambda x, y, m, e: assert_almost_equal(
-        m.theta_marginal(1).get_moments(),
-        m.theta_marginals[1].get_moments(),
+        # Wrap with array constructor with object data type to avoid
+        # DeprecationWarning because it isn't handled within asserter
+        np.array(m.theta_marginal(1).get_moments(), dtype=object),
+        np.array(m.theta_marginals[1].get_moments(), dtype=object),
         decimal=12
     ),
     lambda x, y, m, e: assert_almost_equal(
