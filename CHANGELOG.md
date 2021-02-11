@@ -1,5 +1,17 @@
 # Change Log
 
+
+## 0.3.1
+
+### Add
+- Common constructor for kernel based GP formulas
+- Unit tests for GP kernels
+
+### Fix
+- Numpy testing incompatibility issues
+- Numpy deprecation warning
+
+
 ## 0.3.0
 
 ### Add
