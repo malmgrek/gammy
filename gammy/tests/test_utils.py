@@ -5,7 +5,7 @@ import bayespy as bp
 import numpy as np
 from numpy import array_equal
 from numpy.testing import (
-    assert_allclose,
+    assert_almost_equal,
     assert_array_equal
 )
 import pytest
@@ -135,9 +135,10 @@ def test_extract_diag_blocks(x, y, expected):
 ])
 def test_solve_covariance(mu, Sigma):
     node = bp.nodes.Gaussian(mu, np.linalg.inv(Sigma))
-    assert_allclose(
+    assert_almost_equal(
         utils.solve_covariance(node),
-        Sigma
+        Sigma,
+        decimal=8
     )
     return
 
@@ -157,6 +158,136 @@ def test_extend_spline_grid(order, expected):
     grid = np.array([0, 1, 2, 3])
     assert_array_equal(
         utils.extend_spline_grid(grid, order),
+        expected
+    )
+    return
+
+
+@pytest.mark.parametrize("x1,x2,expected", [
+    (
+        np.array([[0, 0], [1, 2]]),
+        np.array([[1, 1], [2, 2], [3, 1]]),
+        np.array([
+            [2, 8, 10],
+            [1, 1, 5]
+        ])
+    ),
+    (
+        np.array([[0], [1], [2], [3]]),
+        np.array([[0], [1], [2], [3]]),
+        np.array([
+            [0, 1, 4, 9],
+            [1, 0, 1, 4],
+            [4, 1, 0, 1],
+            [9, 4, 1, 0]
+        ])
+    )
+])
+def test_squared_dist(x1, x2, expected):
+    assert_array_equal(utils.squared_dist(x1, x2), expected)
+    return
+
+
+def test_exp_squared():
+    x1 = np.array([[0], [1], [2], [3]])
+    x2 = np.array([[0], [1], [2], [3]])
+    sigma = 2
+    corrlen = 2
+    expected = 2 * np.exp(
+        -0.5 * np.array([
+            [0, 1, 4, 9],
+            [1, 0, 1, 4],
+            [4, 1, 0, 1],
+            [9, 4, 1, 0]
+        ]) / 4
+    )
+    assert_almost_equal(
+        utils.exp_squared(x1, x2, sigma=sigma, corrlen=corrlen),
+        expected,
+        decimal=12
+    )
+    return
+
+
+def test_exp_sine_squared():
+    x1 = np.array([[0], [1], [2], [3]])
+    x2 = np.array([[0], [1], [2], [3]])
+    sigma = 2
+    corrlen = 2
+    period = 2
+    expected = 2 * np.exp(
+        -2.0 * np.sin(
+            np.pi * np.array([
+                [0, 1, 2, 3],
+                [1, 0, 1, 2],
+                [2, 1, 0, 1],
+                [3, 2, 1, 0]
+            ]) / 2
+        ) ** 2 / 4
+    )
+    assert_almost_equal(
+        utils.exp_sine_squared(
+            x1, x2, sigma=sigma, period=period, corrlen=corrlen
+        ),
+        expected,
+        decimal=12
+    )
+    return
+
+
+def test_rational_quadratic():
+    x1 = np.array([[0], [1], [2], [3]])
+    x2 = np.array([[0], [1], [2], [3]])
+    sigma = 2
+    corrlen = 2
+    alpha = 1.5
+    expected = 2 * np.exp(
+        -1.5 * np.log(
+            1.0 + 0.5 * np.array([
+                [0, 1, 4, 9],
+                [1, 0, 1, 4],
+                [4, 1, 0, 1],
+                [9, 4, 1, 0]
+            ]) / 4 / 1.5
+        )
+    )
+    assert_almost_equal(
+        utils.rational_quadratic(
+            x1, x2, sigma=sigma, corrlen=corrlen, alpha=alpha
+        ),
+        expected,
+        decimal=12
+    )
+    return
+
+
+def test_ornstein_uhlenbeck():
+    x1 = np.array([[0], [1], [2], [3]])
+    x2 = np.array([[0], [1], [2], [3]])
+    sigma = 2
+    corrlen = 2
+    expected = 2 * np.exp(
+        -np.array([
+            [0, 1, 2, 3],
+            [1, 0, 1, 2],
+            [2, 1, 0, 1],
+            [3, 2, 1, 0]
+        ]) / 2
+    )
+    assert_almost_equal(
+        utils.ornstein_uhlenbeck(x1, x2, sigma=sigma, corrlen=corrlen),
+        expected,
+        decimal=12
+    )
+    return
+
+
+def test_white_noise():
+    sigma = 2
+    n_dims = 42
+    expected = 2 * np.eye(n_dims)
+    assert_array_equal(
+        utils.white_noise(sigma=sigma, n_dims=n_dims),
         expected
     )
     return

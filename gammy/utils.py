@@ -225,7 +225,7 @@ def ornstein_uhlenbeck(
         x2: np.ndarray,
         corrlen: float=1.0,
         sigma: float=1.0
-):
+) -> np.ndarray:
     return sigma * np.exp(
         -np.sqrt(squared_dist(x1, x2)) / corrlen
     )
