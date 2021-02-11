@@ -24,7 +24,6 @@ if __name__ == "__main__":
         cmdclass     = versioneer.get_cmdclass(),
         packages     = find_packages(),
         install_requires = [
-            "attrs",
             "bayespy",
             "h5py",
             "matplotlib",

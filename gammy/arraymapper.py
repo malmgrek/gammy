@@ -1,9 +1,9 @@
-import attr
+"""Numpy array mapping in model building"""
+
 
 from gammy.utils import compose
 
 
-@attr.s
 class ArrayMapper():
     """Convenience tool for handling input mappings
 
@@ -17,11 +17,13 @@ class ArrayMapper():
     is a valid definition as long as ``a`` is an instance of
     :class:`gammy.Formula` and ``x`` is an instance of :class:`ArrayMapper`.
 
-    TODO: Think if some natural methods are still missing?
+    TODO: Are some natural methods are still missing?
 
     """
 
-    function = attr.ib(default=lambda t: t)
+    def __init__(self, function=lambda t: t):
+        self.function = function
+        return
 
     def __call__(self, *args, **kwargs):
         return self.function.__call__(*args, **kwargs)

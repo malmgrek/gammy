@@ -3,7 +3,6 @@
 
 from typing import (Callable, List, Tuple)
 
-import attr
 import numpy as np
 import scipy as sp
 from scipy import interpolate
@@ -26,7 +25,6 @@ def design_matrix(input_data: np.ndarray, basis: List[Callable]):
     ])
 
 
-@attr.s(frozen=True)
 class Formula():
     """Basis manipulation and design matrix creator
 
@@ -44,8 +42,11 @@ class Formula():
 
     """
 
-    bases = attr.ib()
-    prior = attr.ib()
+    def __init__(self, bases, prior):
+        self.bases = bases
+        self.prior = prior
+        return
+
 
     def __add__(self, other):
         return Formula(

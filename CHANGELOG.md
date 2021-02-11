@@ -1,6 +1,12 @@
 # Change Log
 
 
+## Dev
+
+### Remove
+- Dependence from `attrs` package
+
+
 ## 0.3.1
 
 ### Add
