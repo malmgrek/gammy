@@ -1,7 +1,7 @@
 # Change Log
 
 
-## Dev
+## 0.3.2
 
 ### Remove
 - Dependence from `attrs` package
