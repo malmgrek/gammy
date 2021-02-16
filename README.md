@@ -28,10 +28,15 @@ The work is on an early stage, so many features are still missing.
 - [PyGAM](https://pygam.readthedocs.io/en/latest/)
 - [Statsmodels](https://www.statsmodels.org/dev/gam.html)
 
+<!-- Remark for Emacs users: Table of contents comes out best, when generated at
+the top of file -->
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
+- [Summary](#summary)
+    - [Other projects with GAM functionalities](#other-projects-with-gam-functionalities)
+- [Installation](#installation)
 - [Examples](#examples)
     - [Polynomial regression on 'roids](#polynomial-regression-on-roids)
         - [Predicting with model](#predicting-with-model)
@@ -39,12 +44,21 @@ The work is on an early stage, so many features are still missing.
         - [Saving model on hard disk for later use (HDF5)](#saving-model-on-hard-disk-for-later-use-hdf5)
     - [Gaussian process regression ("kriging")](#gaussian-process-regression-kriging)
         - [More kernel functions for GPs](#more-kernel-functions-for-gps)
-        - [Define custom kernel](#define-custom-kernel)
+        - [Define custom kernels](#define-custom-kernels)
     - [Multivariate Gaussian process regression](#multivariate-gaussian-process-regression)
     - [B-Spline basis](#b-spline-basis)
 - [To-be-added features](#to-be-added-features)
 
 <!-- markdown-toc end -->
+
+
+## Installation
+
+The package is found in PyPi.
+
+``` shell
+pip install gammy
+```
 
 
 ## Examples
@@ -121,7 +135,7 @@ The grey band in the top figure is two times
 the prediction standard deviation and, in the partial residual plots, two times
 the respective marginal posterior standard deviation.
 
-![alt text](./doc/source/images/example0-0.png "Validation plot")
+![Partial residuals](./doc/source/images/example0-0.png "Partial residuals")
 
 It is also possible to plot the estimated Γ-distribution of the noise precision
 (inverse variance) as well as the 1-D Normal distributions of each individual
@@ -131,7 +145,7 @@ model parameter.
 # Plot parameter probability density functions
 fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ```
-![alt text](./doc/source/images/example0-1.png "1-D density plot")
+![Marginal posterior densities of parameters](./doc/source/images/example0-1.png "Densities")
 
 #### Saving model on hard disk for later use (HDF5)
 
@@ -187,8 +201,8 @@ fig = gammy.plot.validation_plot(
 fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ```
 
-![alt text](./doc/source/images/example1-0.png "Validation plot")
-![alt text](./doc/source/images/example1-1.png "1-D density plot")
+![Partial residuals](./doc/source/images/example1-0.png "Partial residuals")
+![Marginal posterior densities of parameters](./doc/source/images/example1-1.png "Densities")
 
 #### More kernel functions for GPs
 
@@ -231,9 +245,9 @@ ornstein_uhlenbeck = gammy.BayesianGAM(c).fit(input_data, y)
 
 ```
 
-![alt text](./doc/source/images/example1-2.png "Residual plot")
+![Residuals of GP models](./doc/source/images/example1-2.png "GP residuals")
 
-#### Define custom kernel
+#### Define custom kernels
 
 It is straightforward to define custom formulas from "positive semidefinite" covariance kernel functions.
 
@@ -267,7 +281,7 @@ ax.legend()
 
 ```
 
-![alt text](./doc/source/images/example1-3.png "Samples plot")
+![Random samples](./doc/source/images/example1-3.png "Random samples")
 
 ### Multivariate Gaussian process regression
 
@@ -347,8 +361,8 @@ fig = gammy.plot.validation_plot(
 fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ```
 
-![alt text](./doc/source/images/example2-0.png "Validation plot")
-![alt text](./doc/source/images/example2-1.png "1-D density plot")
+![Partial residuals](./doc/source/images/example2-0.png "Partial residuals")
+![Marginal posterior densities of parameters](./doc/source/images/example2-1.png "Densities")
 
 The original function can be plotted like so
 
@@ -364,7 +378,7 @@ ax = fig.gca(projection="3d")
 ax.plot_surface(X, Y, Z, color="r", antialiased=False)
 ```
 
-![alt text](./doc/source/images/peaks.png "Peaks")
+![The Mathworks function](./doc/source/images/peaks.png "Peaks")
 
 
 ### B-Spline basis
@@ -409,8 +423,8 @@ fig = gammy.plot.validation_plot(
 fig = gammy.plot.gaussian1d_density_plot(model, grid_limits=[-1, 3])
 ```
 
-![alt text](./doc/source/images/example3-0.png "Validation plot")
-![alt text](./doc/source/images/example3-1.png "1-D density plot")
+![Partial residuals](./doc/source/images/example3-0.png "Validation plot")
+![Marginal posterior densities of parameters](./doc/source/images/example3-1.png "Densities")
 
 
 ## To-be-added features
