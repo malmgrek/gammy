@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.3.3
+
+### Remove
+- Versioneer
+- Redundant information in `setup.py`
+
+
 ## 0.3.2
 
 ### Remove
