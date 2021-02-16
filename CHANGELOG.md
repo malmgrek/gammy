@@ -1,6 +1,12 @@
 # Change Log
 
 
+## 0.3.4
+
+### Fix
+- Bug in `setup.py`
+
+
 ## 0.3.3
 
 ### Remove

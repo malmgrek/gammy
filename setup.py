@@ -2,13 +2,13 @@ import os
 from setuptools import setup, find_packages
 
 
-with open(os.path.join(os.path.dirname(__file__), "README.md")).read() as fh:
+with open(os.path.join(os.path.dirname(__file__), "README.md")) as fh:
     long_description = fh.read()
 
 
 setup(
     name="gammy",
-    version="0.3.2",
+    version="0.3.4",
     author="Stratos Staboulis",
     description="Generalized additive models with a Bayesian twist",
     url="https://github.com/malmgrek/gammy",
