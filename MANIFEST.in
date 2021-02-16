@@ -1,2 +1,1 @@
-include versioneer.py
-include gammy/_version.py
+include LICENSE.txt
