@@ -4,7 +4,7 @@
 import numpy as np
 from numpy.testing import (
     assert_array_equal,
-    assert_allclose,
+    assert_almost_equal,
     assert_equal
 )
 import pytest
@@ -97,11 +97,10 @@ def test_design_matrix(xs, expected):
     return
 
 
-@pytest.mark.parametrize("xs,ys,input_map,expected", [
+@pytest.mark.parametrize("xs,ys,expected", [
     (
         line(),
         sine(),
-        x,
         {
             "__add__": np.array([
                 [0., 0.],
@@ -113,37 +112,64 @@ def test_design_matrix(xs, expected):
             "__call__": np.array([0., .5, 1.])[:, None],
             "build_Xi": np.array([0., 1., 2.])[:, None],
             "build_X": np.array([0., 1., 2.])[:, None]
-        },
+        }
     )
+    # Let's keep this level of abstraction so that we can later add more
+    # test cases with different sets formulae if needed
 ])
-@pytest.mark.parametrize("require", [
-    lambda d, f, o, i, e: assert_allclose(
-        (f + o).build_X(d),
-        e["__add__"],
-        atol=1e-12
-    ),
-    lambda d, f, o, i, e: assert_array_equal(
-        (f * i).build_X(d),
-        e["__mul__"]
-    ),
-    lambda d, f, o, i, e: assert_equal(len(f), e["__len__"]),
-    lambda d, f, o, i, e: assert_array_equal(
-        f(lambda t: t * .5).build_X(d),
-        e["__call__"]
-    ),
-    lambda d, f, o, i, e: assert_array_equal(
-        f.build_X(d),
-        e["build_X"]
-    ),
-    lambda d, f, o, i, e: assert_array_equal(
-        (f + o).build_Xi(d, 0),
-        e["build_Xi"]
+def test_formula(xs, ys, expected):
+    (formula_1, input_data) = xs
+    (formula_2, _) = ys
+
+    #
+    # Addition
+    # ~~~~~~~~
+    #
+    assert_almost_equal(
+        (formula_1 + formula_2).build_X(input_data),
+        expected["__add__"],
+        decimal=10
     )
-])
-def test_formula(xs, ys, input_map, expected, require):
-    (formula, input_data) = xs
-    (other, _) = ys
-    require(input_data, formula, other, input_map, expected)
+
+    #
+    # Multiply with arraymapper
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    assert_array_equal(
+        (formula_1 * gammy.x).build_X(input_data),
+        expected["__mul__"]
+    )
+
+    #
+    # Formula.__len__
+    # ~~~~~~~~~~~~~~~
+    #
+    assert_equal(len(formula_1), expected["__len__"])
+
+    #
+    # Formula.__call__
+    # ~~~~~~~~~~~~~~~~
+    #
+    assert_array_equal(
+        formula_1(lambda t: t * .5).build_X(input_data),
+        expected["__call__"]
+    )
+
+    #
+    # Formula.build_X
+    # ~~~~~~~~~~~~~~~
+    #
+    assert_array_equal(formula_1.build_X(input_data), expected["build_X"])
+
+    #
+    # Formula.build_Xi
+    # ~~~~~~~~~~~~~~~~
+    #
+    assert_array_equal(
+        (formula_1 + formula_2).build_Xi(input_data, 0),
+        expected["build_Xi"]
+    )
+
     return
 
 
@@ -180,7 +206,7 @@ def test_kron():
     formula = gammy.formulae.Kron(a, b)
     [bs] = formula.bases
     assert len(bs) == 4
-    assert_allclose(
+    assert_almost_equal(
         formula.build_X(input_data),
         np.array([
             [0., 0., 0., 0.],
@@ -188,6 +214,6 @@ def test_kron():
             [4., 8., 0., 0.],
             [9., 27., -3., -9.]
         ]),
-        atol=1e-10
+        decimal=10
     )
     return
