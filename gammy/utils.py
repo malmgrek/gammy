@@ -9,7 +9,8 @@ import scipy.interpolate as spi
 
 
 #
-# Function manipulation
+# Functional
+# ~~~~~~~~~~
 #
 
 
@@ -72,7 +73,8 @@ tuplefilter = curryish(compose(tuple, filter))
 
 
 #
-# Iterable manipulations
+# Iterables
+# ~~~~~~~~~
 #
 
 
@@ -157,6 +159,7 @@ def gen_spline_args_from_grid_ext(
 
 #
 # Basis function generation tools
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
 # TODO/FIXME: The linear-algebraic stuff below remains unfortunately largely
 # untested.
