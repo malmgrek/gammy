@@ -161,8 +161,8 @@ def gen_spline_args_from_grid_ext(
 # Basis function generation tools
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #
-# TODO/FIXME: The linear-algebraic stuff below remains unfortunately largely
-# untested.
+# TODO / FIXME: The linear-algebraic stuff below remains unfortunately
+# largely untested.
 #
 
 

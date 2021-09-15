@@ -20,8 +20,7 @@ def create_gaussian_theta(formula: Formula):
     return bp.nodes.Gaussian(*formula.prior)
 
 
-# TODO: Rename to GAM
-class BayesianGAM:
+class GAM:
     """Generalized additive model predictor
 
     Parameters
@@ -296,7 +295,7 @@ class BayesianGAM:
                 tau._load(h5f["nodes"]["tau"])
                 theta = create_gaussian_theta(self.formula)
                 theta._load(h5f["nodes"]["theta"])
-                return BayesianGAM(
+                return GAM(
                     formula=self.formula,
                     tau=tau,
                     theta=theta
@@ -308,4 +307,4 @@ class BayesianGAM:
                 theta = utils.set_from_json(raw["theta"], self.theta)
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
-        return BayesianGAM(formula=self.formula, tau=tau, theta=theta)
+        return GAM(formula=self.formula, tau=tau, theta=theta)

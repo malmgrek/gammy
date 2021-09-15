@@ -19,7 +19,7 @@ def test_polynomial():
         gammy.Scalar(prior=(0, 1e-6)) * x ** 2 +
         gammy.Scalar(prior=(0, 1e-6))
     )
-    model = gammy.BayesianGAM(formula).fit(input_data, y)
+    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
     assert_allclose(
         model.predict(input_data[[0, 3, 6, 9, 12]]),
         np.array([
@@ -50,7 +50,7 @@ def test_gp():
         period=2 * np.pi,
         energy=0.99
     )(x[:, 0]) * x[:, 1] + gammy.Scalar(prior=(0, 1e-6))
-    model = gammy.BayesianGAM(formula).fit(input_data, y)
+    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
     assert_allclose(
         model.predict(input_data[[1, 42, 11, 26, 31]]),
         np.array([1.78918855, 1.87107355, 1.30149328, 1.29221874, 1.31596102])
@@ -96,7 +96,7 @@ def test_kron():
             energy=0.99
         )(x[:, 1])
     ) + gammy.Scalar(prior=(0, 1e-6))
-    model = gammy.BayesianGAM(formula).fit(input_data, y)
+    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
     assert_allclose(
         model.predict(input_data[[1, 5, 12, 19], :]),
         np.array([3.78593199, 3.56403323, 3.73910833, 3.55960657])
@@ -123,7 +123,7 @@ def test_bspline():
         prior=(np.zeros(N), np.identity(N) / sigma),
         extrapolate=True
     )(x)
-    model = gammy.BayesianGAM(formula).fit(input_data, y)
+    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
     assert_allclose(
         model.predict(input_data[[6, 2, 11, 7, 23]]),
         np.array([

@@ -1,2 +1,2 @@
-from .bayespy import BayesianGAM
-from .numpy import LinearGAM, Delta
+from . import bayespy
+from . import numpy

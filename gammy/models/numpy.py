@@ -60,10 +60,9 @@ def create_gaussian_theta(formula: Formula):
     return Gaussian(*formula.prior)
 
 
-# TODO: Rename to GAM
 # TODO: Add docstrings to methods
 # TODO: Uniformize docstring and type hint styles with bayespy.GAM
-class LinearGAM:
+class GAM:
 
     def __init__(self, formula: Formula, tau: Delta, theta: Gaussian=None) -> None:
         self.formula = formula
@@ -125,7 +124,7 @@ class LinearGAM:
             Lambda_post,
             np.dot(self.tau.mu * X.T, y) + np.dot(self.theta.Lambda, self.theta.mu)
         )
-        return LinearGAM(
+        return GAM(
             formula=self.formula,
             tau=self.tau,
             theta=Gaussian(mu=mu_post, Lambda=Lambda_post)
@@ -256,4 +255,4 @@ class LinearGAM:
                 )
         else:
             raise ValueError(f"Unknown file type: {file_ext}")
-        return LinearGAM(formula=self.formula, theta=theta, tau=tau)
+        return GAM(formula=self.formula, theta=theta, tau=tau)

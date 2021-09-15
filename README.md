@@ -97,7 +97,7 @@ a = gammy.Scalar(prior=(0, 1e-6))
 b = gammy.Scalar(prior=(0, 1e-6))
 bias = gammy.Scalar(prior=(0, 1e-6))
 formula = a * x + b * x ** 2 + bias
-model = gammy.BayesianGAM(formula).fit(input_data, y)
+model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 ```
 
 The model attribute `model.theta` characterizes the Gaussian posterior distribution of the model parameters vector.
@@ -158,7 +158,7 @@ model.save("/home/foobar/test.hdf5")
 Loading
 
 ```python
-model = BayesianGAM(formula).load("/home/foobar/test.hdf5")
+model = bayespy.GAM(formula).load("/home/foobar/test.hdf5")
 ```
 
 ### Gaussian process regression ("kriging")
@@ -183,7 +183,7 @@ a = gammy.ExpSineSquared1d(
 )
 bias = gammy.Scalar(prior=(0, 1e-6))
 formula = a(x[:, 0]) * x[:, 1] + bias
-model = gammy.BayesianGAM(formula).fit(input_data, y)
+model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
 
 # Plot results
@@ -238,9 +238,9 @@ c = gammy.OrnsteinUhlenbeck1d(
     energy=0.99
 )(x)
 
-exponential_squared = gammy.BayesianGAM(a).fit(input_data, y)
-rational_quadratic = gammy.BayesianGAM(b).fit(input_data, y)
-ornstein_uhlenbeck = gammy.BayesianGAM(c).fit(input_data, y)
+exponential_squared = gammy.models.bayespy.GAM(a).fit(input_data, y)
+rational_quadratic = gammy.models.bayespy.GAM(b).fit(input_data, y)
+ornstein_uhlenbeck = gammy.models.bayespy.GAM(c).fit(input_data, y)
 # Plot boilerplate ...
 
 ```
@@ -332,7 +332,7 @@ b = gammy.ExpSquared1d(
 A = gammy.Kron(a, b)
 bias = gammy.Scalar(prior=(0, 1e-6))
 formula = A + bias
-model = gammy.BayesianGAM(formula).fit(input_data, y)
+model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 ```
 
 Note that same logic could be used to construct higher dimensional bases,
@@ -406,7 +406,7 @@ a = gammy.BSpline1d(
     extrapolate=True
 )
 formula = a(x)
-model = gammy.BayesianGAM(formula).fit(input_data, y)
+model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
 # Plot results
 fig = gammy.plot.validation_plot(
