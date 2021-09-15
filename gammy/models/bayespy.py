@@ -1,8 +1,10 @@
-"""BayesPy based GAM model"""
+"""GAM with BayesPy backend
+
+"""
 
 
 import json
-from typing import (Callable, List, Tuple)
+from typing import Callable, List, Tuple
 
 import bayespy as bp
 import h5py
@@ -10,14 +12,16 @@ import numpy as np
 
 import gammy
 from gammy import utils
+from gammy.formulae import Formula
 from gammy.utils import listmap, pipe
 
 
-def build_gaussian_theta(formula: gammy.formulae.Formula):
+def create_gaussian_theta(formula: Formula):
     return bp.nodes.Gaussian(*formula.prior)
 
 
-class BayesianGAM(object):
+# TODO: Rename to GAM
+class BayesianGAM:
     """Generalized additive model predictor
 
     Parameters
@@ -47,18 +51,13 @@ class BayesianGAM(object):
 
     """
 
-    def __init__(
-            self,
-            formula,
-            tau=None,
-            theta=None
-    ):
+    def __init__(self, formula, tau=None, theta=None) -> None:
         # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
         #       would ruin everything because of mutability
         self.formula = formula
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
         self.theta = (
-            theta if theta is not None else build_gaussian_theta(formula)
+            theta if theta is not None else create_gaussian_theta(formula)
         )
 
     def __len__(self) -> int:
@@ -80,11 +79,11 @@ class BayesianGAM(object):
         )
         return [
             bp.nodes.Gaussian(mu=mu, Lambda=bp.utils.linalg.inv(cov))
-            for mu, cov in zip(mus, covs)
+            for (mu, cov) in zip(mus, covs)
         ]
 
     @property
-    def mean_theta(self) -> List:
+    def mean_theta(self) -> List[np.ndarray]:
         """Transforms theta to similarly nested list as bases
 
         """
@@ -153,7 +152,8 @@ class BayesianGAM(object):
         return np.dot(X, np.hstack(self.mean_theta))
 
     def predict_variance(
-            self, input_data: np.ndarray
+            self,
+            input_data: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Predict observations with variance
 
@@ -172,7 +172,8 @@ class BayesianGAM(object):
         )
 
     def predict_variance_theta(
-            self, input_data: np.ndarray
+            self,
+            input_data: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Predict observations with variance from model parameters
 
@@ -197,20 +198,27 @@ class BayesianGAM(object):
             pipe(F, utils.solve_covariance, np.diag)
         )
 
-    def predict_marginals(self, input_data: np.ndarray) -> List:
+    def predict_marginals(self, input_data: np.ndarray) -> List[np.ndarray]:
         """Predict all terms separately
 
         """
         Xs = self.formula.build_Xs(input_data)
-        return [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
+        return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
     def predict_variance_marginals(self, input_data: np.ndarray) -> List:
+        """Predict variance (theta) for marginal parameter distributions
+
+        NOTE: Analogous to self.predict_variance_theta but for marginal
+        distributions. Adding observation noise does not make sense as we don't
+        know how it is splitted among the model terms.
+
+        """
         Xs = self.formula.build_Xs(input_data)
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
-            for X, theta in zip(Xs, self.theta_marginals)
+            for (X, theta) in zip(Xs, self.theta_marginals)
         ]
-        mus = [np.dot(X, c) for X, c in zip(Xs, self.mean_theta)]
+        mus = [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
         sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
         return list(zip(mus, sigmas))
 
@@ -239,8 +247,7 @@ class BayesianGAM(object):
         """Marginal (partial) residuals
 
         """
-        marginals = self.predict_variance_marginals(input_data)
-        mus = [mu for (mu, _) in marginals]
+        mus = self.predict_marginals(input_data)
         return [
             y - np.sum(mus[:i] + mus[i + 1:], axis=0)
             for i in range(len(mus))
@@ -253,14 +260,8 @@ class BayesianGAM(object):
             i: int
     ) -> np.ndarray:
         # Not refactored with marginal_residuals for perf reasons
-        marginals = self.predict_variance_marginals(input_data)
-        mus = [mu for (mu, _) in marginals]
+        mus = self.predict_marginals(input_data)
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
-
-    def _save_h5(self, group):
-        self.tau._save(group.create_group("tau"))
-        self.theta._save(group.create_group("theta"))
-        return group
 
     def save(self, filepath: str) -> None:
         """Save the model to disk
@@ -270,41 +271,19 @@ class BayesianGAM(object):
         if file_ext in ("h5", "hdf5"):
             with h5py.File(filepath, "w") as h5f:
                 group = h5f.create_group("nodes")
-                self._save_h5(group)
+                self.tau._save(group.create_group("tau"))
+                self.theta._save(group.create_group("theta"))
         elif file_ext == "json":
             with open(filepath, "w+") as jsonf:
                 json.dump(
-                    obj=dict(
-                        theta=utils.jsonify(self.theta),
-                        tau=utils.jsonify(self.tau)
-                    ),
+                    obj={
+                        "theta": utils.jsonify(self.theta),
+                        "tau": utils.jsonify(self.tau)
+                    },
                     fp=jsonf
                 )
         else:
-            raise ValueError("Unknown file type: {0}".format(file_ext))
-
-    def _load_h5(
-            self,
-            h5f: str,
-            build_theta: Callable=build_gaussian_theta
-    ):
-        tau = self.tau
-        tau._load(h5f["nodes"]["tau"])
-        theta = build_theta(self.formula)
-        theta._load(h5f["nodes"]["theta"])
-        return BayesianGAM(
-            formula=self.formula,
-            tau=tau,
-            theta=theta
-        )
-
-    def _load_json(self, jsonf: str):
-        raw = json.load(jsonf)
-        return BayesianGAM(
-            formula=self.formula,
-            tau=utils.set_from_json(raw["tau"], self.tau),
-            theta=utils.set_from_json(raw["theta"], self.theta)
-        )
+            raise ValueError(f"Unknown file type: {file_ext}")
 
     def load(self, filepath: str, **kwargs):
         """Load model from disk
@@ -313,9 +292,20 @@ class BayesianGAM(object):
         file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
             with h5py.File(filepath, "r") as h5f:
-                return self._load_h5(h5f, **kwargs)
+                tau = self.tau
+                tau._load(h5f["nodes"]["tau"])
+                theta = create_gaussian_theta(self.formula)
+                theta._load(h5f["nodes"]["theta"])
+                return BayesianGAM(
+                    formula=self.formula,
+                    tau=tau,
+                    theta=theta
+                )
         elif file_ext == "json":
             with open(filepath, "r") as jsonf:
-                return self._load_json(jsonf)
+                raw = json.load(jsonf)
+                tau = utils.set_from_json(raw["tau"], self.tau)
+                theta = utils.set_from_json(raw["theta"], self.theta)
         else:
             raise ValueError("Unknown file type: {0}".format(file_ext))
+        return BayesianGAM(formula=self.formula, tau=tau, theta=theta)

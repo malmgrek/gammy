@@ -293,11 +293,28 @@ def rlift_basis(basis: List[Callable], func: Callable) -> List:
 
 
 #
+# Files and I/O
+# ~~~~~~~~~~~~~
+#
+
+
+def write_to_hdf5(group, data, name):
+    try:
+        group.create_dataset(name, data=data, compression="gzip")
+    except TypeError:
+        group.create_dataset(name, data=data)
+    except ValueError:
+        raise ValueError(f"Could not write {data}")
+
+
+#
 # BayesPy related
+# ~~~~~~~~~~~~~~~
 #
 
 
 def solve_covariance(node) -> np.ndarray:
+    # TODO / FIXME: Change input to node -> moments
     u = node.get_moments()
     cov = u[1] - np.outer(u[0], u[0])
     return cov if cov.shape != (1, 1) else np.array(cov.sum())

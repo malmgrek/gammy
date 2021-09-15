@@ -55,193 +55,227 @@ assert_arrays_equal = utils.compose(
 )
 
 
-def assert_nodes_equal(a, b):
-    """Assert that two bp.expfamily nodes coincide
-
-    """
-    assert_arrays_equal(a.u, b.u)
-    assert_arrays_equal(a.phi, b.phi)
-    assert_array_equal(a.f, b.f)
-    assert_array_equal(a.g, b.g)
-    assert a.observed == b.observed
-    return
-
-
-@pytest.mark.parametrize("data,expected", [
-    # NOTE: Currently we are testing here just the dummy
-    # polynomial model. I didn't see it necessary copying a large
-    # set of data regarding a more complex model as that test would
-    # be model validation, not testing that the class works.
-    (
-        utils.pipe(
-            polynomial(),
-            lambda data: (
-                data[0],
-                data[1],
-                gammy.BayesianGAM(data[2]).fit(data[0], data[1])
+@pytest.mark.parametrize("model_data", [
+    utils.pipe(
+        polynomial(),
+        lambda xs: (
+            xs[0],
+            xs[1],
+            gammy.BayesianGAM(formula=xs[2]).fit(
+                input_data=xs[0],
+                y=xs[1]
             )
-        ),
-        {
-            "__len__": 2,
-            "theta_marginals": [
-                [np.array([ 7.]), np.array([[ 49.00071654]])],
-                [np.array([ 2.]), np.array([[ 4.00026276]])]
-            ],
-            "mean_theta": [np.array([7.]), np.array([2.])],
-            "covariance_theta": np.array([
-                [ 0.0007166, -0.0003583 ],
-                [-0.0003583,  0.00026276]
-            ]),
-            "inv_mean_tau": 0.000500374,
-            "theta_marginal": [np.array([2.]), np.array([4.00026276])],
-            "predict": 7 * np.array([0., .2, .4, .6, .8, 1.]) + 2,
-            "predict_variance": (
-                np.array([2., 3.4, 4.8, 6.2, 7.6, 9.]),
-                np.array([
-                    0.00076313, 0.00064847, 0.00059114,
-                    0.00059114, 0.00064847, 0.00076313
-                ])
-            ),
-            "predict_variance_theta": (
-                np.array([2., 3.4, 4.8, 6.2, 7.6, 9.]),
-                np.array([
-                    2.62755089e-04, 1.48098323e-04, 9.07699398e-05,
-                    9.07699398e-05, 1.48098323e-04, 2.62755089e-04
-                ])
-            ),
-            "predict_marginals": [
-                np.array([0., 1.4, 2.8, 4.2, 5.6, 7.]),
-                np.array([2., 2., 2., 2., 2., 2.])
-            ],
-            "predict_variance_marginals": [
-                (
-                    np.array([0., 1.4, 2.8, 4.2, 5.6, 7.]),
-                    np.array([
-                        0.00000000e+00, 2.86641915e-05, 1.14656766e-04,
-                        2.57977723e-04, 4.58627064e-04, 7.16604787e-04
-                    ])
-                ),
-                (
-                    np.array([2., 2., 2., 2., 2., 2.]),
-                    np.array([
-                        0.00026276, 0.00026276, 0.00026276,
-                        0.00026276, 0.00026276, 0.00026276
-                    ])
-                )
-            ],
-            "marginal_residuals": [
-                np.array([
-                    -1.98260874e-09, 1.40000000e+00, 2.80000000e+00,
-                    4.20000000e+00, 5.60000000e+00, 7.00000000e+00
-                ]),
-                np.array([2., 2., 2., 2., 2., 2.])
-            ]
-        },
+        )
+    ),
+    utils.pipe(
+        polynomial(),
+        lambda xs: (
+            xs[0],
+            xs[1],
+            gammy.LinearGAM(
+                formula=xs[2],
+                tau=gammy.Delta(1998.50381764)
+            ).fit(
+                input_data=xs[0],
+                y=xs[1]
+            )
+        )
     )
 ])
-@pytest.mark.parametrize("require", [
-    lambda x, y, m, e: assert_almost_equal(
-        len(m),
-        e["__len__"],
-        decimal=10,
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        # Wrap with array constructor with object data type to avoid
-        # DeprecationWarning because it isn't handled within asserter
-        np.array(
-            [theta.get_moments() for theta in m.theta_marginals],
-            dtype=object
-        ),
-        np.array(e["theta_marginals"], dtype=object),
+def test_gam(model_data):
+    """Test Numpy and BayesPy-based GAM
+
+    - Check that the interfaces are same
+    - Check that numeric results are sufficiently close
+
+    NOTE: Currently we are testing here just the dummy polynomial model. I
+    didn't see it necessary copying a large set of data regarding a more complex
+    model as that test would be model validation, not testing that the class
+    works.
+
+    """
+    (input_data, y, model) = model_data
+
+    #
+    # model.__len__
+    # ~~~~~~~~~~~~~
+    #
+    assert len(model) == 2
+
+    #
+    # model.theta_marginals
+    # ~~~~~~~~~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.theta_marginals[0].get_moments(),
+        [np.array([7]), np.array([49])],
+        decimal=3
+    )
+    assert_almost_equal(
+        model.theta_marginals[1].get_moments(),
+        [np.array([2]), np.array([4])],
+        decimal=3
+    )
+
+    #
+    # model.mean_theta
+    # ~~~~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.mean_theta,
+        [np.array([7]), np.array([2])],
         decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(m.mean_theta, e["mean_theta"]),
-    lambda x, y, m, e: assert_almost_equal(
-        m.covariance_theta,
-        e["covariance_theta"],
+    )
+
+    #
+    # model.covariance_theta
+    # ~~~~~~~~~~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.covariance_theta,
+        np.array([
+            [ 0.00071, -0.00035],
+            [-0.00035,  0.00026]
+        ]),
+        decimal=5
+    )
+
+    #
+    # model.inv_mean_tau
+    # ~~~~~~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.inv_mean_tau,
+        0.00050037,
         decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.inv_mean_tau,
-        e["inv_mean_tau"],
-        decimal=9
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        # Wrap with array constructor with object data type to avoid
-        # DeprecationWarning because it isn't handled within asserter
-        np.array(m.theta_marginal(1).get_moments(), dtype=object),
-        np.array(e["theta_marginal"], dtype=object),
+    )
+
+    #
+    # model.theta_marginal
+    # ~~~~~~~~~~~~~~~~~~~~
+    #
+    theta_marginals = model.theta_marginals
+    assert_almost_equal(
+        [model.theta_marginal(i).get_moments()[0] for i in range(len(model))],
+        [theta_marginals[i].get_moments()[0] for i in range(len(model))]
+    )
+
+    #
+    # model.predict
+    # ~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.predict(input_data),
+        [2, 3.4, 4.8, 6.2, 7.6, 9],
         decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        # Wrap with array constructor with object data type to avoid
-        # DeprecationWarning because it isn't handled within asserter
-        np.array(m.theta_marginal(1).get_moments(), dtype=object),
-        np.array(m.theta_marginals[1].get_moments(), dtype=object),
-        decimal=12
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.predict(x),
-        e["predict"],
+    )
+
+    #
+    # model.predict_variance
+    # ~~~~~~~~~~~~~~~~~~~~~~
+    #
+    (y_pred, sigma) = model.predict_variance(input_data)
+    assert_almost_equal(y_pred, [2, 3.4, 4.8, 6.2, 7.6, 9], decimal=8)
+    assert_almost_equal(
+        sigma,
+        [0.00076, 0.00065, 0.00059, 0.00059, 0.00064, 0.00076],
+        decimal=5
+    )
+
+    #
+    # model.predict_variance_theta
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    (y_pred, sigma) = model.predict_variance_theta(input_data)
+    assert_almost_equal(y_pred, [2, 3.4, 4.8, 6.2, 7.6, 9], decimal=8)
+    assert_almost_equal(
+        sigma,
+        [0.00026, 0.00015, 0.00009, 0.00009, 0.00015, 0.00026],
+        decimal=5
+    )
+
+    #
+    # model.predict_marginals
+    # ~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    marginals = model.predict_marginals(input_data)
+    assert_almost_equal(marginals[0], [0, 1.4, 2.8, 4.2, 5.6, 7], decimal=8)
+    assert_almost_equal(marginals[1], [2, 2, 2, 2, 2, 2], decimal=8)
+
+    #
+    # model.predict_variance_marginals
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    variance_marginals = model.predict_variance_marginals(input_data)
+    assert_almost_equal(
+        variance_marginals[0][0], [0, 1.4, 2.8, 4.2, 5.6, 7], decimal=8
+    )
+    assert_almost_equal(
+        variance_marginals[0][1],
+        [0, 0.000029, 0.00011, 0.00026, 0.00046, 0.00072],
+        decimal=5
+    )
+    assert_almost_equal(
+        variance_marginals[1][0], [2, 2, 2, 2, 2, 2], decimal=8
+    )
+    assert_almost_equal(
+        variance_marginals[1][1],
+        [0.00026, 0.00026, 0.00026, 0.00026, 0.00026, 0.00026], decimal=5
+    )
+
+    #
+    # model.predict_marginal
+    # ~~~~~~~~~~~~~~~~~~~~~~
+    #
+    marginals = model.predict_marginals(input_data)
+    assert_almost_equal(
+        [model.predict_marginal(input_data, i) for i in range(len(model))],
+        marginals
+    )
+
+    #
+    # model.predict_variance_marginal
+    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    variance_marginals = model.predict_variance_marginals(input_data)
+    assert_almost_equal(
+        [
+            model.predict_variance_marginal(input_data, i)
+            for i in range(len(model))
+        ],
+        variance_marginals,
         decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.predict_variance(x),
-        e["predict_variance"],
+    )
+
+    #
+    # model.marginal_residuals
+    # ~~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    assert_almost_equal(
+        model.marginal_residuals(input_data, y),
+        [
+            np.array([0, 1.4, 2.8, 4.2, 5.6, 7]),
+            np.array([2, 2, 2, 2, 2, 2])
+        ],
         decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.predict_variance_theta(x),
-        e["predict_variance_theta"],
-        decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.predict_marginals(x),
-        e["predict_marginals"],
-        decimal=8
-    ),
-    lambda x, y, m, e: assert_almost_equal(
-        m.predict_variance_marginals(x),
-        e["predict_variance_marginals"],
-        decimal=8
-    ),
-    lambda x, y, m, e: utils.listmap(
-        lambda i: assert_almost_equal(
-            m.predict_marginal(x, i),
-            e["predict_marginals"][i],
-            decimal=8
-        )
-    )(range(len(m.formula))),
-    lambda x, y, m, e: utils.listmap(
-        lambda i: assert_almost_equal(
-            m.predict_variance_marginal(x, i),
-            e["predict_variance_marginals"][i],
-            decimal=8
-        )
-    )(range(len(m.formula))),
-    lambda x, y, m, e: assert_almost_equal(
-        m.marginal_residuals(x, y),
-        e["marginal_residuals"],
-        decimal=8
-    ),
-    lambda x, y, m, e: utils.listmap(
-        lambda i: assert_almost_equal(
-            m.marginal_residual(x, y, i),
-            e["marginal_residuals"][i],
-            decimal=8
-        )
-    )(range(len(m.formula)))
-])
-def test_bayesian_gam(data, expected, require):
-    (input_data, y, model) = data
-    require(input_data, y, model, expected)
+    )
+
+    #
+    # model.marginal_residual
+    # ~~~~~~~~~~~~~~~~~~~~~~~
+    #
+    marginal_residuals = model.marginal_residuals(input_data, y)
+    assert_almost_equal(
+        marginal_residuals,
+        [model.marginal_residual(input_data, y, i) for i in range(len(model))]
+    )
     return
 
 
 @pytest.mark.parametrize("data", [
     polynomial(), gp()
 ])
-def test_mutable(data):
+def test_bayespy_mutable(data):
     """Currently ``BayesianGAM`` object is mutated when fitted
 
     """
@@ -252,6 +286,14 @@ def test_mutable(data):
         model_prefit.mean_theta,  # This changes as a side-effect
         model_fitted.mean_theta
     )
+    return
+
+
+@pytest.mark.parametrize("data", [
+    polynomial(), gp()
+])
+def test_numpy_immutable(data):
+    (input_data, y, formula) = data
     return
 
 
@@ -272,13 +314,48 @@ def test_fit_unique(data):
     return
 
 
+def assert_nodes_equal(a, b):
+    """Assert that two bp.expfamily nodes coincide
+
+    """
+    assert_arrays_equal(a.u, b.u)
+    assert_arrays_equal(a.phi, b.phi)
+    assert_array_equal(a.f, b.f)
+    assert_array_equal(a.g, b.g)
+    assert a.observed == b.observed
+    return
+
+
+@pytest.mark.parametrize("filename", [
+    "test.json",
+    "test.hdf5"
+])
+@pytest.mark.parametrize("data", [
+    polynomial(),
+    gp()
+])
+def test_numpy_serialize(tmpdir, filename, data):
+    p = tmpdir.mkdir("test").join(filename)
+    (input_data, y, formula) = data
+    model = gammy.LinearGAM(formula=formula, tau=gammy.Delta(666))
+    model.save(p.strpath)
+    loaded = gammy.LinearGAM(
+        formula=formula,
+        tau=gammy.Delta(42)
+    ).load(p.strpath)
+    assert_almost_equal(model.theta.mu, loaded.theta.mu, decimal=8)
+    assert_almost_equal(model.theta.Lambda, loaded.theta.Lambda, decimal=8)
+    assert_almost_equal(model.tau.mu, loaded.tau.mu, decimal=8)
+    return
+
+
 @pytest.mark.parametrize("filename", [
     "test.json", "test.hdf5"
 ])
 @pytest.mark.parametrize("data", [
     polynomial(), gp()
 ])
-def test_serialize(tmpdir, filename, data):
+def test_bayespy_serialize(tmpdir, filename, data):
     p = tmpdir.mkdir("test").join(filename)
     (input_data, y, formula) = data
     model = gammy.BayesianGAM(formula).fit(input_data, y)
