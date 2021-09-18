@@ -11,14 +11,6 @@ from gammy import utils
 from gammy.utils import listmap, rlift_basis
 
 
-def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
-    # gaussians = [(μ1, Λ1), (μ2, Λ2)]
-    return (
-        np.hstack([g[0] for g in gaussians]),
-        sp.linalg.block_diag(*[g[1] for g in gaussians])
-    )
-
-
 def design_matrix(input_data: np.ndarray, basis: List[Callable]):
     return np.hstack([
         f(input_data).reshape(-1, 1) for f in basis
@@ -51,7 +43,7 @@ class Formula():
     def __add__(self, other):
         return Formula(
             bases=self.bases + other.bases,
-            prior=concat_gaussians([self.prior, other.prior])
+            prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
     def __mul__(self, input_map):
@@ -128,7 +120,7 @@ def Sum(formulae: List[Formula], prior=None) -> Formula:
     priors = [formula.prior for formula in formulae]
     return Formula(
         bases=utils.flatten([formula.bases for formula in formulae]),
-        prior=concat_gaussians(priors) if prior is None else prior
+        prior=utils.concat_gaussians(priors) if prior is None else prior
     )
 
 
@@ -194,7 +186,7 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
 
         mu_basis = [] if mu_basis is None else mu_basis
         basis = utils.interp1d_1darrays(
-            utils.scaled_principal_eigvecsh(
+            utils.decompose_covariance(
                 kernel(
                     x1=grid.reshape(-1, 1),
                     x2=grid.reshape(-1, 1),
@@ -215,7 +207,7 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
 
         return Formula(
             bases=[mu_basis + basis],
-            prior=prior if mu_hyper is None else concat_gaussians(
+            prior=prior if mu_hyper is None else utils.concat_gaussians(
                 [mu_hyper, prior]
             )
         )
@@ -477,7 +469,7 @@ def BSpline1d(
     )
     return Formula(
         bases=[mu_basis + basis],
-        prior=prior if mu_hyper is None else concat_gaussians(
+        prior=prior if mu_hyper is None else utils.concat_gaussians(
             [mu_hyper, prior]
         )
     )

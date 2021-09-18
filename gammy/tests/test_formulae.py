@@ -58,25 +58,6 @@ def square():
     )
 
 
-def test_concat_gaussians():
-    X = (np.ones(2), np.identity(2))
-    Y = (np.zeros(3), 2 * np.ones((3, 3)))
-    (mean, precision) = gammy.concat_gaussians([X, Y])
-    assert_array_equal(
-        mean, np.array([1., 1., 0., 0., 0])
-    )
-    assert_array_equal(
-        precision,
-        np.array([
-            [1., 0., 0., 0., 0.],
-            [0., 1., 0., 0., 0.],
-            [0., 0., 2., 2., 2.],
-            [0., 0., 2., 2., 2.],
-            [0., 0., 2., 2., 2.]
-        ])
-    )
-
-
 @pytest.mark.parametrize("xs,expected", [
     (
         multinomial(),

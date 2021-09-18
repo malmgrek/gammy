@@ -291,3 +291,33 @@ def test_white_noise():
         expected
     )
     return
+
+
+def test_decompose_covariance():
+    x1 = np.arange(0, 1, 0.01).reshape(-1, 1)
+    H = utils.exp_squared(x1, x1, sigma=1, corrlen=1)
+    Uh = utils.decompose_covariance(H, energy=1.01)
+    assert_almost_equal(Uh[42, 0], -0.9958898213927759, decimal=12)
+    assert_almost_equal(Uh[66, 1], 0.1625888269228036, decimal=12)
+    assert_almost_equal(Uh[71, 3], -0.0085321682733649, decimal=12)
+    assert_almost_equal(Uh.shape, H.shape)
+    return
+
+
+def test_concat_gaussians():
+    X = (np.ones(2), np.identity(2))
+    Y = (np.zeros(3), 2 * np.ones((3, 3)))
+    (mean, precision) = utils.concat_gaussians([X, Y])
+    assert_array_equal(
+        mean, np.array([1., 1., 0., 0., 0])
+    )
+    assert_array_equal(
+        precision,
+        np.array([
+            [1., 0., 0., 0., 0.],
+            [0., 1., 0., 0., 0.],
+            [0., 0., 2., 2., 2.],
+            [0., 0., 2., 2., 2.],
+            [0., 0., 2., 2., 2.]
+        ])
+    )

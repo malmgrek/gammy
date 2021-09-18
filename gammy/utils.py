@@ -1,4 +1,6 @@
-"""Miscellaneous utilities"""
+"""Miscellaneous utilities
+
+"""
 
 
 import functools
@@ -238,40 +240,64 @@ def white_noise(n_dims: int, sigma: float=1.0) -> np.ndarray:
     return sigma * np.identity(n_dims)
 
 
-def scaled_principal_eigvecsh(H: np.ndarray, energy: float=0.99) -> np.ndarray:
-    """Most important eigenvectors of a Hermitian matrix
+def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
+    """Most important eigenvectors of a symmetric positive-definite square matrix
 
-    Descending order with respect of the corresponding eigenvalues. Each
-    vector scaled with ``sqrt(λ)``.
+    Ordered with respect of the descending eigenvalues. Each
+    eigenvector scaled with ``sqrt(λ)``.
 
-    Lets expand the solution as :math:`\lambda_n^{1/2} \mathbf{u}_n`,
-    where :math:`\{\lambda_n`, :math:`\mathbf{u}_n\}_n` is the eigenbasis
-    of the covariance matrix :math:`\Sigma`. Note that then the eigenbasis of
-    the precision matrix :math:`\Lambda = \Sigma^{-1}` is given by
-    :math:`\{\lambda_n^{-1}`, :math:`\mathbf{u}_n\}_n`. Expressing
-    :math:`x = \mu + w_n\lambda_n^{1/2} \mathbf{u}_n`, we get for the
-    logarithm of the prior distribution
+    Parameters
+    ----------
+    H : np.ndarray
+        Symmetric positive-definite square matrix
+    energy : float
+        Truncate to eigenvalues that sum up to this proportion of the total
+        eigenvalue sum. If absolutelu all eigenvectors are needed, give value
+        slightly larger than one.
+
+    Theoretical background
+    ----------------------
+
+    Lets expand the solution along the span of the vectors
+    :math:`\lambda_n^{1/2} \mathbf{u}_n`, where :math:`\{\lambda_n`,
+    :math:`\mathbf{u}_n\}_n` is the eigenbasis of the covariance matrix
+    :math:`\Sigma`. Note that the eigenvectors of real symmetric matrices are
+    orthonormal. The eigensystem of the precision matrix :math:`\Lambda =
+    \Sigma^{-1}` is given by :math:`\{\lambda_n^{-1}`, :math:`\mathbf{u}_n\}_n`.
+    Expressing :math:`x = \mu + y_n\lambda_n^{1/2} \mathbf{u}_n`, we get for the
+    log-prior
 
     .. math::
 
         (x - \mu)^T \Lambda (x - \mu)
-        = \lambda_n^{1/2}\mathbf{u}_n^T \lambda_n^{-1/2}\mathbf{u}_n^T
-        = \|\mathbf{w}\|^2
+        = \lambda_n^{1/2}\mathbf{u}_n^T y_n^2 \lambda_n^{-1/2}\mathbf{u}_n
+        = \|\mathbf{y}\|^2.
 
-    FIXME: There might be problem with serialization. If there are duplicate
-           eigenvalues, then on different machines, the vectors might
-           appear in different order.
+    In other words, the given transformation for the log-prior is whitening.
+
+    NOTE: In the implementation we use np.linalg.svd instead of np.linalg.eigh
+    because the latter sometimes returns slightly negative eigenvalues for
+    numerical reasons. In those cases the energy trick doesn't give all
+    eigenvectors even if we wanted
+
+    REVIEW: There might be problem with serialization. If there are duplicate
+            eigenvalues, then on different machines, the vectors might
+            appear in different order.
 
     """
-    w, v = pipe(
-        np.linalg.eigh(H),
-        lambda x: (x[0][::-1], x[1][:, ::-1])
-    )
-    crop = (w.cumsum() / w.sum()) <= energy
-    return pipe(
-        v,
-        lambda x: np.dot(x[:, crop], np.sqrt(np.diag(w[crop])))
-    )
+
+    #
+    # Comparison of np.linalg.eigh and np.linalg.svd
+    #
+    # (W, V) = np.linalg.eigh(H)
+    # (U, S, Vh) = np.linalg.svd(H)
+    #
+    # Holds up to numerical sanity: V[:, ::-1] == U == Vh.T
+    #
+
+    (U, S, Vh) = np.linalg.svd(H)
+    crop = (S.cumsum() / S.sum()) <= energy
+    return np.dot(U[:, crop], np.sqrt(np.diag(S[crop])))
 
 
 def interp1d_1darrays(v: np.ndarray, grid: np.ndarray, **kwargs) -> List:
@@ -311,6 +337,20 @@ def write_to_hdf5(group, data, name):
 # BayesPy related
 # ~~~~~~~~~~~~~~~
 #
+
+
+def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
+    """Concatenate means and covariances to one Gaussian
+
+    Parameters
+    ----------
+    gaussians : [(μ1, Λ1), (μ2, Λ2)]
+
+    """
+    return (
+        np.hstack([g[0] for g in gaussians]),
+        sp.linalg.block_diag(*[g[1] for g in gaussians])
+    )
 
 
 def solve_covariance(node) -> np.ndarray:
