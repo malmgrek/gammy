@@ -106,16 +106,12 @@ def test_gam(model_data):
     # model.theta_marginals
     # ~~~~~~~~~~~~~~~~~~~~~
     #
-    assert_almost_equal(
-        model.theta_marginals[0].get_moments(),
-        [np.array([7]), np.array([49])],
-        decimal=3
-    )
-    assert_almost_equal(
-        model.theta_marginals[1].get_moments(),
-        [np.array([2]), np.array([4])],
-        decimal=3
-    )
+    ans = model.theta_marginals[0].get_moments()
+    assert_almost_equal(ans[0], [7], decimal=8)
+    assert_almost_equal(ans[1], [[49]], decimal=3)
+    ans = model.theta_marginals[1].get_moments()
+    assert_almost_equal(ans[0], [2], decimal=8)
+    assert_almost_equal(ans[1], [[4]], decimal=3)
 
     #
     # model.mean_theta
