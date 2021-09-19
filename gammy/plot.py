@@ -1,4 +1,10 @@
+"""Plotting model results and coefficient distributions
+
+"""
+
+from __future__ import annotations
 import logging
+from typing import Callable, List, Optional, Union
 
 import bayespy as bp
 try:
@@ -15,40 +21,50 @@ from gammy.utils import pipe
 
 
 def validation_plot(
-        model,
-        input_data,
-        y,
-        grid_limits,
-        input_maps,
-        index=None,
-        xlabels=None,
-        titles=None,
-        ylabel=None,
-        gridsize=20,
-        color="r",
+        model: Union[gammy.bayespy.GAM, gammy.numpy.GAM],
+        input_data: np.ndarray,
+        y: np.ndarray,
+        grid_limits: Union[List[List[float]], List[float]],
+        input_maps: List[Callable],
+        index: Optional[np.ndarray]=None,
+        xlabels: Optional[List[str]]=None,
+        titles: Optional[List[str]]=None,
+        gridsize: int=20,
+        color: str="r",
         **kwargs
 ):
     """Generic validation plot for a GAM
 
     """
-    # TODO: Support larger input dimensions
-    index = np.arange(len(input_data)) if index is None else index
 
-    # Figure definitions
     N = len(model.formula)
     fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N // 2 + 3, 2)
     xlabels = xlabels or [None] * len(model.formula)
     titles = titles or [None] * len(model.formula)
+    index = np.arange(len(input_data)) if index is None else index
+
+    assert (
+        len(grid_limits) == 2 if len(input_data.shape) == 1 else
+        (
+            len(grid_limits) == input_data.shape[1] and
+            all([len(xs) == 2 for xs in grid_limits])
+        )
+    ), (
+        "Given grid limits do not match with the shape of input data."
+    )
+    assert len(model.formula.bases) == len(input_maps), (
+        "Must give exactly one input per model term."
+    )
+    assert len(model.formula.bases) == len(titles), (
+        "Must give exactly one title per model term."
+    )
 
     # Data and predictions
-    grid = (
-        pipe(
-            grid_limits,
-            utils.listmap(lambda x: np.linspace(x[0], x[1], gridsize)),
-            lambda x: np.array(x).T
-        ) if len(input_data.shape) > 1
-        else np.linspace(grid_limits[0], grid_limits[1], gridsize)
+    grid = np.array(
+        utils.listmap(lambda x: np.linspace(x[0], x[1], gridsize))(grid_limits)
+    ).T if len(input_data.shape) == 2 else np.linspace(
+        grid_limits[0], grid_limits[1], gridsize
     )
     marginals = model.predict_variance_marginals(grid)
     residuals = model.marginal_residuals(input_data, y)
@@ -106,14 +122,8 @@ def validation_plot(
     return fig
 
 
-def gaussian1d_density_plot(model, grid_limits=[0.5, 1.5]):
+def gaussian1d_density_plot(model: gammy.bayespy.GAM):
     """Plot 1-D density for each parameter
-
-    Parameters
-    ----------
-    grid_limits : list
-        Grid of `tau` has endpoints `[grid_limits[0] * mu, grid_limits[1] * mu]`
-        where `mu` is the expectation of `tau`.
 
     """
     N = len(model.formula)
@@ -153,7 +163,7 @@ def gaussian1d_density_plot(model, grid_limits=[0.5, 1.5]):
     return fig
 
 
-def gaussian2d_density_plot(model, i, j):
+def gaussian2d_density_plot(model: gammy.bayespy.GAM, i, j):
     """Plot 2-D joint distribution of indices i and j
 
     """
