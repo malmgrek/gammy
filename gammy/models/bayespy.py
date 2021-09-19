@@ -14,7 +14,6 @@ import numpy as np
 import gammy
 from gammy import utils
 from gammy.formulae import Formula
-from gammy.utils import listmap, pipe
 
 
 def create_gaussian_theta(formula: Formula):
@@ -72,9 +71,10 @@ class GAM:
 
         """
         # TODO: Test that the marginal distributions are correct
-        mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
+        u = self.theta.get_moments()
+        mus = utils.unflatten(u[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
-            utils.solve_covariance(self.theta),
+            utils.solve_covariance(u),
             self.formula.bases
         )
         return [
@@ -87,15 +87,16 @@ class GAM:
         """Transforms theta to similarly nested list as bases
 
         """
-        return pipe(
-            self.theta.get_moments()[0],
-            lambda x: utils.unflatten(x, self.formula.bases),
-            listmap(np.array)
+        return utils.listmap(np.array)(
+            utils.unflatten(
+                self.theta.get_moments()[0],
+                self.formula.bases
+            )
         )
 
     @property
     def covariance_theta(self) -> np.ndarray:
-        return utils.solve_covariance(self.theta)
+        return utils.solve_covariance(self.theta.get_moments())
 
     @property
     def inv_mean_tau(self) -> np.ndarray:
@@ -108,9 +109,10 @@ class GAM:
         """Extract marginal distribution for a specific term
 
         """
-        mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
+        u = self.theta.get_moments()
+        mus = utils.unflatten(u[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
-            utils.solve_covariance(self.theta),
+            utils.solve_covariance(u),
             self.formula.bases
         )
         return bp.nodes.Gaussian(
@@ -169,10 +171,8 @@ class GAM:
         """
         X = self.formula.build_X(input_data)
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
-        return (
-            F.get_moments()[0],
-            pipe(F, utils.solve_covariance, np.diag) + self.inv_mean_tau
-        )
+        u = F.get_moments()
+        return (u[0], np.diag(utils.solve_covariance(u)) + self.inv_mean_tau)
 
     def predict_variance_theta(
             self,
@@ -196,10 +196,8 @@ class GAM:
         # )
         #
         # NOTE: See also bp.plot.plot_gaussian how std can be calculated
-        return (
-            F.get_moments()[0],
-            pipe(F, utils.solve_covariance, np.diag)
-        )
+        u = F.get_moments()
+        return (u[0], np.diag(utils.solve_covariance(u)))
 
     def predict_marginals(self, input_data: np.ndarray) -> List[np.ndarray]:
         """Predict all terms separately
@@ -222,7 +220,7 @@ class GAM:
             for (X, theta) in zip(Xs, self.theta_marginals)
         ]
         mus = [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
-        sigmas = [pipe(F, utils.solve_covariance, np.diag) for F in Fs]
+        sigmas = [np.diag(utils.solve_covariance(F.get_moments())) for F in Fs]
         return list(zip(mus, sigmas))
 
     def predict_marginal(self, input_data: np.ndarray, i: int) -> np.ndarray:
@@ -241,7 +239,7 @@ class GAM:
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
         mu = np.dot(X, self.mean_theta[i])
-        sigma = pipe(F, utils.solve_covariance, np.diag)
+        sigma = np.diag(utils.solve_covariance(F.get_moments()))
         return (mu, sigma)
 
     def marginal_residuals(

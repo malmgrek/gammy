@@ -353,9 +353,16 @@ def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
     )
 
 
-def solve_covariance(node) -> np.ndarray:
-    # TODO / FIXME: Change input to node -> moments
-    u = node.get_moments()
+def solve_covariance(u: List[np.ndarray]) -> np.ndarray:
+    """Solve covariance matrix from moments
+
+    Parameters
+    ----------
+    u : List[np.ndarray]
+        List of moments as defined by the ``get_moments()`` method call
+        of a BayesPy node object.
+
+    """
     cov = u[1] - np.outer(u[0], u[0])
     return cov if cov.shape != (1, 1) else np.array(cov.sum())
 

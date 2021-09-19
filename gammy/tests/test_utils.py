@@ -136,7 +136,7 @@ def test_extract_diag_blocks(x, y, expected):
 def test_solve_covariance(mu, Sigma):
     node = bp.nodes.Gaussian(mu, np.linalg.inv(Sigma))
     assert_almost_equal(
-        utils.solve_covariance(node),
+        utils.solve_covariance(node.get_moments()),
         Sigma,
         decimal=8
     )

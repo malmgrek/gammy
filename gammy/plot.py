@@ -144,7 +144,7 @@ def gaussian1d_density_plot(model: gammy.bayespy.GAM):
         ax = fig.add_subplot(gs[i + 1])
         mus = theta.get_moments()[0]
         mus = np.array([mus]) if mus.shape == () else mus
-        cov = utils.solve_covariance(theta)
+        cov = utils.solve_covariance(theta.get_moments())
         stds = pipe(
             np.array([cov]) if cov.shape == ()
             else np.diag(cov),

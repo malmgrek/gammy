@@ -12,7 +12,6 @@ import numpy as np
 import gammy
 from gammy import utils
 from gammy.formulae import Formula
-from gammy.utils import listmap, pipe
 
 
 class Gaussian:
@@ -87,9 +86,10 @@ class GAM:
 
     @property
     def theta_marginals(self) -> List[Gaussian]:
-        mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
+        u = self.theta.get_moments()
+        mus = utils.unflatten(u[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
-            utils.solve_covariance(self.theta),
+            utils.solve_covariance(u),
             self.formula.bases
         )
         return [
@@ -99,15 +99,16 @@ class GAM:
 
     @property
     def mean_theta(self) -> List[np.ndarray]:
-        return pipe(
-            self.theta.get_moments()[0],
-            lambda x: utils.unflatten(x, self.formula.bases),
-            listmap(np.array)
+        return utils.listmap(np.array)(
+            utils.unflatten(
+                self.theta.get_moments()[0],
+                self.formula.bases
+            )
         )
 
     @property
     def covariance_theta(self) -> np.ndarray:
-        return utils.solve_covariance(self.theta)
+        return utils.solve_covariance(self.theta.get_moments())
 
     @property
     def inv_mean_tau(self) -> np.ndarray:
@@ -120,9 +121,10 @@ class GAM:
         """Extract marginal distribution for a specific term
 
         """
-        mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
+        u = self.theta.get_moments()
+        mus = utils.unflatten(u[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
-            utils.solve_covariance(self.theta),
+            utils.solve_covariance(u),
             self.formula.bases
         )
         return Gaussian(
@@ -170,7 +172,7 @@ class GAM:
 
         """
         X = self.formula.build_X(input_data)
-        Sigma = utils.solve_covariance(self.theta)
+        Sigma = utils.solve_covariance(self.theta.get_moments())
         return (
             np.dot(X, self.theta.mu),
             # Based on formula: var(A x) = A var(x) A'
@@ -191,7 +193,7 @@ class GAM:
 
         """
         X = self.formula.build_X(input_data)
-        Sigma = utils.solve_covariance(self.theta)
+        Sigma = utils.solve_covariance(self.theta.get_moments())
         return (
             np.dot(X, self.theta.mu),
             np.diag(np.dot(X, np.dot(Sigma, X.T)))
@@ -212,7 +214,10 @@ class GAM:
 
         """
         Xs = self.formula.build_Xs(input_data)
-        Sigmas = utils.listmap(utils.solve_covariance)(self.theta_marginals)
+        Sigmas = [
+            utils.solve_covariance(theta.get_moments())
+            for theta in self.theta_marginals
+        ]
         mus = [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
         sigmas = [
             np.diag(np.dot(X, np.dot(Sigma, X.T)))
@@ -233,7 +238,7 @@ class GAM:
             i: int
     ) -> Tuple[np.ndarray, np.ndarray]:
         X = self.formula.build_Xi(input_data, i=i)
-        Sigma = utils.solve_covariance(self.theta_marginal(i))
+        Sigma = utils.solve_covariance(self.theta_marginal(i).get_moments())
         mu = np.dot(X, self.mean_theta[i])
         sigma = np.diag(np.dot(X, np.dot(Sigma, X.T)))
         return (mu, sigma)
