@@ -114,7 +114,7 @@ def Sum(formulae: List[Formula], prior=None) -> Formula:
 
     Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
 
-    NOTE: Differs from `Flatten`
+    NOTE: `Sum` and `Flatten` are different!
 
     """
     priors = [formula.prior for formula in formulae]

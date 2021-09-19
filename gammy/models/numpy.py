@@ -1,10 +1,8 @@
 """GAM with "raw" NumPy backend
 
-TODO:
-- Match with the BayesPy interface `get_moments`
-
 """
 
+from __future__ import annotations
 import json
 from typing import List, Tuple
 
@@ -18,7 +16,7 @@ from gammy.utils import listmap, pipe
 
 
 class Gaussian:
-    """Moment calculator a Gaussian distribution
+    """Moment calculator for a Gaussian distribution
 
     Parameters
     ----------
@@ -60,9 +58,19 @@ def create_gaussian_theta(formula: Formula):
     return Gaussian(*formula.prior)
 
 
-# TODO: Add docstrings to methods
-# TODO: Uniformize docstring and type hint styles with bayespy.GAM
 class GAM:
+    """Generalized additive model with NumPy backend
+
+    Parameters
+    ----------
+    formula : gammy.formulae.Formula
+        Formula object containing the bases and prior
+    theta : Gaussian
+        Model parameters vector
+    tau : Delta
+        Observation noise precision (inverse variance)
+
+    """
 
     def __init__(self, formula: Formula, tau: Delta, theta: Gaussian=None) -> None:
         self.formula = formula
@@ -78,7 +86,7 @@ class GAM:
         return len(utils.flatten(self.formula.bases))
 
     @property
-    def theta_marginals(self) -> List:
+    def theta_marginals(self) -> List[Gaussian]:
         mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(self.theta),
@@ -103,9 +111,15 @@ class GAM:
 
     @property
     def inv_mean_tau(self) -> np.ndarray:
+        """Additive observation noise variance
+
+        """
         return 1 / self.tau.get_moments()[0]
 
-    def theta_marginal(self, i: int):
+    def theta_marginal(self, i: int) -> Gaussian:
+        """Extract marginal distribution for a specific term
+
+        """
         mus = utils.unflatten(self.theta.get_moments()[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(self.theta),
@@ -116,7 +130,7 @@ class GAM:
             Lambda=np.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data: np.ndarray, y: np.ndarray):
+    def fit(self, input_data: np.ndarray, y: np.ndarray) -> GAM:
         X = self.formula.build_X(input_data)
         # Kaipio--Somersalo; Remark after Theorem 3.7
         Lambda_post = self.theta.Lambda + self.tau.mu * np.dot(X.T, X)
@@ -131,6 +145,14 @@ class GAM:
         )
 
     def predict(self, input_data: np.ndarray) -> np.ndarray:
+        """Predict observations
+
+        Returns
+        -------
+        np.array
+            Mean of posterior predictive distribution
+
+        """
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
@@ -138,6 +160,15 @@ class GAM:
             self,
             input_data: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """Predict observations with variance
+
+        Returns
+        -------
+        (μ, σ) : tuple([np.array, np.array])
+            ``μ`` is mean of posterior predictive distribution
+            ``σ`` is variances of posterior predictive + noise
+
+        """
         X = self.formula.build_X(input_data)
         Sigma = utils.solve_covariance(self.theta)
         return (
@@ -150,6 +181,15 @@ class GAM:
             self,
             input_data: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray]:
+        """Predict observations with variance from model parameters
+
+        Returns
+        -------
+        (μ, σ) : tuple([np.array, np.array])
+            ``μ`` is mean of posterior predictive distribution
+            ``σ`` is variances of posterior predictive
+
+        """
         X = self.formula.build_X(input_data)
         Sigma = utils.solve_covariance(self.theta)
         return (
@@ -158,6 +198,9 @@ class GAM:
         )
 
     def predict_marginals(self, input_data: np.ndarray) -> List[np.ndarray]:
+        """Predict all terms separately
+
+        """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
@@ -165,6 +208,9 @@ class GAM:
             self,
             input_data: np.ndarray
     ) -> List[Tuple[np.ndarray, np.ndarray]]:
+        """Predict variance (theta) for marginal parameter distributions
+
+        """
         Xs = self.formula.build_Xs(input_data)
         Sigmas = utils.listmap(utils.solve_covariance)(self.theta_marginals)
         mus = [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
@@ -175,6 +221,9 @@ class GAM:
         return list(zip(mus, sigmas))
 
     def predict_marginal(self, input_data: np.ndarray, i: int) -> np.ndarray:
+        """Predict a term separately
+
+        """
         X = self.formula.build_Xi(input_data, i=i)
         return np.dot(X, self.mean_theta[i])
 
@@ -194,6 +243,9 @@ class GAM:
             input_data: np.ndarray,
             y: np.ndarray
     ) -> List[np.ndarray]:
+        """Marginal (partial) residuals
+
+        """
         mus = self.predict_marginals(input_data)
         return [
             y - np.sum(mus[:i] + mus[i + 1:], axis=0)
@@ -210,6 +262,11 @@ class GAM:
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
 
     def save(self, filepath: str) -> None:
+        """Save the model to disk
+
+        Supported file formats: JSON and HDF5
+
+        """
         file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
             with h5py.File(filepath, "w") as h5f:
@@ -237,6 +294,9 @@ class GAM:
         return
 
     def load(self, filepath: str):
+        """Load model from a file on disk
+
+        """
         file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
             with h5py.File(filepath, "r") as h5f:

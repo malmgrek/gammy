@@ -3,6 +3,7 @@
 """
 
 
+from __future__ import annotations
 import json
 from typing import Callable, List, Tuple
 
@@ -21,16 +22,16 @@ def create_gaussian_theta(formula: Formula):
 
 
 class GAM:
-    """Generalized additive model predictor
+    """Generalized additive model with BayesPy backend
 
     Parameters
     ----------
-    formula : gammy.Formula
+    formula : gammy.formulae.Formula
         Formula object containing the bases and prior
     theta : bp.nodes.Gaussian
         Model parameters vector
     tau : bp.nodes.Gamma
-        Observation noise precision
+        Observation noise precision (inverse variance)
 
     NOTE: Currently tau is fixed to Gamma distribution, i.e., it is not
     possible to manually define the noise level. Note though that one can
@@ -66,7 +67,7 @@ class GAM:
         return len(utils.flatten(self.formula.bases))
 
     @property
-    def theta_marginals(self) -> List:
+    def theta_marginals(self) -> List[bp.nodes.Gaussian]:
         """Nodes for the basis specific marginal distributions
 
         """
@@ -98,9 +99,12 @@ class GAM:
 
     @property
     def inv_mean_tau(self) -> np.ndarray:
+        """Additive observation noise variance estimate
+
+        """
         return 1 / self.tau.get_moments()[0]
 
-    def theta_marginal(self, i: int):
+    def theta_marginal(self, i: int) -> bp.nodes.Gaussian:
         """Extract marginal distribution for a specific term
 
         """
@@ -121,7 +125,7 @@ class GAM:
         repeat: int=1000,
         verbose: bool=False,
         **kwargs
-    ):
+    ) -> GAM:
         """Update BayesPy nodes and construct a GAM predictor
 
         WARNING: Currently mutates the original object's ``theta`` and ``tau``.
@@ -242,7 +246,7 @@ class GAM:
 
     def marginal_residuals(
             self, input_data: np.ndarray, y: np.ndarray
-    ) -> List:
+    ) -> List[np.ndarray]:
         """Marginal (partial) residuals
 
         """
@@ -265,6 +269,8 @@ class GAM:
     def save(self, filepath: str) -> None:
         """Save the model to disk
 
+        Supported file formats: JSON and HDF5
+
         """
         file_ext = filepath.split(".")[-1]
         if file_ext in ("h5", "hdf5"):
@@ -285,7 +291,7 @@ class GAM:
             raise ValueError(f"Unknown file type: {file_ext}")
 
     def load(self, filepath: str, **kwargs):
-        """Load model from disk
+        """Load model from a file on disk
 
         """
         file_ext = filepath.split(".")[-1]
