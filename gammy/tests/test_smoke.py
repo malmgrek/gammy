@@ -1,11 +1,16 @@
+"""Sanity checks for semi-realistic modeling cases
+
+"""
+
 import numpy as np
-from numpy.testing import assert_allclose
+from numpy.testing import assert_almost_equal
+import pytest
 
 import gammy
 from gammy.arraymapper import x
 
 
-def test_polynomial():
+def test_polynomial(fit_model):
     np.random.seed(42)
     input_data = 10 * np.random.rand(30)
     y = (
@@ -19,17 +24,16 @@ def test_polynomial():
         gammy.Scalar(prior=(0, 1e-6)) * x ** 2 +
         gammy.Scalar(prior=(0, 1e-6))
     )
-    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-    assert_allclose(
+    model = fit_model(formula, gammy.numpy.Delta(0.01342))(input_data, y)
+    assert_almost_equal(
         model.predict(input_data[[0, 3, 6, 9, 12]]),
-        np.array([
-            52.57112684, 104.28633909, 14.48274839, 136.98584437, 180.09263955
-        ])
+        np.array([52.5711, 104.2863, 14.4829, 136.9858, 180.0926]),
+        decimal=3
     )
     return
 
 
-def test_gp():
+def test_gp(fit_model):
     np.random.seed(42)
     n = 50
     input_data = np.vstack(
@@ -50,15 +54,16 @@ def test_gp():
         period=2 * np.pi,
         energy=0.99
     )(x[:, 0]) * x[:, 1] + gammy.Scalar(prior=(0, 1e-6))
-    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-    assert_allclose(
+    model = fit_model(formula, gammy.numpy.Delta(100))(input_data, y)
+    assert_almost_equal(
         model.predict(input_data[[1, 42, 11, 26, 31]]),
-        np.array([1.78918855, 1.87107355, 1.30149328, 1.29221874, 1.31596102])
+        np.array([1.7891, 1.8710, 1.3014, 1.2922, 1.3159]),
+        decimal=3
     )
     return
 
 
-def test_kron():
+def test_kron(fit_model):
     np.random.seed(42)
     n = 30
     input_data = np.vstack(
@@ -96,15 +101,16 @@ def test_kron():
             energy=0.99
         )(x[:, 1])
     ) + gammy.Scalar(prior=(0, 1e-6))
-    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-    assert_allclose(
+    model = fit_model(formula, gammy.numpy.Delta(24.2289))(input_data, y)
+    assert_almost_equal(
         model.predict(input_data[[1, 5, 12, 19], :]),
-        np.array([3.78593199, 3.56403323, 3.73910833, 3.55960657])
+        np.array([3.7859, 3.5640, 3.7391, 3.5596]),
+        decimal=3
     )
     return
 
 
-def test_bspline():
+def test_bspline(fit_model):
     np.random.seed(42)
     input_data = 10 * np.random.rand(30)
     y = (
@@ -123,11 +129,10 @@ def test_bspline():
         prior=(np.zeros(N), np.identity(N) / sigma),
         extrapolate=True
     )(x)
-    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-    assert_allclose(
+    model = fit_model(formula, gammy.numpy.Delta(0.0136602))(input_data, y)
+    assert_almost_equal(
         model.predict(input_data[[6, 2, 11, 7, 23]]),
-        np.array([
-            11.49053477, 112.66157312, 172.88750407, 145.61888784, 27.74474919
-        ])
+        np.array([11.4905, 112.6615, 172.8875, 145.6188, 27.7447]),
+        decimal=1
     )
     return

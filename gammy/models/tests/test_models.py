@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from numpy.testing import (
     assert_array_equal,
-    assert_almost_equal
+    assert_almost_equal,
 )
 
 import gammy
@@ -55,34 +55,7 @@ assert_arrays_equal = utils.compose(
 )
 
 
-@pytest.mark.parametrize("model_data", [
-    utils.pipe(
-        polynomial(),
-        lambda xs: (
-            xs[0],
-            xs[1],
-            gammy.models.bayespy.GAM(formula=xs[2]).fit(
-                input_data=xs[0],
-                y=xs[1]
-            )
-        )
-    ),
-    utils.pipe(
-        polynomial(),
-        lambda xs: (
-            xs[0],
-            xs[1],
-            gammy.models.numpy.GAM(
-                formula=xs[2],
-                tau=gammy.models.numpy.Delta(1998.50381764)
-            ).fit(
-                input_data=xs[0],
-                y=xs[1]
-            )
-        )
-    )
-])
-def test_gam(model_data):
+def test_gam(fit_model):
     """Test Numpy and BayesPy-based GAM
 
     - Check that the interfaces are same
@@ -94,7 +67,9 @@ def test_gam(model_data):
     works.
 
     """
-    (input_data, y, model) = model_data
+
+    (input_data, y, formula) = polynomial()
+    model = fit_model(formula, gammy.numpy.Delta(1998.503818))(input_data, y)
 
     #
     # model.__len__
@@ -288,14 +263,6 @@ def test_bayespy_mutable(data):
 @pytest.mark.parametrize("data", [
     polynomial(), gp()
 ])
-def test_numpy_immutable(data):
-    (input_data, y, formula) = data
-    return
-
-
-@pytest.mark.parametrize("data", [
-    polynomial(), gp()
-])
 def test_fit_unique(data):
     """Check that fit gives same result both times
 
@@ -336,7 +303,7 @@ def test_numpy_serialize(tmpdir, filename, data):
     model = gammy.models.numpy.GAM(
         formula=formula,
         tau=gammy.models.numpy.Delta(666)
-    )
+    ).fit(input_data, y)
     model.save(p.strpath)
     loaded = gammy.models.numpy.GAM(
         formula=formula,
