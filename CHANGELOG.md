@@ -7,6 +7,7 @@
 - Numpy engine for fitting GAM models
 - PyTest configuration file `conftest.py`
 - Documentation with Sphinx
+- Unit test coverage
 
 ### Fix
 - Truncated eigenvalue decomposition: `np.linalg.eigh` -> `np.linalg.svd`. Eigh
