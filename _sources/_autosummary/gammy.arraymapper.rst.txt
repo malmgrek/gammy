@@ -1,0 +1,6 @@
+﻿gammy.arraymapper
+=================
+
+.. currentmodule:: gammy.arraymapper
+
+.. automodule:: gammy.arraymapper

@@ -1,0 +1,15 @@
+﻿.. py:data:: gammy.models.numpy.GAM
+   :noindex:
+
+GAM
+======================
+
+.. currentmodule:: gammy.models.numpy
+
+.. autoclass:: GAM
+   :members:
+   :special-members:
+   :inherited-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:

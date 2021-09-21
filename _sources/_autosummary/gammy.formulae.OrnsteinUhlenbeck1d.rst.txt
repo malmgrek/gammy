@@ -1,0 +1,6 @@
+﻿gammy.formulae.OrnsteinUhlenbeck1d
+==================================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: OrnsteinUhlenbeck1d

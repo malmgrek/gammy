@@ -1,0 +1,6 @@
+﻿gammy.utils.extract\_diag\_blocks
+=================================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: extract_diag_blocks

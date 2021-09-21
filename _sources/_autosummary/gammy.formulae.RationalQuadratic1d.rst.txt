@@ -1,0 +1,6 @@
+﻿gammy.formulae.RationalQuadratic1d
+==================================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: RationalQuadratic1d

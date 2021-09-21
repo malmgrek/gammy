@@ -1,0 +1,6 @@
+gammy.models.bayespy
+====================
+
+.. currentmodule:: gammy.models.bayespy
+
+.. automodule:: gammy.models.bayespy

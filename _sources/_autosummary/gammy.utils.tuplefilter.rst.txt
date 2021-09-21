@@ -1,0 +1,6 @@
+﻿gammy.utils.tuplefilter
+=======================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: tuplefilter

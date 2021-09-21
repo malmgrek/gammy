@@ -1,0 +1,6 @@
+﻿gammy.utils.squared\_dist
+=========================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: squared_dist

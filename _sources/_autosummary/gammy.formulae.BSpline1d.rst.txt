@@ -1,0 +1,6 @@
+﻿gammy.formulae.BSpline1d
+========================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: BSpline1d

@@ -1,0 +1,6 @@
+﻿gammy.formulae.Scalar
+=====================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Scalar

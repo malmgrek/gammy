@@ -1,0 +1,6 @@
+﻿gammy.utils.ornstein\_uhlenbeck
+===============================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: ornstein_uhlenbeck

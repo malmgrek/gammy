@@ -1,0 +1,6 @@
+﻿gammy.formulae.Flatten
+======================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Flatten

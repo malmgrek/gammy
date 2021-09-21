@@ -1,0 +1,6 @@
+﻿gammy.utils.exp\_squared
+========================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: exp_squared

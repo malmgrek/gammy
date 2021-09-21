@@ -1,0 +1,6 @@
+﻿gammy.utils.rational\_quadratic
+===============================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: rational_quadratic

@@ -1,0 +1,6 @@
+﻿gammy.formulae.Kron
+===================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Kron

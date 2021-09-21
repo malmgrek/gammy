@@ -1,0 +1,6 @@
+﻿gammy.plot.gaussian1d\_density\_plot
+====================================
+
+.. currentmodule:: gammy.plot
+
+.. autofunction:: gaussian1d_density_plot

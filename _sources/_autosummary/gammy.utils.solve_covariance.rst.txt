@@ -1,0 +1,6 @@
+﻿gammy.utils.solve\_covariance
+=============================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: solve_covariance

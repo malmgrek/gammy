@@ -1,0 +1,6 @@
+﻿gammy.utils.concat\_gaussians
+=============================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: concat_gaussians

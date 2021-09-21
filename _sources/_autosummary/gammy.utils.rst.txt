@@ -1,0 +1,6 @@
+﻿gammy.utils
+===========
+
+.. currentmodule:: gammy.utils
+
+.. automodule:: gammy.utils

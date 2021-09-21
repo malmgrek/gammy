@@ -1,0 +1,6 @@
+﻿gammy.formulae
+==============
+
+.. currentmodule:: gammy.formulae
+
+.. automodule:: gammy.formulae

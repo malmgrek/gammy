@@ -1,0 +1,6 @@
+gammy.models.numpy
+==================
+
+.. currentmodule:: gammy.models.numpy
+
+.. automodule:: gammy.models.numpy

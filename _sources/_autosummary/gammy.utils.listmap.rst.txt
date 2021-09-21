@@ -1,0 +1,6 @@
+gammy.utils.listmap
+===================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: listmap

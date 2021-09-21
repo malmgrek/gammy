@@ -1,0 +1,6 @@
+﻿gammy.formulae.WhiteNoise1d
+===========================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: WhiteNoise1d

@@ -1,0 +1,15 @@
+﻿.. py:data:: gammy.arraymapper.ArrayMapper
+   :noindex:
+
+ArrayMapper
+=============================
+
+.. currentmodule:: gammy.arraymapper
+
+.. autoclass:: ArrayMapper
+   :members:
+   :special-members:
+   :inherited-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,6 @@
+﻿gammy.formulae.design\_matrix
+=============================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: design_matrix

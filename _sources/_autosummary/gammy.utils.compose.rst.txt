@@ -1,0 +1,6 @@
+gammy.utils.compose
+===================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: compose

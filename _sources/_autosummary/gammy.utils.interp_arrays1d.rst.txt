@@ -1,0 +1,6 @@
+﻿gammy.utils.interp\_arrays1d
+============================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: interp_arrays1d

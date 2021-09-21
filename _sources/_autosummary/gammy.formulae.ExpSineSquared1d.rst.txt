@@ -1,0 +1,6 @@
+﻿gammy.formulae.ExpSineSquared1d
+===============================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: ExpSineSquared1d

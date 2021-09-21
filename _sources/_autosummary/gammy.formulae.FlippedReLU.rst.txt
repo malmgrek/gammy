@@ -1,0 +1,6 @@
+﻿gammy.formulae.FlippedReLU
+==========================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: FlippedReLU

@@ -1,0 +1,6 @@
+﻿gammy.utils.white\_noise
+========================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: white_noise

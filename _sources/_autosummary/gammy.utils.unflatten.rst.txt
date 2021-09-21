@@ -1,0 +1,6 @@
+﻿gammy.utils.unflatten
+=====================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: unflatten

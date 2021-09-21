@@ -1,0 +1,6 @@
+﻿gammy.plot
+==========
+
+.. currentmodule:: gammy.plot
+
+.. automodule:: gammy.plot

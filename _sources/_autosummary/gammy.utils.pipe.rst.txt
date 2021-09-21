@@ -1,0 +1,6 @@
+gammy.utils.pipe
+================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: pipe

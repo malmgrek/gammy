@@ -1,0 +1,6 @@
+﻿gammy.utils.tuplemap
+====================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: tuplemap

@@ -1,0 +1,6 @@
+﻿gammy.utils.listfilter
+======================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: listfilter

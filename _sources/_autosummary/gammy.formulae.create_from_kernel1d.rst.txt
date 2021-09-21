@@ -1,0 +1,6 @@
+﻿gammy.formulae.create\_from\_kernel1d
+=====================================
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: create_from_kernel1d
