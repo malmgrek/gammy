@@ -435,7 +435,6 @@ fig = gammy.plot.gaussian1d_density_plot(model)
 - **TODO** Hyperpriors for model parameters – Start from diagonal precisions.
            Instead of `(μ, Λ)` pairs, the arguments could be just
            BayesPy node.
-- **TODO** Add simple Numpy-based linear solver for MAP estimates.
 - **TODO** Support non-linear GAM models.
 - **TODO** Multi-dimensional observations.
 - **TODO** Dynamically changing models.

@@ -1,6 +1,21 @@
 # Change Log
 
 
+## 0.4.0
+
+### Add
+- Numpy engine for fitting GAM models
+- PyTest configuration file `conftest.py`
+- Documentation with Sphinx
+
+### Fix
+- Truncated eigenvalue decomposition: `np.linalg.eigh` -> `np.linalg.svd`. Eigh
+  is problematic since it may return negative eigenvalues (very close to zero).
+  As a consequence, the truncated covariance decomposition never gives the full
+  basis with sensible arguments.
+  See also https://github.com/malmgrek/gammy/issues/5.
+
+
 ## 0.3.4
 
 ### Fix
