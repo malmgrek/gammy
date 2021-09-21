@@ -148,6 +148,9 @@ Serialization
 Gaussian processes
 ------------------
 
+Theory
+******
+
 In real-world applications usually one doesn't know closed form expression for
 the model. One approach in tackling such problems is modeling the unknown
 function as a Gaussian Process. In practice one tries to estimate the model in
@@ -234,8 +237,8 @@ Downsides:
   we use Kronecker product to construct high dimensional bases.
 
 
-1-D GP models
-*************
+One-dimensional Gaussian Process models
+***************************************
 
 In this example, we have a 1-D noisy dataset :math:`y` and the input data are
 from the interval :math:`[0, 1]`. The model shape is unknown, and is sought in
@@ -300,8 +303,8 @@ zero-mean but it's variance is estimated from data.
    plt.show()
 
 
-More GP kernels
-***************
+More on Gaussian Process kernels
+********************************
 
 The GP covariance kernel defines the shape and smoothness of the resulting
 function estimate. The package implements some of the most typical kernels, and
@@ -383,8 +386,8 @@ step function (truncated) estimation problem.
    ax.legend()
 
 
-Custom GP kernels
-*****************
+Customize Gaussian Process kernels
+**********************************
 
 It is straightforward to define custom formulas from "positive semidefinite"
 covariance kernel functions.
@@ -437,15 +440,15 @@ covariance kernel functions.
    plt.show()
 
 
-Multivariate terms
-------------------
+Multivariate formulae
+---------------------
 
 Often, the expressive power of a model that is a sum of univariate basis functions is
 not sufficient. To avoid problems, an important generalization is to be able to define
 multivariate terms. Gammy supports various ways of defining multivariate model terms.
 
-Multiplying terms
-*****************
+Multiplying formulae with each other
+************************************
 
 A straightforward way to mathematically define multivariate functions is to
 multiply two univariate (real valued) functions of different variable
@@ -504,8 +507,8 @@ built-in feature in Gammy formula objects.
    plt.show()
 
 
-Kronecker priors
-****************
+Kronecker formulae
+******************
 
 In this example we construct a basis corresponding to a multi-variate Gaussian
 process with a Kronecker structure (see e.g. `PyMC3

@@ -1,4 +1,9 @@
-"""GAM with BayesPy backend
+"""BayesPy engine
+
+.. autosummary::
+   :toctree:
+
+   GAM
 
 """
 
@@ -32,21 +37,29 @@ class GAM:
     tau : bp.nodes.Gamma
         Observation noise precision (inverse variance)
 
-    NOTE: Currently tau is fixed to Gamma distribution, i.e., it is not
+    Currently tau is fixed to Gamma distribution, i.e., it is not
     possible to manually define the noise level. Note though that one can
     set tight values for `α, β` in `Gamma(α, β)`, recalling that `mean = α / β`
     and `variance = α / β ** 2`. The upside is that by estimating the noise
     level, one gets a nice prediction uncertainty estimate.
 
-    NOTE: Currently Gaussian requirement deeply built in. Tau being Gamma
+    Currently Gaussian requirement deeply built in. Tau being Gamma
     implies, by conjugacy, that theta must be Gaussian.
 
-    NOTE: Does not support scalar valued Gaussian r.v.. Could be implemented
+    Does not support scalar valued Gaussian r.v.. Could be implemented
     using GaussianARD but this would require a lot of refactoring for such a
     small feature -- after all one can define an auxiliary bias term with a
     very tight prior.
 
     TODO: Statistics for basis function evaluations at grid points.
+
+    FIXME: BayesPy fit fails with the following example:
+
+        .. code-block:: python
+
+           gammy.bayespy.GAM(
+               gammy.Scalar()
+           ).fit(np.array([0]), np.array([1]))
 
     """
 
@@ -84,7 +97,9 @@ class GAM:
 
     @property
     def mean_theta(self) -> List[np.ndarray]:
-        """Transforms theta to similarly nested list as bases
+        """Mean estimate of model parameters
+
+        Posterior if model is fitted, otherwise prior.
 
         """
         return utils.listmap(np.array)(
@@ -96,6 +111,9 @@ class GAM:
 
     @property
     def covariance_theta(self) -> np.ndarray:
+        """Covariance estimate of model parameters
+
+        """
         return utils.solve_covariance(self.theta.get_moments())
 
     @property
@@ -120,15 +138,19 @@ class GAM:
             Lambda=bp.utils.linalg.inv(covs[i])
         )
 
-    def fit(
-        self,
-        input_data: np.ndarray,
-        y: np.ndarray,
-        repeat: int=1000,
-        verbose: bool=False,
-        **kwargs
-    ) -> GAM:
+    def fit(self, input_data, y, repeat=1000, verbose=False, **kwargs) -> GAM:
         """Update BayesPy nodes and construct a GAM predictor
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input data
+        y : np.ndarray
+            Observations
+        repeat : int
+            BayesPy allowed repetitions in variational Bayes learning
+        verbose : bool
+            BayesPy logging
 
         WARNING: Currently mutates the original object's ``theta`` and ``tau``.
 
@@ -144,29 +166,15 @@ class GAM:
         Q.update(repeat=repeat, verbose=verbose, **kwargs)
         return self
 
-    def predict(self, input_data: np.ndarray) -> np.ndarray:
-        """Predict observations
-
-        Returns
-        -------
-        np.array
-            Mean of posterior predictive distribution
+    def predict(self, input_data) -> np.ndarray:
+        """Calculate mean of posterior predictive at inputs
 
         """
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_variance(
-            self,
-            input_data: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """Predict observations with variance
-
-        Returns
-        -------
-        (μ, σ) : tuple([np.array, np.array])
-            ``μ`` is mean of posterior predictive distribution
-            ``σ`` is variances of posterior predictive + noise
+    def predict_variance(self, input_data) -> Tuple[np.ndarray]:
+        """Predict mean and variance
 
         """
         X = self.formula.build_X(input_data)
@@ -174,17 +182,8 @@ class GAM:
         u = F.get_moments()
         return (u[0], np.diag(utils.solve_covariance(u)) + self.inv_mean_tau)
 
-    def predict_variance_theta(
-            self,
-            input_data: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def predict_variance_theta(self, input_data) -> Tuple[np.ndarray]:
         """Predict observations with variance from model parameters
-
-        Returns
-        -------
-        (μ, σ) : tuple([np.array, np.array])
-            ``μ`` is mean of posterior predictive distribution
-            ``σ`` is variances of posterior predictive
 
         """
         X = self.formula.build_X(input_data)
@@ -199,14 +198,14 @@ class GAM:
         u = F.get_moments()
         return (u[0], np.diag(utils.solve_covariance(u)))
 
-    def predict_marginals(self, input_data: np.ndarray) -> List[np.ndarray]:
+    def predict_marginals(self, input_data) -> List[np.ndarray]:
         """Predict all terms separately
 
         """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
-    def predict_variance_marginals(self, input_data: np.ndarray) -> List:
+    def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
         """Predict variance (theta) for marginal parameter distributions
 
         NOTE: Analogous to self.predict_variance_theta but for marginal
@@ -223,7 +222,7 @@ class GAM:
         sigmas = [np.diag(utils.solve_covariance(F.get_moments())) for F in Fs]
         return list(zip(mus, sigmas))
 
-    def predict_marginal(self, input_data: np.ndarray, i: int) -> np.ndarray:
+    def predict_marginal(self, input_data, i: int) -> np.ndarray:
         """Predict a term separately
 
         """
@@ -232,9 +231,9 @@ class GAM:
 
     def predict_variance_marginal(
             self,
-            input_data: np.ndarray,
+            input_data,
             i: int
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray]:
         # Not refactored with predict_marginal for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
@@ -242,9 +241,7 @@ class GAM:
         sigma = np.diag(utils.solve_covariance(F.get_moments()))
         return (mu, sigma)
 
-    def marginal_residuals(
-            self, input_data: np.ndarray, y: np.ndarray
-    ) -> List[np.ndarray]:
+    def marginal_residuals(self, input_data, y) -> List[np.ndarray]:
         """Marginal (partial) residuals
 
         """
@@ -254,12 +251,10 @@ class GAM:
             for i in range(len(mus))
         ]
 
-    def marginal_residual(
-            self,
-            input_data: np.ndarray,
-            y: np.ndarray,
-            i: int
-    ) -> np.ndarray:
+    def marginal_residual(self, input_data, y, i: int) -> np.ndarray:
+        """Calculate marginal residual for a given term
+
+        """
         # Not refactored with marginal_residuals for perf reasons
         mus = self.predict_marginals(input_data)
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)

@@ -1,13 +1,37 @@
 """Miscellaneous utilities
 
+.. autosummary::
+   :toctree:
+
+   compose
+   lift
+   pipe
+   listmap
+   tuplemap
+   listfilter
+   tuplefilter
+   decompose_covariance
+   interp_arrays1d
+   flatten
+   unflatten
+   extract_diag_blocks
+   squared_dist
+   exp_squared
+   exp_sine_squared
+   rational_quadratic
+   ornstein_uhlenbeck
+   white_noise
+   concat_gaussians
+   solve_covariance
+
 """
 
-
 import functools
-from typing import (Callable, Dict, Generator, Iterable, List)
+from typing import (Callable, Dict, Generator, Iterable, List, Tuple)
 
 import numpy as np
-import scipy.interpolate as spi
+import scipy as sp
+from scipy import interpolate
 
 
 #
@@ -16,6 +40,7 @@ import scipy.interpolate as spi
 #
 
 
+# TODO: A proper curry
 def curryish(f: Callable) -> Callable:
 
     def g(*args, **kwargs):
@@ -35,7 +60,7 @@ def compose2(f: Callable, g: Callable) -> Callable:
 def lift(func: Callable) -> Callable:
     """Transforms a function into an operator
 
-    lift :: (a -> b) -> ((c -> a) -> (c -> b))
+    ``lift :: (a -> b) -> ((c -> a) -> (c -> b))``
 
     NOTE: Could add func's *args and **kwargs as arguments
 
@@ -69,9 +94,24 @@ def pipe(arg, *funcs: Callable) -> Callable:
 
 
 listmap = curryish(compose(list, map))
+listmap.__doc__ = """Map for lists with partial evaluation
+
+"""
+
 tuplemap = curryish(compose(tuple, map))
+tuplemap.__doc__ = """Map for tuples with partial evaluation
+
+"""
+
 listfilter = curryish(compose(list, filter))
+listfilter.__doc__ = """Filter for lists with partial evaluation
+
+"""
+
 tuplefilter = curryish(compose(tuple, filter))
+tuplefilter.__doc__ = """Filter for tuples with partial evaluation
+
+"""
 
 
 #
@@ -80,14 +120,14 @@ tuplefilter = curryish(compose(tuple, filter))
 #
 
 
-def flatten(x: List) -> List:
+def flatten(x: list) -> list:
     """Flatten a list of lists once
 
     """
     return functools.reduce(lambda cum, this: cum + this, x, [])
 
 
-def unflatten(x: List, y: List) -> List:
+def unflatten(x: list, y: list) -> list:
     """Unflatten according to a reference
 
     Example
@@ -108,7 +148,7 @@ def unflatten(x: List, y: List) -> List:
     return functools.reduce(func, list(y), [list(x), []])[-1]
 
 
-def extract_diag_blocks(x: np.ndarray, y: List) -> List:
+def extract_diag_blocks(x: np.ndarray, y: list) -> List[np.ndarray]:
     """Extract diagonal blocks from a matrix according to a reference
 
     """
@@ -123,7 +163,10 @@ def extract_diag_blocks(x: np.ndarray, y: List) -> List:
     return functools.reduce(func, list(y), [x, []])[-1]
 
 
-def extend_spline_grid(grid: np.ndarray, order: int) -> np.ndarray:
+def extend_spline_grid(grid, order: int) -> np.ndarray:
+    """Grid extension for higher order splines
+
+    """
     if order < 1:
         raise ValueError(
             "Spline order = n + 1 where n >= 0 is the polynomial degree"
@@ -139,11 +182,19 @@ def extend_spline_grid(grid: np.ndarray, order: int) -> np.ndarray:
     )
 
 
-def gen_spline_args_from_grid_ext(
-        grid_ext: np.ndarray,
-        order: int,
-        extrapolate: bool
-) -> Generator:
+def gen_spline_args_from_grid_ext(grid_ext: np.ndarray, order: int, extrapolate: bool) -> Generator:
+    """Spline arguments generator from extended grid
+
+    Parameters
+    ----------
+    grid_ext : np.ndarray
+        Extended grid
+    order : int
+        Order of the splines
+    extrapolate : bool
+        Allow smooth(ish) extrapolation
+
+    """
     n = len(grid_ext) - order  # Number of basis functions
     (i_left, i_right) = (
         (1, n - 1) if order == 1 else (order - 1, n - order + 1)
@@ -168,8 +219,15 @@ def gen_spline_args_from_grid_ext(
 #
 
 
-def squared_dist(x1: np.ndarray, x2: np.ndarray) -> np.ndarray:
+def squared_dist(x1, x2) -> np.ndarray:
     """Squared distance matrix for column array of N-dimensional points
+
+    Parameters
+    ----------
+    x1 : np.ndarray
+        1-D Column array
+    x2 : np.ndarray
+        1-D Column array
 
     Example
     -------
@@ -190,22 +248,17 @@ def squared_dist(x1: np.ndarray, x2: np.ndarray) -> np.ndarray:
     )
 
 
-def exp_squared(
-        x1: np.ndarray,
-        x2: np.ndarray,
-        corrlen: float=1.0,
-        sigma: float=1.0
-) -> np.ndarray:
+def exp_squared(x1, x2, corrlen=1.0, sigma=1.0) -> np.ndarray:
+    """Exponential squared kernel function
+
+    """
     return sigma * np.exp(-0.5 / corrlen ** 2 * squared_dist(x1, x2))
 
 
-def exp_sine_squared(
-        x1: np.ndarray,
-        x2: np.ndarray,
-        corrlen: float=1.0,
-        sigma: float=1.0,
-        period: float=1.0
-) -> np.ndarray:
+def exp_sine_squared(x1, x2, corrlen=1.0, sigma=1.0, period=1.0) -> np.ndarray:
+    """Exponential sine squared kernel function
+
+    """
     return sigma * np.exp(
         -2.0 / corrlen ** 2 * np.sin(
             np.pi * np.sqrt(squared_dist(x1, x2)) / period
@@ -213,38 +266,33 @@ def exp_sine_squared(
     )
 
 
-def rational_quadratic(
-        x1: np.ndarray,
-        x2: np.ndarray,
-        corrlen: float=1.0,
-        sigma: float=1.0,
-        alpha: float=1.0
-) -> np.ndarray:
+def rational_quadratic(x1, x2, corrlen=1.0, sigma=1.0, alpha=1.0) -> np.ndarray:
+    """Rational quadratic kernel function
+
+    """
     return sigma * (
         1 + squared_dist(x1, x2) / 2.0 / alpha / corrlen ** 2
     ) ** -alpha
 
 
-def ornstein_uhlenbeck(
-        x1: np.ndarray,
-        x2: np.ndarray,
-        corrlen: float=1.0,
-        sigma: float=1.0
-) -> np.ndarray:
+def ornstein_uhlenbeck(x1, x2, corrlen=1.0, sigma=1.0) -> np.ndarray:
+    """Ornstein-Uhlenbeck kernel function
+
+    """
     return sigma * np.exp(
         -np.sqrt(squared_dist(x1, x2)) / corrlen
     )
 
 
-def white_noise(n_dims: int, sigma: float=1.0) -> np.ndarray:
+def white_noise(n_dims: int, sigma=1.0) -> np.ndarray:
+    """White noise kernel function
+
+    """
     return sigma * np.identity(n_dims)
 
 
-def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
+def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
     """Most important eigenvectors of a symmetric positive-definite square matrix
-
-    Ordered with respect of the descending eigenvalues. Each
-    eigenvector scaled with ``sqrt(λ)``.
 
     Parameters
     ----------
@@ -255,25 +303,9 @@ def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
         eigenvalue sum. If absolutelu all eigenvectors are needed, give value
         slightly larger than one.
 
-    Theoretical background
-    ----------------------
-
-    Lets expand the solution along the span of the vectors
-    :math:`\lambda_n^{1/2} \mathbf{u}_n`, where :math:`\{\lambda_n`,
-    :math:`\mathbf{u}_n\}_n` is the eigenbasis of the covariance matrix
-    :math:`\Sigma`. Note that the eigenvectors of real symmetric matrices are
-    orthonormal. The eigensystem of the precision matrix :math:`\Lambda =
-    \Sigma^{-1}` is given by :math:`\{\lambda_n^{-1}`, :math:`\mathbf{u}_n\}_n`.
-    Expressing :math:`x = \mu + y_n\lambda_n^{1/2} \mathbf{u}_n`, we get for the
-    log-prior
-
-    .. math::
-
-        (x - \mu)^T \Lambda (x - \mu)
-        = \lambda_n^{1/2}\mathbf{u}_n^T y_n^2 \lambda_n^{-1/2}\mathbf{u}_n
-        = \|\mathbf{y}\|^2.
-
-    In other words, the given transformation for the log-prior is whitening.
+    Ordered with respect of the descending eigenvalues. Each
+    eigenvector scaled with ``sqrt(λ)``. For theoretical justification,
+    see the section on Gaussian Processes in the package documentation.
 
     NOTE: In the implementation we use np.linalg.svd instead of np.linalg.eigh
     because the latter sometimes returns slightly negative eigenvalues for
@@ -281,8 +313,8 @@ def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
     eigenvectors even if we wanted
 
     REVIEW: There might be problem with serialization. If there are duplicate
-            eigenvalues, then on different machines, the vectors might
-            appear in different order.
+    eigenvalues, then on different machines, the vectors might appear in
+    different order.
 
     """
 
@@ -300,17 +332,20 @@ def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
     return np.dot(U[:, crop], np.sqrt(np.diag(S[crop])))
 
 
-def interp1d_1darrays(v: np.ndarray, grid: np.ndarray, **kwargs) -> List:
+def interp_arrays1d(v, grid, **kwargs) -> List:
     """Create list of interpolators from a given array
 
     Parameters
     ----------
     v : np.array
         Each column is a "basis" vector
+    grid : np.ndarray
+        Interpolation grid
 
     """
     return [
-        spi.interp1d(grid, v[:, i], **kwargs) for i in range(v.shape[1])
+        interpolate.interp1d(grid, v[:, i], **kwargs)
+        for i in range(v.shape[1])
     ]
 
 
@@ -339,12 +374,13 @@ def write_to_hdf5(group, data, name):
 #
 
 
-def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
+def concat_gaussians(gaussians):
     """Concatenate means and covariances to one Gaussian
 
     Parameters
     ----------
-    gaussians : [(μ1, Λ1), (μ2, Λ2)]
+    gaussians : List[Tuple[np.ndarray]]
+        List of mean-precision tuples of each Gaussian
 
     """
     return (
@@ -353,7 +389,7 @@ def concat_gaussians(gaussians: List[Tuple[np.ndarray, np.ndarray]]):
     )
 
 
-def solve_covariance(u: List[np.ndarray]) -> np.ndarray:
+def solve_covariance(u) -> np.ndarray:
     """Solve covariance matrix from moments
 
     Parameters
@@ -393,7 +429,7 @@ def jsonify(node) -> Dict:
     }
 
 
-def set_from_json(raw: Dict, node):
+def set_from_json(raw: dict, node):
     """Set BayesPy node attributes from JSON
 
     """

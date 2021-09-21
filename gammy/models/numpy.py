@@ -1,4 +1,11 @@
-"""GAM with "raw" NumPy backend
+"""Numpy engine
+
+.. autosummary::
+   :toctree:
+
+   Gaussian
+   Delta
+   GAM
 
 """
 
@@ -26,7 +33,7 @@ class Gaussian:
 
     """
 
-    def __init__(self, mu: np.ndarray, Lambda: np.ndarray) -> None:
+    def __init__(self, mu, Lambda) -> None:
         self.mu = mu
         self.Lambda = Lambda
         return
@@ -71,7 +78,7 @@ class GAM:
 
     """
 
-    def __init__(self, formula: Formula, tau: Delta, theta: Gaussian=None) -> None:
+    def __init__(self, formula, tau, theta=None) -> None:
         self.formula = formula
         self.tau = tau
         self.theta = (
@@ -86,6 +93,9 @@ class GAM:
 
     @property
     def theta_marginals(self) -> List[Gaussian]:
+        """Marginal distributions of model parameters
+
+        """
         u = self.theta.get_moments()
         mus = utils.unflatten(u[0], self.formula.bases)
         covs = utils.extract_diag_blocks(
@@ -99,6 +109,11 @@ class GAM:
 
     @property
     def mean_theta(self) -> List[np.ndarray]:
+        """Mean estimate of model parameters
+
+        Posterior if model is fitted, otherwise prior.
+
+        """
         return utils.listmap(np.array)(
             utils.unflatten(
                 self.theta.get_moments()[0],
@@ -108,11 +123,14 @@ class GAM:
 
     @property
     def covariance_theta(self) -> np.ndarray:
+        """Covariance estimate of model parameters
+
+        """
         return utils.solve_covariance(self.theta.get_moments())
 
     @property
     def inv_mean_tau(self) -> np.ndarray:
-        """Additive observation noise variance
+        """Additive observation noise variance estimate
 
         """
         return 1 / self.tau.get_moments()[0]
@@ -132,9 +150,29 @@ class GAM:
             Lambda=np.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data: np.ndarray, y: np.ndarray) -> GAM:
+    def fit(self, input_data, y) -> GAM:
+        """Estimate model parameters
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input data
+        y : np.ndarray
+            Observations
+
+        """
         X = self.formula.build_X(input_data)
-        # Kaipio--Somersalo; Remark after Theorem 3.7
+        #
+        # NOTE: Posterior covariance formula based on Kaipio--Somersalo; Remark
+        # after Theorem 3.7
+        #
+        # Perhaps we should use the other posterior covariance formulation which
+        # doesn't require directly inverting any matrix. Then we could get rid
+        # of all calls of `np.linalg.inv` as long as we refactor out references
+        # to the precision matrices `Lambda`. The downside is we would need to
+        # refactor also `gammy.models.bayespy.GAM` if want to keep similar
+        # interfaces.
+        #
         Lambda_post = self.theta.Lambda + self.tau.mu * np.dot(X.T, X)
         mu_post = np.linalg.solve(
             Lambda_post,
@@ -146,29 +184,15 @@ class GAM:
             theta=Gaussian(mu=mu_post, Lambda=Lambda_post)
         )
 
-    def predict(self, input_data: np.ndarray) -> np.ndarray:
-        """Predict observations
-
-        Returns
-        -------
-        np.array
-            Mean of posterior predictive distribution
+    def predict(self, input_data) -> np.ndarray:
+        """Calculate mean of posterior predictive at inputs
 
         """
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
-    def predict_variance(
-            self,
-            input_data: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
-        """Predict observations with variance
-
-        Returns
-        -------
-        (μ, σ) : tuple([np.array, np.array])
-            ``μ`` is mean of posterior predictive distribution
-            ``σ`` is variances of posterior predictive + noise
+    def predict_variance(self, input_data) -> Tuple[np.ndarray]:
+        """Predict mean and variance
 
         """
         X = self.formula.build_X(input_data)
@@ -179,17 +203,8 @@ class GAM:
             np.diag(np.dot(X, np.dot(Sigma, X.T))) + self.inv_mean_tau
         )
 
-    def predict_variance_theta(
-            self,
-            input_data: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    def predict_variance_theta(self, input_data) -> Tuple[np.ndarray]:
         """Predict observations with variance from model parameters
-
-        Returns
-        -------
-        (μ, σ) : tuple([np.array, np.array])
-            ``μ`` is mean of posterior predictive distribution
-            ``σ`` is variances of posterior predictive
 
         """
         X = self.formula.build_X(input_data)
@@ -199,17 +214,14 @@ class GAM:
             np.diag(np.dot(X, np.dot(Sigma, X.T)))
         )
 
-    def predict_marginals(self, input_data: np.ndarray) -> List[np.ndarray]:
+    def predict_marginals(self, input_data) -> List[np.ndarray]:
         """Predict all terms separately
 
         """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
-    def predict_variance_marginals(
-            self,
-            input_data: np.ndarray
-    ) -> List[Tuple[np.ndarray, np.ndarray]]:
+    def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
         """Predict variance (theta) for marginal parameter distributions
 
         """
@@ -225,7 +237,7 @@ class GAM:
         ]
         return list(zip(mus, sigmas))
 
-    def predict_marginal(self, input_data: np.ndarray, i: int) -> np.ndarray:
+    def predict_marginal(self, input_data, i: int) -> np.ndarray:
         """Predict a term separately
 
         """
@@ -234,20 +246,19 @@ class GAM:
 
     def predict_variance_marginal(
             self,
-            input_data: np.ndarray,
+            input_data,
             i: int
-    ) -> Tuple[np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray]:
+        """Evaluate mean and variance for a given term
+
+        """
         X = self.formula.build_Xi(input_data, i=i)
         Sigma = utils.solve_covariance(self.theta_marginal(i).get_moments())
         mu = np.dot(X, self.mean_theta[i])
         sigma = np.diag(np.dot(X, np.dot(Sigma, X.T)))
         return (mu, sigma)
 
-    def marginal_residuals(
-            self,
-            input_data: np.ndarray,
-            y: np.ndarray
-    ) -> List[np.ndarray]:
+    def marginal_residuals(self, input_data, y) -> List[np.ndarray]:
         """Marginal (partial) residuals
 
         """
@@ -257,12 +268,10 @@ class GAM:
             for i in range(len(mus))
         ]
 
-    def marginal_residual(
-            self,
-            input_data: np.ndarray,
-            y: np.ndarray,
-            i: int
-    ) -> np.ndarray:
+    def marginal_residual(self, input_data, y, i: int) -> np.ndarray:
+        """Calculate marginal residual for a given term
+
+        """
         mus = self.predict_marginals(input_data)
         return y - np.sum(mus[:i] + mus[i + 1:], axis=0)
 

@@ -1,4 +1,11 @@
-"""Plotting model results and coefficient distributions
+"""Plotting tools for Gammy models and formulae
+
+.. autosummary::
+   :toctree:
+
+   validation_plot
+   gaussian1d_density_plot
+   basis_plot
 
 """
 
@@ -21,25 +28,52 @@ from gammy.utils import pipe
 
 
 def validation_plot(
-        model: Union[gammy.bayespy.GAM, gammy.numpy.GAM],
-        input_data: np.ndarray,
-        y: np.ndarray,
-        grid_limits: Union[List[List[float]], List[float]],
-        input_maps: List[Callable],
-        index: Optional[np.ndarray]=None,
-        xlabels: Optional[List[str]]=None,
-        titles: Optional[List[str]]=None,
-        gridsize: int=20,
-        color: str="r",
+        model,
+        input_data,
+        y,
+        grid_limits,
+        input_maps,
+        index=None,
+        xlabels=None,
+        titles=None,
+        gridsize=20,
+        color="r",
         **kwargs
 ):
-    """Generic validation plot for a GAM
+    """Validation plot for a GAM object
+
+    Contains:
+
+        - Series plot with predicted vs. observed
+        - Partial residual plots
+
+    Parameters
+    ----------
+    model : gammy.bayespy.GAM | gammy.numpy.GAM
+        Visualized model
+    input_data : np.ndarray
+        Input data
+    y : np.ndarray
+        Observations
+    grid_limits : List
+        Grid limits, either `[a, b]` or `[[a_1, b_1], ..., [a_N, b_N]]`
+    input_maps : List[Callable]
+        List of input maps to be used for each pair of grid limits
+    index : np.ndarray
+        Optional x-axis for the series plot
+    xlabels : List[str]
+        Optional x-labels for the partial residual plots
+    gridsize : int
+        Number of points in the input dimensions discretizations
+    color : str
+        Color of scatter points
 
     """
 
     N = len(model.formula)
-    fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
-    gs = fig.add_gridspec(N // 2 + 3, 2)
+    N_rows = 2 + (N + 1) // 2
+    fig = plt.figure(figsize=(8, 2 * N_rows))
+    gs = fig.add_gridspec(2 + (N + 1) // 2, 2)
     xlabels = xlabels or [None] * len(model.formula)
     titles = titles or [None] * len(model.formula)
     index = np.arange(len(input_data)) if index is None else index
@@ -127,7 +161,8 @@ def gaussian1d_density_plot(model: gammy.bayespy.GAM):
 
     """
     N = len(model.formula)
-    fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
+    N_rows = 2 + (N + 1) // 2
+    fig = plt.figure(figsize=(8, 2 * N_rows))
     gs = fig.add_gridspec(N + 1, 1)
 
     # Plot inverse gamma
@@ -177,12 +212,17 @@ def covariance_plot(model):
     raise NotImplementedError
 
 
-def basis_plot(model, grid_limits, input_maps, gridsize=20):
+def basis_plot(
+        formula: gammy.formulae.Formula,
+        grid_limits,
+        input_maps,
+        gridsize=20
+):
     """Plot all basis functions
 
     """
     # Figure definition
-    N = len(model.formula)
+    N = len(formula)
     fig = plt.figure(figsize=(8, max(4 * N // 2, 8)))
     gs = fig.add_gridspec(N, 1)
 
@@ -196,9 +236,7 @@ def basis_plot(model, grid_limits, input_maps, gridsize=20):
     )
 
     # Plot stuff
-    for i, (basis, input_map) in enumerate(
-            zip(model.formula.bases, input_maps)
-        ):
+    for i, (basis, input_map) in enumerate(zip(formula.bases, input_maps)):
         ax = fig.add_subplot(gs[i])
         x = input_map(grid)
         for f in basis:

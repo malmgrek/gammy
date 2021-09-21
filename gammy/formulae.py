@@ -1,17 +1,43 @@
-"""This module defines the formula type"""
+"""Formula type definition and constructors
+
+.. autosummary::
+   :toctree:
+
+   Formula
+   design_matrix
+   Flatten
+   Sum
+   Kron
+   create_from_kernel1d
+   ExpSquared1d
+   ExpSineSquared1d
+   RationalQuadratic1d
+   WhiteNoise1d
+   OrnsteinUhlenbeck1d
+   Scalar
+   ReLU
+   FlippedReLU
+   BSpline1d
+
+"""
 
 
-from typing import (Callable, List, Tuple)
+from __future__ import annotations
+from typing import Callable, List, Tuple
 
 import numpy as np
 import scipy as sp
 from scipy import interpolate
 
 from gammy import utils
+from gammy.arraymapper import ArrayMapper
 from gammy.utils import listmap, rlift_basis
 
 
 def design_matrix(input_data: np.ndarray, basis: List[Callable]):
+    """Assemble the design matrix for basis function regression
+
+    """
     return np.hstack([
         f(input_data).reshape(-1, 1) for f in basis
     ])
@@ -22,10 +48,10 @@ class Formula():
 
     Parameters
     ----------
-    bases : list
+    bases : List[Callable]
         Each element is a list of basis functions and corresponds to a term
         in the additive model formula
-    prior : tuple
+    prior : Tuple[np.ndarray]
         Mean and precision matrix of the Gaussian prior distribution
 
     Example
@@ -40,13 +66,19 @@ class Formula():
         return
 
 
-    def __add__(self, other):
+    def __add__(self, other) -> Formula:
+        """Addition
+
+        """
         return Formula(
             bases=self.bases + other.bases,
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
-    def __mul__(self, input_map):
+    def __mul__(self, input_map: ArrayMapper) -> Formula:
+        """Multiplication
+
+        """
         return Formula(
             bases=[
                 listmap(
@@ -56,13 +88,13 @@ class Formula():
             prior=self.prior
         )
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Number of terms in the formula
 
         """
         return len(self.bases)
 
-    def __call__(self, *input_maps):
+    def __call__(self, *input_maps) -> Formula:
         # TODO: Transform basis
         return Formula(
             bases=[
@@ -71,13 +103,13 @@ class Formula():
             prior=self.prior
         )
 
-    def build_Xi(self, input_data, i):
+    def build_Xi(self, input_data, i) -> np.ndarray:
         """A column block of the design matrix
 
         """
         return design_matrix(input_data, self.bases[i])
 
-    def build_Xs(self, input_data):
+    def build_Xs(self, input_data: np.ndarray):
         """All column blocks as list
 
         """
@@ -85,7 +117,7 @@ class Formula():
             self.build_Xi(input_data, i) for i, _ in enumerate(self.bases)
         ]
 
-    def build_X(self, input_data):
+    def build_X(self, input_data: np.ndarray):
         """Design matrix
 
         """
@@ -97,10 +129,17 @@ class Formula():
 #
 
 
-def Flatten(formula: Formula, prior=None) -> Formula:
+def Flatten(formula, prior=None) -> Formula:
     """Flatten the bases of a given formula
 
-    Bases: [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
+    Parameters
+    ----------
+    formula : Formula
+        Flattened formula with a nested list of bases
+    prior : Tuple[np.ndarray]
+        Prior of the final formula
+
+    In terms of bases: ``[[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]``
 
     """
     return Formula(
@@ -109,8 +148,15 @@ def Flatten(formula: Formula, prior=None) -> Formula:
     )
 
 
-def Sum(formulae: List[Formula], prior=None) -> Formula:
+def Sum(formulae, prior=None) -> Formula:
     """Sum (i.e. concatenate) many formulae
+
+    Parameters
+    ----------
+    formulae : List[Formula]
+        Formulas to concatenate
+    prior : Tuple[np.ndarray]
+        Prior mean and covariance for concatenated formula
 
     Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
 
@@ -124,19 +170,15 @@ def Sum(formulae: List[Formula], prior=None) -> Formula:
     )
 
 
-def Kron(a: Formula, b: Formula) -> Formula:
+def Kron(a, b) -> Formula:
     """Tensor product of two Formula bases
-
-    Non-commutative!
 
     Parameters
     ----------
     a : Formula
     b : Formula
 
-    Returns
-    -------
-    Formula
+    Non-commutative!
 
     Let ``u, v`` be eigenvectors of matrices ``A, B``, respectively. Then
     ``u ⊗ v`` is an eigenvector of ``A ⊗ B`` and ``λμ`` is the corresponding
@@ -174,6 +216,9 @@ def Kron(a: Formula, b: Formula) -> Formula:
 
 
 def create_from_kernel1d(kernel: Callable) -> Callable:
+    """Create formula from bivariate GP kernel function
+
+    """
 
     def _Formula(
             grid: np.ndarray,
@@ -185,7 +230,7 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
     ) -> Formula:
 
         mu_basis = [] if mu_basis is None else mu_basis
-        basis = utils.interp1d_1darrays(
+        basis = utils.interp_arrays1d(
             utils.decompose_covariance(
                 kernel(
                     x1=grid.reshape(-1, 1),
@@ -216,13 +261,13 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
 
 
 def ExpSquared1d(
-        grid: np.ndarray,
-        corrlen: float,
-        sigma: float,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None,
-        energy: float=0.99
+        grid,
+        corrlen,
+        sigma,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None,
+        energy=0.99
 ) -> Formula:
     """Squared exponential kernel formula
 
@@ -256,16 +301,36 @@ def ExpSquared1d(
 
 
 def ExpSineSquared1d(
-        grid: np.ndarray,
-        corrlen: float,
-        sigma: float,
-        period: float,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None,
-        energy: float=0.99
+        grid,
+        corrlen,
+        sigma,
+        period,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None,
+        energy=0.99
 ) -> Formula:
     """Squared sine exponential kernel formula for periodic terms
+
+    Parameters
+    ----------
+    grid : np.ndarray
+        Discretization grid
+    corrlen : float
+        Correlation length
+    sigma : float
+        Variance
+    period : float
+        Period
+    prior : Tuple[np.ndarray]
+        Prior mean and precision matrix
+    mu_basis : List[Callable]
+        Basis for estimating the mean hyperparameter
+    mu_hyper : Tuple[np.ndarray]
+        Hyperprior mean and precision matrix
+    energy : float
+        Eigenvalue-weighted proportion of eigenvectors to consider in
+        truncation
 
     """
     kernel_kwargs = {
@@ -285,14 +350,14 @@ def ExpSineSquared1d(
 
 
 def RationalQuadratic1d(
-        grid: np.ndarray,
-        corrlen: float,
-        sigma: float,
-        alpha: float,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None,
-        energy: float=0.99
+        grid,
+        corrlen,
+        sigma,
+        alpha,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None,
+        energy=0.99
 ) -> Formula:
     """Rational quadratic kernel formula
 
@@ -314,12 +379,12 @@ def RationalQuadratic1d(
 
 
 def WhiteNoise1d(
-        grid: np.ndarray,
-        sigma: float,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None,
-        energy: float=1.0
+        grid,
+        sigma,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None,
+        energy=1.0,
 ) -> Formula:
     """White noise kernel formula
 
@@ -340,15 +405,15 @@ def WhiteNoise1d(
 
 
 def OrnsteinUhlenbeck1d(
-        grid: np.ndarray,
-        corrlen: float,
-        sigma: float,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None,
-        energy: float=0.99
+        grid,
+        corrlen,
+        sigma,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None,
+        energy=0.99
 ) -> Formula:
-    """Rational quadratic kernel formula
+    """Ornstein-Uhlenbeck kernel formula
 
     """
     kernel_kwargs = {
@@ -403,6 +468,9 @@ def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
 
 
 def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
+    """Mirrored ReLU basis
+
+    """
     relus = listmap(lambda c: lambda t: (t < c) * (c - t))(grid[1:-1])
     prior = (
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
@@ -420,23 +488,30 @@ def Gaussian1d() -> Formula:
 
 
 def BSpline1d(
-        grid: np.ndarray,
-        order: int=3,
-        extrapolate: bool=True,
-        prior: Tuple[np.ndarray]=None,
-        mu_basis: List[Callable]=None,
-        mu_hyper: Tuple[np.ndarray]=None
+        grid,
+        order=3,
+        extrapolate=True,
+        prior=None,
+        mu_basis=None,
+        mu_hyper=None
 ) -> Formula:
     """B-spline basis on a fixed grid
 
     Parameters
     ----------
-
+    grid : np.ndarray
+        Discretization grid
     order : int
         Order of the spline function. Polynomial degree is ``order - 1``
     extrapolate : bool
         Extrapolate outside of the grid using basis functions "touching" the
         endpoints
+    prior : Tuple[np.ndarray]
+        Prior mean and precision matrix
+    mu_basis : List[Callable]
+        Basis for estimating the mean hyperparameter
+    mu_hyper : Tuple[np.ndarray]
+        Hyperprior mean and precision matrix
 
     Number of spline basis functions is always ``N = len(grid) + order - 2``
 

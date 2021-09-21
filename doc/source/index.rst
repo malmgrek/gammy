@@ -21,19 +21,10 @@ Contents
 --------
 
 .. toctree::
-   motivation
+   installation
    walkthrough
-   :maxdepth: 3
-
-
-Installation
-------------
-
-The package is found in PyPi and can be installed with
-
-.. code-block:: bash
-
-   pip install gammy
+   api
+   :maxdepth: 2
 
 
 Other Python projects with GAM functionalities
