@@ -17,7 +17,7 @@ from gammy.arraymapper import x
 # TODO: Multivariate with Kron
 def multinomial():
     return (
-        gammy.Scalar() * x[:, 0] * x[:, 1] + gammy.Scalar(),
+        gammy.Scalar((0, 1)) * x[:, 0] * x[:, 1] + gammy.Scalar((0, 1)),
         np.vstack(
             (
                 np.arange(0, 1.5, 0.5),
@@ -29,7 +29,7 @@ def multinomial():
 
 def scalar():
     return (
-        gammy.Scalar(),
+        gammy.Scalar((0, 1)),
         np.array([0., 1., 2.])
     )
 

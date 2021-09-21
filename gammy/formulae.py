@@ -366,22 +366,34 @@ def OrnsteinUhlenbeck1d(
     )
 
 
-def Scalar(prior: Tuple[np.ndarray]=(0, 1)) -> Formula:
+def Scalar(prior: Tuple[np.ndarray]=(0, 1e-6)) -> Formula:
+    """Scalar formula
+
+    """
     basis = [lambda t: np.ones(len(t))]
     return Formula(bases=[basis], prior=prior)
 
 
-def Line(prior: Tuple[np.ndarray]=(0, 1)) -> Formula:
+def Line(prior: Tuple[np.ndarray]=(0, 1e-6)) -> Formula:
+    """Straight line (through origin) formula
+
+    """
     basis = [lambda t: t]
     return Formula(bases=[basis], prior=prior)
 
 
 def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
+    """Construct a formula from a single function
+
+    """
     basis = [function]
     return Formula(bases=[basis], prior=prior)
 
 
 def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
+    """Rectified linear unit shaped basis
+
+    """
     relus = listmap(lambda c: lambda t: (t > c) * (c - t))(grid[1:-1])
     prior = (
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
