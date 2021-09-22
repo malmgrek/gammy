@@ -41,11 +41,10 @@
 
 <span class="sd">   x</span>
 
-
-
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
 
 <span class="kn">from</span> <span class="nn">gammy.utils</span> <span class="kn">import</span> <span class="n">compose</span>
 
@@ -70,10 +69,16 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
+        <span class="sd">&quot;&quot;&quot;Wrapped function&quot;&quot;&quot;</span>
+
         <span class="k">return</span>
 
 <div class="viewcode-block" id="ArrayMapper.__call__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the wrapped function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__getitem__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
@@ -85,7 +90,11 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__add__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Addition</span>
+        <span class="sd">&quot;&quot;&quot;Addition of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -93,7 +102,11 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__sub__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__sub__">[docs]</a>    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Subtraction</span>
+        <span class="sd">&quot;&quot;&quot;Subtraction of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -101,7 +114,11 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__mul__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Multiplication</span>
+        <span class="sd">&quot;&quot;&quot;Multiplication of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -109,7 +126,11 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__truediv__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__truediv__">[docs]</a>    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Division</span>
+        <span class="sd">&quot;&quot;&quot;Division of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -117,7 +138,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.__pow__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__pow__">[docs]</a>    <span class="k">def</span> <span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Raise to exponent</span>
+        <span class="sd">&quot;&quot;&quot;Raise an arraymapper to a power</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -132,8 +153,12 @@
             <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__neg__</span><span class="p">()</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="ArrayMapper.lift"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.lift">[docs]</a>    <span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<div class="viewcode-block" id="ArrayMapper.lift"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.lift">[docs]</a>    <span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Lift the contained function with a given function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        f : Callable</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -141,7 +166,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="ArrayMapper.ravel"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.ravel">[docs]</a>    <span class="k">def</span> <span class="nf">ravel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ArrayMapper</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;NumPy ravel method</span>
+        <span class="sd">&quot;&quot;&quot;Imitates the behavior of NumPy ravel method</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
@@ -158,19 +183,21 @@
 
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">ArrayMapper</span><span class="p">()</span>
-<span class="n">x</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Instance of ArrayMapper</span>
+<span class="n">x</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;ArrayMapper instantiated at load-time for convenient importing to applications</span>
 
-<span class="s2">Intended usage is to import ``x`` standalone:</span>
+<span class="sd">    Intended usage is to import ``x`` standalone:</span>
 
-<span class="s2">.. code-block:: python</span>
+<span class="sd">    .. code-block:: python</span>
 
-<span class="s2">    import gammy</span>
-<span class="s2">    from gammy.arraymapper import x</span>
+<span class="sd">        import gammy</span>
+<span class="sd">        from gammy.arraymapper import x</span>
 
-<span class="s2">    # Define formula</span>
-<span class="s2">    formula = gammy.Scalar() * x</span>
+<span class="sd">        # Define formula</span>
+<span class="sd">        formula = gammy.Scalar() * x</span>
 
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
 </pre></div>
 
           </div>

@@ -56,13 +56,15 @@ in the additive model formula</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.__add__">
 <span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.__add__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Addition</p>
+<dd><p>Addition of formulae</p>
+<p>other : Formula</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.__call__">
 <span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">input_maps</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Call self as a function.</p>
+<dd><p>Make the object callable</p>
+<p>input_maps : Iterable[ArrayMapper]</p>
 </dd></dl>
 
 <dl class="py method">
@@ -73,8 +75,9 @@ in the additive model formula</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.__mul__">
-<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_map</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.__mul__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_map</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.__mul__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiplication</p>
+<p>input_map : ArrayMapper</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -85,20 +88,23 @@ in the additive model formula</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.build_X">
-<span class="sig-name descname"><span class="pre">build_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_X" title="Permalink to this definition">¶</a></dt>
-<dd><p>Design matrix</p>
+<span class="sig-name descname"><span class="pre">build_X</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_X"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_X" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build whole design matrix</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.build_Xi">
-<span class="sig-name descname"><span class="pre">build_Xi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_Xi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_Xi" title="Permalink to this definition">¶</a></dt>
-<dd><p>A column block of the design matrix</p>
+<span class="sig-name descname"><span class="pre">build_Xi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_Xi"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_Xi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build one sub design matrix corresponding to a basis</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.formulae.Formula.build_Xs">
-<span class="sig-name descname"><span class="pre">build_Xs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_Xs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_Xs" title="Permalink to this definition">¶</a></dt>
-<dd><p>All column blocks as list</p>
+<span class="sig-name descname"><span class="pre">build_Xs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.build_Xs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.build_Xs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a list of sub design matrices</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py attribute">

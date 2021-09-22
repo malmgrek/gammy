@@ -119,7 +119,7 @@ very tight prior.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.load">
-<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.load" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">load</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.models.bayespy.GAM" title="gammy.models.bayespy.GAM"><span class="pre">gammy.models.bayespy.GAM</span></a></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.load"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.load" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load model from a file on disk</p>
 </dd></dl>
 
@@ -127,12 +127,19 @@ very tight prior.</p>
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.marginal_residual">
 <span class="sig-name descname"><span class="pre">marginal_residual</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.marginal_residual"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.marginal_residual" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate marginal residual for a given term</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.marginal_residuals">
 <span class="sig-name descname"><span class="pre">marginal_residuals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.marginal_residuals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.marginal_residuals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Marginal (partial) residuals</p>
+<dl class="simple">
+<dt>input_data<span class="classifier">np.ndarray</span></dt><dd><p>Input data</p>
+</dd>
+<dt>y<span class="classifier">np.ndarray</span></dt><dd><p>Observations</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">
@@ -146,35 +153,42 @@ very tight prior.</p>
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict">
 <span class="sig-name descname"><span class="pre">predict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate mean of posterior predictive at inputs</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_marginal">
 <span class="sig-name descname"><span class="pre">predict_marginal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">numpy.ndarray</span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_marginal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_marginal" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict a term separately</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_marginals">
 <span class="sig-name descname"><span class="pre">predict_marginals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_marginals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_marginals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict all terms separately</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_variance">
 <span class="sig-name descname"><span class="pre">predict_variance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_variance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_variance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict mean and variance</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_variance_marginal">
 <span class="sig-name descname"><span class="pre">predict_variance_marginal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_variance_marginal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_variance_marginal" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Predict marginal distributions means and variances</p>
+<p>input_data : np.ndarray</p>
+</dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_variance_marginals">
 <span class="sig-name descname"><span class="pre">predict_variance_marginals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_variance_marginals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_variance_marginals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict variance (theta) for marginal parameter distributions</p>
+<p>input_data : np.ndarray</p>
 <p>NOTE: Analogous to self.predict_variance_theta but for marginal
 distributions. Adding observation noise does not make sense as we don’t
 know how it is splitted among the model terms.</p>
@@ -184,6 +198,7 @@ know how it is splitted among the model terms.</p>
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.predict_variance_theta">
 <span class="sig-name descname"><span class="pre">predict_variance_theta</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.predict_variance_theta"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.predict_variance_theta" title="Permalink to this definition">¶</a></dt>
 <dd><p>Predict observations with variance from model parameters</p>
+<p>input_data : np.ndarray</p>
 </dd></dl>
 
 <dl class="py method">

@@ -204,12 +204,20 @@
 <div class="viewcode-block" id="GAM.predict"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate mean of posterior predictive at inputs</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="GAM.predict_variance"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Predict mean and variance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
@@ -219,6 +227,10 @@
 
 <div class="viewcode-block" id="GAM.predict_variance_theta"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance_theta">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Predict observations with variance from model parameters</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
@@ -236,12 +248,20 @@
 <div class="viewcode-block" id="GAM.predict_marginals"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_marginals">[docs]</a>    <span class="k">def</span> <span class="nf">predict_marginals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Predict all terms separately</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xs</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="GAM.predict_variance_marginals"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance_marginals">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance_marginals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
         <span class="sd">&quot;&quot;&quot;Predict variance (theta) for marginal parameter distributions</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        NOTE: Analogous to self.predict_variance_theta but for marginal</span>
 <span class="sd">        distributions. Adding observation noise does not make sense as we don&#39;t</span>
@@ -260,6 +280,10 @@
 <div class="viewcode-block" id="GAM.predict_marginal"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_marginal">[docs]</a>    <span class="k">def</span> <span class="nf">predict_marginal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Predict a term separately</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xi</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
@@ -269,6 +293,13 @@
             <span class="n">input_data</span><span class="p">,</span>
             <span class="n">i</span><span class="p">:</span> <span class="nb">int</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Predict marginal distributions means and variances</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Not refactored with predict_marginal for perf reasons</span>
         <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xi</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_marginal</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">X</span><span class="p">)</span>
@@ -279,6 +310,13 @@
 <div class="viewcode-block" id="GAM.marginal_residuals"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.marginal_residuals">[docs]</a>    <span class="k">def</span> <span class="nf">marginal_residuals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Marginal (partial) residuals</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
+<span class="sd">            Input data</span>
+<span class="sd">        y : np.ndarray</span>
+<span class="sd">            Observations</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">mus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict_marginals</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span>
@@ -288,6 +326,10 @@
 
 <div class="viewcode-block" id="GAM.marginal_residual"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.marginal_residual">[docs]</a>    <span class="k">def</span> <span class="nf">marginal_residual</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">i</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Calculate marginal residual for a given term</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Not refactored with marginal_residuals for perf reasons</span>
@@ -318,7 +360,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown file type: </span><span class="si">{</span><span class="n">file_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GAM.load"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="GAM.load"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GAM</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load model from a file on disk</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
