@@ -1,5 +1,7 @@
 # Gammy – Generalized additive models in Python with a Bayesian twist
 
+![](./doc/source/cover.png "Cover")
+
 A Generalized additive model is a predictive mathematical model defined as a sum
 of terms that are calibrated (fitted) with observation data. 
 
@@ -12,13 +14,30 @@ as B-splines, among others. Of course, very simple terms like lines and
 constants are also supported (these are just very simple basis functions).
 
 The uncertainty in the weight parameter distributions is modeled using Bayesian
-statistic with the help of the superb package
-[BayesPy](http://www.bayespy.org/index.html).
+statistical analysis with the help of the superb package
+[BayesPy](http://www.bayespy.org/index.html). Alternatively, it is possible to
+fit models using just NumPy.
+
+## Key features
+
+- Intuitive interface for constructing additive models.
+- Collection of constructors such as Gaussian Processes and splines.
+- Easily extensible term construction framework, 
+- Build non-linear (w.r.t. inputs) models of arbitrary input dimension.
+- Bayesian prior and posterior of model parameters.
+- Statistics such as posterior means, covariances and confidence intervals.
+
 
 ## Documentation
 
-A detailed documentation of the package can be found in
+A documentation of the package with a lot of code examples and plots:
 <https://malmgrek.github.io/gammy>.
+
+Short code examples:
+- [Polynomial regression](https://malmgrek.github.io/gammy/walkthrough.html#polynomial-regression)
+- [Gaussian process inference](https://malmgrek.github.io/gammy/walkthrough.html#one-dimensional-gaussian-process-models)
+- [Spline inference](https://malmgrek.github.io/gammy/walkthrough.html#spline-regression)
+- [Manifold regression](https://malmgrek.github.io/gammy/walkthrough.html#multivariate-formulae) of arbitrary dimension
 
 
 ## Installation
@@ -45,7 +64,10 @@ from gammy.arraymapper import x
 
 # Simulate data
 n = 100
-input_data = 6 * np.vstack((np.random.rand(n), np.random.rand(n))).T - 3
+input_data = 6 * np.vstack((
+    np.random.rand(n),
+    np.random.rand(n)
+)).T - 3
 y = (
     gammy.peaks(input_data[:, 0], input_data[:, 1]) + 4 
     + 0.3 * np.random.randn(n)
@@ -78,7 +100,7 @@ np.sqrt(model.inv_mean_tau)
 
 Plot generated with `gammy.plot.validation_plot`:
 
-![Marginal posterior densities of parameters](./doc/source/quick.png "Densities")
+![Validation plots](./doc/source/quick.png "Validation")
 `
 
 <!-- ## To-be-added features -->

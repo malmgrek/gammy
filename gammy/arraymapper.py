@@ -7,11 +7,10 @@
 
    x
 
-
-
 """
 
 from __future__ import annotations
+from typing import Callable
 
 from gammy.utils import compose
 
@@ -36,10 +35,16 @@ class ArrayMapper():
     """
 
     def __init__(self, function=lambda t: t):
+
         self.function = function
+        """Wrapped function"""
+
         return
 
     def __call__(self, *args, **kwargs):
+        """Call the wrapped function
+
+        """
         return self.function.__call__(*args, **kwargs)
 
     def __getitem__(self, key: int) -> ArrayMapper:
@@ -51,7 +56,11 @@ class ArrayMapper():
         )
 
     def __add__(self, other) -> ArrayMapper:
-        """Addition
+        """Addition of arraymappers
+
+        Parameters
+        ----------
+        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -59,7 +68,11 @@ class ArrayMapper():
         )
 
     def __sub__(self, other) -> ArrayMapper:
-        """Subtraction
+        """Subtraction of arraymappers
+
+        Parameters
+        ----------
+        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -67,7 +80,11 @@ class ArrayMapper():
         )
 
     def __mul__(self, other) -> ArrayMapper:
-        """Multiplication
+        """Multiplication of arraymappers
+
+        Parameters
+        ----------
+        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -75,7 +92,11 @@ class ArrayMapper():
         )
 
     def __truediv__(self, other) -> ArrayMapper:
-        """Division
+        """Division of arraymappers
+
+        Parameters
+        ----------
+        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -83,7 +104,7 @@ class ArrayMapper():
         )
 
     def __pow__(self, n: float) -> ArrayMapper:
-        """Raise to exponent
+        """Raise an arraymapper to a power
 
         """
         return ArrayMapper(
@@ -98,8 +119,12 @@ class ArrayMapper():
             lambda t: self.function(t).__neg__()
         )
 
-    def lift(self, f):
+    def lift(self, f) -> ArrayMapper:
         """Lift the contained function with a given function
+
+        Parameters
+        ----------
+        f : Callable
 
         """
         return ArrayMapper(
@@ -107,7 +132,7 @@ class ArrayMapper():
         )
 
     def ravel(self) -> ArrayMapper:
-        """NumPy ravel method
+        """Imitates the behavior of NumPy ravel method
 
         """
         return ArrayMapper(
@@ -124,16 +149,18 @@ class ArrayMapper():
 
 
 x = ArrayMapper()
-x.__doc__ = """Instance of ArrayMapper
+x.__doc__ = (
+    """ArrayMapper instantiated at load-time for convenient importing to applications
 
-Intended usage is to import ``x`` standalone:
+    Intended usage is to import ``x`` standalone:
 
-.. code-block:: python
+    .. code-block:: python
 
-    import gammy
-    from gammy.arraymapper import x
+        import gammy
+        from gammy.arraymapper import x
 
-    # Define formula
-    formula = gammy.Scalar() * x
+        # Define formula
+        formula = gammy.Scalar() * x
 
-"""
+    """
+)

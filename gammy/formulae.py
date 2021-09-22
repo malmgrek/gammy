@@ -4,7 +4,7 @@
 
 
 from __future__ import annotations
-from typing import Callable, List, Tuple
+from typing import Callable, List, Tuple, Iterable
 
 import numpy as np
 import scipy as sp
@@ -49,7 +49,11 @@ class Formula():
 
 
     def __add__(self, other) -> Formula:
-        """Addition
+        """Addition of formulae
+
+        Parameters
+        ----------
+        other : Formula
 
         """
         return Formula(
@@ -57,8 +61,12 @@ class Formula():
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
-    def __mul__(self, input_map: ArrayMapper) -> Formula:
+    def __mul__(self, input_map) -> Formula:
         """Multiplication
+
+        Parameters
+        ----------
+        input_map : ArrayMapper
 
         """
         return Formula(
@@ -77,6 +85,13 @@ class Formula():
         return len(self.bases)
 
     def __call__(self, *input_maps) -> Formula:
+        """Make the object callable
+
+        Parameters
+        ----------
+        input_maps : Iterable[ArrayMapper]
+
+        """
         # TODO: Transform basis
         return Formula(
             bases=[
@@ -85,22 +100,34 @@ class Formula():
             prior=self.prior
         )
 
-    def build_Xi(self, input_data, i) -> np.ndarray:
-        """A column block of the design matrix
+    def build_Xi(self, input_data, i: int) -> np.ndarray:
+        """Build one sub design matrix corresponding to a basis
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         return design_matrix(input_data, self.bases[i])
 
-    def build_Xs(self, input_data: np.ndarray):
-        """All column blocks as list
+    def build_Xs(self, input_data) -> np.ndarray:
+        """Build a list of sub design matrices
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         return [
             self.build_Xi(input_data, i) for i, _ in enumerate(self.bases)
         ]
 
-    def build_X(self, input_data: np.ndarray):
-        """Design matrix
+    def build_X(self, input_data) -> np.ndarray:
+        """Build whole design matrix
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         return np.hstack(self.build_Xs(input_data))

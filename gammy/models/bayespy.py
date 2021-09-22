@@ -170,12 +170,20 @@ class GAM:
     def predict(self, input_data) -> np.ndarray:
         """Calculate mean of posterior predictive at inputs
 
+        Parameters
+        ----------
+        input_data : np.ndarray
+
         """
         X = self.formula.build_X(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
     def predict_variance(self, input_data) -> Tuple[np.ndarray]:
         """Predict mean and variance
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         X = self.formula.build_X(input_data)
@@ -185,6 +193,10 @@ class GAM:
 
     def predict_variance_theta(self, input_data) -> Tuple[np.ndarray]:
         """Predict observations with variance from model parameters
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         X = self.formula.build_X(input_data)
@@ -202,12 +214,20 @@ class GAM:
     def predict_marginals(self, input_data) -> List[np.ndarray]:
         """Predict all terms separately
 
+        Parameters
+        ----------
+        input_data : np.ndarray
+
         """
         Xs = self.formula.build_Xs(input_data)
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
     def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
         """Predict variance (theta) for marginal parameter distributions
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         NOTE: Analogous to self.predict_variance_theta but for marginal
         distributions. Adding observation noise does not make sense as we don't
@@ -226,6 +246,10 @@ class GAM:
     def predict_marginal(self, input_data, i: int) -> np.ndarray:
         """Predict a term separately
 
+        Parameters
+        ----------
+        input_data : np.ndarray
+
         """
         X = self.formula.build_Xi(input_data, i=i)
         return np.dot(X, self.mean_theta[i])
@@ -235,6 +259,13 @@ class GAM:
             input_data,
             i: int
     ) -> Tuple[np.ndarray]:
+        """Predict marginal distributions means and variances
+
+        Parameters
+        ----------
+        input_data : np.ndarray
+
+        """
         # Not refactored with predict_marginal for perf reasons
         X = self.formula.build_Xi(input_data, i=i)
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
@@ -245,6 +276,13 @@ class GAM:
     def marginal_residuals(self, input_data, y) -> List[np.ndarray]:
         """Marginal (partial) residuals
 
+        Parameters
+        ----------
+        input_data : np.ndarray
+            Input data
+        y : np.ndarray
+            Observations
+
         """
         mus = self.predict_marginals(input_data)
         return [
@@ -254,6 +292,10 @@ class GAM:
 
     def marginal_residual(self, input_data, y, i: int) -> np.ndarray:
         """Calculate marginal residual for a given term
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         # Not refactored with marginal_residuals for perf reasons
@@ -284,7 +326,7 @@ class GAM:
         else:
             raise ValueError(f"Unknown file type: {file_ext}")
 
-    def load(self, filepath: str, **kwargs):
+    def load(self, filepath: str, **kwargs) -> GAM:
         """Load model from a file on disk
 
         """
