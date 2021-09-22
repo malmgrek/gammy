@@ -1,5 +1,8 @@
-﻿gammy.formulae.create\_from\_kernel1d
-=====================================
+.. py:data:: gammy.formulae.create_from_kernel1d
+   :noindex:
+
+create\_from\_kernel1d
+======================
 
 .. currentmodule:: gammy.formulae
 

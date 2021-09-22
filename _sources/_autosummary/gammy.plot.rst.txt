@@ -1,6 +1,26 @@
-﻿gammy.plot
+﻿.. py:data:: gammy.plot
+   :noindex:
+
+gammy.plot
 ==========
 
-.. currentmodule:: gammy.plot
-
 .. automodule:: gammy.plot
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      basis_plot
+      covariance_plot
+      gaussian1d_density_plot
+      gaussian2d_density_plot
+      validation_plot
+   
+   

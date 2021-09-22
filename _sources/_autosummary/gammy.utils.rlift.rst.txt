@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.rlift
+   :noindex:
+
+rlift
+=====
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: rlift

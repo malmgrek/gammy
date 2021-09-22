@@ -16,7 +16,7 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="gammy.models.numpy" href="gammy.models.numpy.html" />
+    <link rel="next" title="create_gaussian_theta" href="gammy.models.bayespy.create_gaussian_theta.html" />
     <link rel="prev" title="gammy.models.bayespy" href="gammy.models.bayespy.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -105,6 +105,12 @@ very tight prior.</p>
 <code class="docutils literal notranslate"><span class="pre">initialize_from_prior()</span></code> of BayesPy nodes.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gammy.models.bayespy.GAM.formula">
+<span class="sig-name descname"><span class="pre">formula</span></span><a class="headerlink" href="#gammy.models.bayespy.GAM.formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model formula</p>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.inv_mean_tau">
 <em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">inv_mean_tau</span></span><em class="property"><span class="pre">:</span> <span class="pre">numpy.ndarray</span></em><a class="headerlink" href="#gammy.models.bayespy.GAM.inv_mean_tau" title="Permalink to this definition">¶</a></dt>
@@ -187,6 +193,18 @@ know how it is splitted among the model terms.</p>
 <p>Supported file formats: JSON and HDF5</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gammy.models.bayespy.GAM.tau">
+<span class="sig-name descname"><span class="pre">tau</span></span><a class="headerlink" href="#gammy.models.bayespy.GAM.tau" title="Permalink to this definition">¶</a></dt>
+<dd><p>Node for additive noise precision</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gammy.models.bayespy.GAM.theta">
+<span class="sig-name descname"><span class="pre">theta</span></span><a class="headerlink" href="#gammy.models.bayespy.GAM.theta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Node for model parameters</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="gammy.models.bayespy.GAM.theta_marginal">
 <span class="sig-name descname"><span class="pre">theta_marginal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bayespy.inference.vmp.nodes.gaussian.Gaussian</span></span></span><a class="reference internal" href="../_modules/gammy/models/bayespy.html#GAM.theta_marginal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.bayespy.GAM.theta_marginal" title="Permalink to this definition">¶</a></dt>
@@ -223,7 +241,7 @@ know how it is splitted among the model terms.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="gammy.arraymapper.html">gammy.arraymapper</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gammy.formulae.html">gammy.formulae</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="gammy.models.html">gammy.models</a></li>
@@ -237,11 +255,11 @@ know how it is splitted among the model terms.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
   <li><a href="gammy.models.html">gammy.models</a><ul>
   <li><a href="gammy.models.bayespy.html">gammy.models.bayespy</a><ul>
       <li>Previous: <a href="gammy.models.bayespy.html" title="previous chapter">gammy.models.bayespy</a></li>
-      <li>Next: <a href="gammy.models.numpy.html" title="next chapter">gammy.models.numpy</a></li>
+      <li>Next: <a href="gammy.models.bayespy.create_gaussian_theta.html" title="next chapter">create_gaussian_theta</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

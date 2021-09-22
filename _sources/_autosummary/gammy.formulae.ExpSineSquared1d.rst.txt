@@ -1,5 +1,8 @@
-﻿gammy.formulae.ExpSineSquared1d
-===============================
+.. py:data:: gammy.formulae.ExpSineSquared1d
+   :noindex:
+
+ExpSineSquared1d
+================
 
 .. currentmodule:: gammy.formulae
 

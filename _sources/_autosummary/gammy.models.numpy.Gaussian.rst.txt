@@ -1,4 +1,4 @@
-﻿.. py:data:: gammy.models.numpy.Gaussian
+.. py:data:: gammy.models.numpy.Gaussian
    :noindex:
 
 Gaussian

@@ -1,5 +1,8 @@
-﻿gammy.formulae.BSpline1d
-========================
+.. py:data:: gammy.formulae.BSpline1d
+   :noindex:
+
+BSpline1d
+=========
 
 .. currentmodule:: gammy.formulae
 

@@ -1,5 +1,8 @@
-﻿gammy.formulae.FlippedReLU
-==========================
+.. py:data:: gammy.formulae.FlippedReLU
+   :noindex:
+
+FlippedReLU
+===========
 
 .. currentmodule:: gammy.formulae
 

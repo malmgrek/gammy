@@ -34,9 +34,15 @@
 
           <div class="body" role="main">
             
-  <section id="module-gammy.formulae">
+  <dl class="py data">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">gammy.</span></span><span class="sig-name descname"><span class="pre">formulae</span></span></dt>
+<dd></dd></dl>
+
+<section id="module-gammy.formulae">
 <span id="gammy-formulae"></span><h1>gammy.formulae<a class="headerlink" href="#module-gammy.formulae" title="Permalink to this headline">¶</a></h1>
 <p>Formula type definition and constructors</p>
+<p class="rubric">Classes</p>
 <table class="longtable docutils align-default">
 <colgroup>
 <col style="width: 10%" />
@@ -46,47 +52,68 @@
 <tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Formula.html#gammy.formulae.Formula" title="gammy.formulae.Formula"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Formula</span></code></a>(bases, prior)</p></td>
 <td><p>Basis manipulation and design matrix creator</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.design_matrix.html#gammy.formulae.design_matrix" title="gammy.formulae.design_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">design_matrix</span></code></a>(input_data, basis)</p></td>
-<td><p>Assemble the design matrix for basis function regression</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Flatten.html#gammy.formulae.Flatten" title="gammy.formulae.Flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flatten</span></code></a>(formula[, prior])</p></td>
-<td><p>Flatten the bases of a given formula</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Sum.html#gammy.formulae.Sum" title="gammy.formulae.Sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sum</span></code></a>(formulae[, prior])</p></td>
-<td><p>Sum (i.e.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Kron.html#gammy.formulae.Kron" title="gammy.formulae.Kron"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kron</span></code></a>(a, b)</p></td>
-<td><p>Tensor product of two Formula bases</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.create_from_kernel1d.html#gammy.formulae.create_from_kernel1d" title="gammy.formulae.create_from_kernel1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_from_kernel1d</span></code></a>(kernel)</p></td>
-<td><p>Create formula from bivariate GP kernel function</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.ExpSquared1d.html#gammy.formulae.ExpSquared1d" title="gammy.formulae.ExpSquared1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpSquared1d</span></code></a>(grid, corrlen, sigma[, prior, ...])</p></td>
-<td><p>Squared exponential kernel formula</p></td>
+</tbody>
+</table>
+<p class="rubric">Functions</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.BSpline1d.html#gammy.formulae.BSpline1d" title="gammy.formulae.BSpline1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BSpline1d</span></code></a>(grid[, order, extrapolate, prior, ...])</p></td>
+<td><p>B-spline basis on a fixed one-dimensional grid</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.ExpSineSquared1d.html#gammy.formulae.ExpSineSquared1d" title="gammy.formulae.ExpSineSquared1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpSineSquared1d</span></code></a>(grid, corrlen, sigma, period)</p></td>
 <td><p>Squared sine exponential kernel formula for periodic terms</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.ExpSquared1d.html#gammy.formulae.ExpSquared1d" title="gammy.formulae.ExpSquared1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ExpSquared1d</span></code></a>(grid, corrlen, sigma[, prior, ...])</p></td>
+<td><p>Squared exponential kernel formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Flatten.html#gammy.formulae.Flatten" title="gammy.formulae.Flatten"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Flatten</span></code></a>(formula[, prior])</p></td>
+<td><p>Flatten the bases of a given formula</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.FlippedReLU.html#gammy.formulae.FlippedReLU" title="gammy.formulae.FlippedReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlippedReLU</span></code></a>(grid[, prior])</p></td>
+<td><p>Mirrored ReLU basis</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Function.html#gammy.formulae.Function" title="gammy.formulae.Function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Function</span></code></a>(function, prior)</p></td>
+<td><p>Construct a formula from a single function</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Gaussian1d.html#gammy.formulae.Gaussian1d" title="gammy.formulae.Gaussian1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Gaussian1d</span></code></a>()</p></td>
+<td><p></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Kron.html#gammy.formulae.Kron" title="gammy.formulae.Kron"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Kron</span></code></a>(a, b)</p></td>
+<td><p>Tensor product of two Formula bases</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Line.html#gammy.formulae.Line" title="gammy.formulae.Line"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Line</span></code></a>([prior])</p></td>
+<td><p>Straight line (through origin) formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.OrnsteinUhlenbeck1d.html#gammy.formulae.OrnsteinUhlenbeck1d" title="gammy.formulae.OrnsteinUhlenbeck1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrnsteinUhlenbeck1d</span></code></a>(grid, corrlen, sigma[, ...])</p></td>
+<td><p>Ornstein-Uhlenbeck kernel formula</p></td>
+</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.RationalQuadratic1d.html#gammy.formulae.RationalQuadratic1d" title="gammy.formulae.RationalQuadratic1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RationalQuadratic1d</span></code></a>(grid, corrlen, sigma, alpha)</p></td>
 <td><p>Rational quadratic kernel formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.ReLU.html#gammy.formulae.ReLU" title="gammy.formulae.ReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReLU</span></code></a>(grid[, prior])</p></td>
+<td><p>Rectified linear unit shaped basis</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.Scalar.html#gammy.formulae.Scalar" title="gammy.formulae.Scalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Scalar</span></code></a>([prior])</p></td>
+<td><p>Scalar formula</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Sum.html#gammy.formulae.Sum" title="gammy.formulae.Sum"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Sum</span></code></a>(formulae[, prior])</p></td>
+<td><p>Sum (concatenate) many formulae</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.TanH.html#gammy.formulae.TanH" title="gammy.formulae.TanH"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TanH</span></code></a>()</p></td>
+<td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.WhiteNoise1d.html#gammy.formulae.WhiteNoise1d" title="gammy.formulae.WhiteNoise1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">WhiteNoise1d</span></code></a>(grid, sigma[, prior, mu_basis, ...])</p></td>
 <td><p>White noise kernel formula</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.OrnsteinUhlenbeck1d.html#gammy.formulae.OrnsteinUhlenbeck1d" title="gammy.formulae.OrnsteinUhlenbeck1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OrnsteinUhlenbeck1d</span></code></a>(grid, corrlen, sigma[, ...])</p></td>
-<td><p>Ornstein-Uhlenbeck kernel formula</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.create_from_kernel1d.html#gammy.formulae.create_from_kernel1d" title="gammy.formulae.create_from_kernel1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create_from_kernel1d</span></code></a>(kernel)</p></td>
+<td><p>Create formula from bivariate GP kernel function</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.Scalar.html#gammy.formulae.Scalar" title="gammy.formulae.Scalar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Scalar</span></code></a>([prior])</p></td>
-<td><p>Scalar formula</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.ReLU.html#gammy.formulae.ReLU" title="gammy.formulae.ReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReLU</span></code></a>(grid[, prior])</p></td>
-<td><p>Rectified linear unit shaped basis</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.FlippedReLU.html#gammy.formulae.FlippedReLU" title="gammy.formulae.FlippedReLU"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FlippedReLU</span></code></a>(grid[, prior])</p></td>
-<td><p>Mirrored ReLU basis</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="gammy.formulae.BSpline1d.html#gammy.formulae.BSpline1d" title="gammy.formulae.BSpline1d"><code class="xref py py-obj docutils literal notranslate"><span class="pre">BSpline1d</span></code></a>(grid[, order, extrapolate, prior, ...])</p></td>
-<td><p>B-spline basis on a fixed grid</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="gammy.formulae.design_matrix.html#gammy.formulae.design_matrix" title="gammy.formulae.design_matrix"><code class="xref py py-obj docutils literal notranslate"><span class="pre">design_matrix</span></code></a>(input_data, basis)</p></td>
+<td><p>Assemble the design matrix for basis function regression</p></td>
 </tr>
 </tbody>
 </table>
@@ -112,7 +139,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="gammy.arraymapper.html">gammy.arraymapper</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="#">gammy.formulae</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gammy.models.html">gammy.models</a></li>
@@ -126,7 +153,7 @@
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
       <li>Previous: <a href="gammy.arraymapper.ArrayMapper.html" title="previous chapter">ArrayMapper</a></li>
       <li>Next: <a href="gammy.formulae.Formula.html" title="next chapter">Formula</a></li>
   </ul></li>

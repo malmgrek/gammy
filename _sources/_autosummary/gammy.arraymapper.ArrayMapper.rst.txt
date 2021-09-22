@@ -1,4 +1,4 @@
-﻿.. py:data:: gammy.arraymapper.ArrayMapper
+.. py:data:: gammy.arraymapper.ArrayMapper
    :noindex:
 
 ArrayMapper

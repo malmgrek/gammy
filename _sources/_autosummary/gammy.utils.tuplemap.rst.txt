@@ -1,5 +1,8 @@
-﻿gammy.utils.tuplemap
-====================
+.. py:data:: gammy.utils.tuplemap
+   :noindex:
+
+tuplemap
+========
 
 .. currentmodule:: gammy.utils
 

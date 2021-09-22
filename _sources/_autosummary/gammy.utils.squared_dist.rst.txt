@@ -1,5 +1,8 @@
-﻿gammy.utils.squared\_dist
-=========================
+.. py:data:: gammy.utils.squared_dist
+   :noindex:
+
+squared\_dist
+=============
 
 .. currentmodule:: gammy.utils
 

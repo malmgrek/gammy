@@ -34,10 +34,14 @@
   <h1>Source code for gammy.arraymapper</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Arraymapper module</span>
 
+<span class="sd">.. rubric:: Objects</span>
+
 <span class="sd">.. autosummary::</span>
 <span class="sd">   :toctree:</span>
 
-<span class="sd">   ArrayMapper</span>
+<span class="sd">   x</span>
+
+
 
 <span class="sd">&quot;&quot;&quot;</span>
 
@@ -154,6 +158,19 @@
 
 
 <span class="n">x</span> <span class="o">=</span> <span class="n">ArrayMapper</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Instance of ArrayMapper</span>
+
+<span class="s2">Intended usage is to import ``x`` standalone:</span>
+
+<span class="s2">.. code-block:: python</span>
+
+<span class="s2">    import gammy</span>
+<span class="s2">    from gammy.arraymapper import x</span>
+
+<span class="s2">    # Define formula</span>
+<span class="s2">    formula = gammy.Scalar() * x</span>
+
+<span class="s2">&quot;&quot;&quot;</span>
 </pre></div>
 
           </div>
@@ -175,7 +192,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 </ul>
 
 <div class="relations">

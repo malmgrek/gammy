@@ -1,5 +1,8 @@
-﻿gammy.formulae.Flatten
-======================
+.. py:data:: gammy.formulae.Flatten
+   :noindex:
+
+Flatten
+=======
 
 .. currentmodule:: gammy.formulae
 

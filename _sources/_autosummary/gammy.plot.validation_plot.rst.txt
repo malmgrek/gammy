@@ -1,5 +1,8 @@
-﻿gammy.plot.validation\_plot
-===========================
+.. py:data:: gammy.plot.validation_plot
+   :noindex:
+
+validation\_plot
+================
 
 .. currentmodule:: gammy.plot
 

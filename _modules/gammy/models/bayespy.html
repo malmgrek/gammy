@@ -34,11 +34,6 @@
   <h1>Source code for gammy.models.bayespy</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;BayesPy engine</span>
 
-<span class="sd">.. autosummary::</span>
-<span class="sd">   :toctree:</span>
-
-<span class="sd">   GAM</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -55,8 +50,8 @@
 <span class="kn">from</span> <span class="nn">gammy.formulae</span> <span class="kn">import</span> <span class="n">Formula</span>
 
 
-<span class="k">def</span> <span class="nf">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="n">Formula</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
+<div class="viewcode-block" id="create_gaussian_theta"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.create_gaussian_theta.html#gammy.models.bayespy.create_gaussian_theta">[docs]</a><span class="k">def</span> <span class="nf">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="n">Formula</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GAM"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM">[docs]</a><span class="k">class</span> <span class="nc">GAM</span><span class="p">:</span>
@@ -100,11 +95,17 @@
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()</span>
         <span class="c1">#       would ruin everything because of mutability</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="sd">&quot;&quot;&quot;Model formula&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span> <span class="k">if</span> <span class="n">tau</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gamma</span><span class="p">(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Node for additive noise precision&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Node for model parameters&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GAM.__len__"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Number of model parameters</span>
@@ -362,7 +363,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
 <div class="relations">

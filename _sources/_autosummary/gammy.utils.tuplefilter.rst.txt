@@ -1,5 +1,8 @@
-﻿gammy.utils.tuplefilter
-=======================
+.. py:data:: gammy.utils.tuplefilter
+   :noindex:
+
+tuplefilter
+===========
 
 .. currentmodule:: gammy.utils
 

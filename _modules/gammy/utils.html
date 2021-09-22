@@ -34,30 +34,6 @@
   <h1>Source code for gammy.utils</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Miscellaneous utilities</span>
 
-<span class="sd">.. autosummary::</span>
-<span class="sd">   :toctree:</span>
-
-<span class="sd">   compose</span>
-<span class="sd">   lift</span>
-<span class="sd">   pipe</span>
-<span class="sd">   listmap</span>
-<span class="sd">   tuplemap</span>
-<span class="sd">   listfilter</span>
-<span class="sd">   tuplefilter</span>
-<span class="sd">   decompose_covariance</span>
-<span class="sd">   interp_arrays1d</span>
-<span class="sd">   flatten</span>
-<span class="sd">   unflatten</span>
-<span class="sd">   extract_diag_blocks</span>
-<span class="sd">   squared_dist</span>
-<span class="sd">   exp_squared</span>
-<span class="sd">   exp_sine_squared</span>
-<span class="sd">   rational_quadratic</span>
-<span class="sd">   ornstein_uhlenbeck</span>
-<span class="sd">   white_noise</span>
-<span class="sd">   concat_gaussians</span>
-<span class="sd">   solve_covariance</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">functools</span>
@@ -75,20 +51,26 @@
 
 
 <span class="c1"># TODO: A proper curry</span>
-<span class="k">def</span> <span class="nf">curryish</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="curryish"><a class="viewcode-back" href="../../_autosummary/gammy.utils.curryish.html#gammy.utils.curryish">[docs]</a><span class="k">def</span> <span class="nf">curryish</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Lifted partial application</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">g</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">g</span>
+    <span class="k">return</span> <span class="n">g</span></div>
 
 
-<span class="k">def</span> <span class="nf">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="compose2"><a class="viewcode-back" href="../../_autosummary/gammy.utils.compose2.html#gammy.utils.compose2">[docs]</a><span class="k">def</span> <span class="nf">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Compose two functions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">h</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
 
-    <span class="k">return</span> <span class="n">h</span>
+    <span class="k">return</span> <span class="n">h</span></div>
 
 
 <div class="viewcode-block" id="lift"><a class="viewcode-back" href="../../_autosummary/gammy.utils.lift.html#gammy.utils.lift">[docs]</a><span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
@@ -102,28 +84,24 @@
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">compose2</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">lift2</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="k">lambda</span> <span class="n">f</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="p">(</span>
-            <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">func</span><span class="p">(</span>
-                <span class="o">*</span><span class="p">[</span><span class="n">f</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">),</span> <span class="n">g</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)]</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">rlift</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+<div class="viewcode-block" id="rlift"><a class="viewcode-back" href="../../_autosummary/gammy.utils.rlift.html#gammy.utils.rlift">[docs]</a><span class="k">def</span> <span class="nf">rlift</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Lift from right</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+    <span class="k">return</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">compose2</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="compose"><a class="viewcode-back" href="../../_autosummary/gammy.utils.compose.html#gammy.utils.compose">[docs]</a><span class="k">def</span> <span class="nf">compose</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Function composition</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">,</span> <span class="n">compose2</span><span class="p">)(</span><span class="n">funcs</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="pipe"><a class="viewcode-back" href="../../_autosummary/gammy.utils.pipe.html#gammy.utils.pipe">[docs]</a><span class="k">def</span> <span class="nf">pipe</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="o">*</span><span class="n">funcs</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Piping an object through functions</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">compose</span><span class="p">(</span><span class="o">*</span><span class="n">funcs</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])(</span><span class="n">arg</span><span class="p">)</span></div>
 
 
@@ -197,7 +175,7 @@
     <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="n">y</span><span class="p">),</span> <span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="p">[]])[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
 
 
-<span class="k">def</span> <span class="nf">extend_spline_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="extend_spline_grid"><a class="viewcode-back" href="../../_autosummary/gammy.utils.extend_spline_grid.html#gammy.utils.extend_spline_grid">[docs]</a><span class="k">def</span> <span class="nf">extend_spline_grid</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Grid extension for higher order splines</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -213,10 +191,10 @@
         <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
             <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">x</span><span class="p">)[:(</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">x</span>
         <span class="p">)</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">gen_spline_args_from_grid_ext</span><span class="p">(</span><span class="n">grid_ext</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">extrapolate</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
+<div class="viewcode-block" id="gen_spline_args_from_grid_ext"><a class="viewcode-back" href="../../_autosummary/gammy.utils.gen_spline_args_from_grid_ext.html#gammy.utils.gen_spline_args_from_grid_ext">[docs]</a><span class="k">def</span> <span class="nf">gen_spline_args_from_grid_ext</span><span class="p">(</span><span class="n">grid_ext</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">order</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">extrapolate</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Generator</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Spline arguments generator from extended grid</span>
 
 <span class="sd">    Parameters</span>
@@ -241,7 +219,7 @@
             <span class="p">)</span>
         <span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="p">)</span></div>
 
 
 <span class="c1">#</span>
@@ -383,8 +361,18 @@
     <span class="p">]</span></div>
 
 
-<span class="k">def</span> <span class="nf">rlift_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">],</span> <span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">:</span>
-    <span class="k">return</span> <span class="n">listmap</span><span class="p">(</span><span class="n">rlift</span><span class="p">(</span><span class="n">func</span><span class="p">))(</span><span class="n">basis</span><span class="p">)</span>
+<div class="viewcode-block" id="rlift_basis"><a class="viewcode-back" href="../../_autosummary/gammy.utils.rlift_basis.html#gammy.utils.rlift_basis">[docs]</a><span class="k">def</span> <span class="nf">rlift_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+    <span class="sd">&quot;&quot;&quot;Map a right lift to each function of a basis</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    basis : List[Callable]</span>
+<span class="sd">        List of basis functions</span>
+<span class="sd">    func : Callable</span>
+<span class="sd">        Lifted function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">listmap</span><span class="p">(</span><span class="n">rlift</span><span class="p">(</span><span class="n">func</span><span class="p">))(</span><span class="n">basis</span><span class="p">)</span></div>
 
 
 <span class="c1">#</span>
@@ -393,13 +381,16 @@
 <span class="c1">#</span>
 
 
-<span class="k">def</span> <span class="nf">write_to_hdf5</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="write_to_hdf5"><a class="viewcode-back" href="../../_autosummary/gammy.utils.write_to_hdf5.html#gammy.utils.write_to_hdf5">[docs]</a><span class="k">def</span> <span class="nf">write_to_hdf5</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Add data to HDF5 handler</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip&quot;</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
         <span class="n">group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not write </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not write </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <span class="c1">#</span>
@@ -438,9 +429,12 @@
 
 
 <span class="n">solve_precision</span> <span class="o">=</span> <span class="n">compose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">,</span> <span class="n">solve_covariance</span><span class="p">)</span>
+<span class="n">solve_precision</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Solve precision matrix from moments</span>
+
+<span class="s2">&quot;&quot;&quot;</span>
 
 
-<span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<div class="viewcode-block" id="jsonify"><a class="viewcode-back" href="../../_autosummary/gammy.utils.jsonify.html#gammy.utils.jsonify">[docs]</a><span class="k">def</span> <span class="nf">jsonify</span><span class="p">(</span><span class="n">node</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Turn a expfamily node into a JSON serializable dict</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -460,10 +454,10 @@
             <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">f</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
             <span class="s2">&quot;g&quot;</span><span class="p">:</span> <span class="n">node</span><span class="o">.</span><span class="n">g</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
         <span class="p">}</span>
-    <span class="p">}</span>
+    <span class="p">}</span></div>
 
 
-<span class="k">def</span> <span class="nf">set_from_json</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="set_from_json"><a class="viewcode-back" href="../../_autosummary/gammy.utils.set_from_json.html#gammy.utils.set_from_json">[docs]</a><span class="k">def</span> <span class="nf">set_from_json</span><span class="p">(</span><span class="n">raw</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Set BayesPy node attributes from JSON</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -476,7 +470,18 @@
     <span class="p">]</span>
     <span class="n">node</span><span class="o">.</span><span class="n">f</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">])</span>
     <span class="n">node</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">])</span>
-    <span class="k">return</span> <span class="n">node</span>
+    <span class="k">return</span> <span class="n">node</span></div>
+
+
+<div class="viewcode-block" id="peaks"><a class="viewcode-back" href="../../_autosummary/gammy.utils.peaks.html#gammy.utils.peaks">[docs]</a><span class="k">def</span> <span class="nf">peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The MATLAB function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span>
+        <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">5</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span>
+        <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -498,7 +503,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 </ul>
 
 <div class="relations">

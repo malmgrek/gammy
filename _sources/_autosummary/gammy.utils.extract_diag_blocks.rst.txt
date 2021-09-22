@@ -1,5 +1,8 @@
-﻿gammy.utils.extract\_diag\_blocks
-=================================
+.. py:data:: gammy.utils.extract_diag_blocks
+   :noindex:
+
+extract\_diag\_blocks
+=====================
 
 .. currentmodule:: gammy.utils
 

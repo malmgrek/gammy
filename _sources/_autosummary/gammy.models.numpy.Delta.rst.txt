@@ -1,4 +1,4 @@
-﻿.. py:data:: gammy.models.numpy.Delta
+.. py:data:: gammy.models.numpy.Delta
    :noindex:
 
 Delta

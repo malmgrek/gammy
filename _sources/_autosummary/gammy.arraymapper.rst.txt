@@ -1,6 +1,22 @@
-﻿gammy.arraymapper
+﻿.. py:data:: gammy.arraymapper
+   :noindex:
+
+gammy.arraymapper
 =================
 
-.. currentmodule:: gammy.arraymapper
-
 .. automodule:: gammy.arraymapper
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      ArrayMapper
+   
+   
+
+   
+   
+   

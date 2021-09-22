@@ -1,4 +1,4 @@
-﻿.. py:data:: gammy.formulae.Formula
+.. py:data:: gammy.formulae.Formula
    :noindex:
 
 Formula

@@ -1,5 +1,8 @@
-﻿gammy.formulae.Scalar
-=====================
+.. py:data:: gammy.formulae.Scalar
+   :noindex:
+
+Scalar
+======
 
 .. currentmodule:: gammy.formulae
 

@@ -1,5 +1,8 @@
-﻿gammy.formulae.ReLU
-===================
+.. py:data:: gammy.formulae.ReLU
+   :noindex:
+
+ReLU
+====
 
 .. currentmodule:: gammy.formulae
 

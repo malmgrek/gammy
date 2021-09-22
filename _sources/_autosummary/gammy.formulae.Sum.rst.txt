@@ -1,5 +1,8 @@
-﻿gammy.formulae.Sum
-==================
+.. py:data:: gammy.formulae.Sum
+   :noindex:
+
+Sum
+===
 
 .. currentmodule:: gammy.formulae
 

@@ -34,13 +34,6 @@
   <h1>Source code for gammy.models.numpy</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Numpy engine</span>
 
-<span class="sd">.. autosummary::</span>
-<span class="sd">   :toctree:</span>
-
-<span class="sd">   Gaussian</span>
-<span class="sd">   Delta</span>
-<span class="sd">   GAM</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
@@ -68,8 +61,13 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">Lambda</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="sd">&quot;&quot;&quot;Mean vector&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">=</span> <span class="n">Lambda</span>
+        <span class="sd">&quot;&quot;&quot;Precision matrix&quot;&quot;&quot;</span>
+
         <span class="k">return</span>
 
 <div class="viewcode-block" id="Gaussian.get_moments"><a class="viewcode-back" href="../../../_autosummary/gammy.models.numpy.Gaussian.html#gammy.models.numpy.Gaussian.get_moments">[docs]</a>    <span class="k">def</span> <span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -87,15 +85,18 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="sd">&quot;&quot;&quot;Mean vector&quot;&quot;&quot;</span>
+
         <span class="k">return</span>
 
 <div class="viewcode-block" id="Delta.get_moments"><a class="viewcode-back" href="../../../_autosummary/gammy.models.numpy.Delta.html#gammy.models.numpy.Delta.get_moments">[docs]</a>    <span class="k">def</span> <span class="nf">get_moments</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">]</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="n">Formula</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">Gaussian</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span>
+<div class="viewcode-block" id="create_gaussian_theta"><a class="viewcode-back" href="../../../_autosummary/gammy.models.numpy.create_gaussian_theta.html#gammy.models.numpy.create_gaussian_theta">[docs]</a><span class="k">def</span> <span class="nf">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">:</span> <span class="n">Formula</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">Gaussian</span><span class="p">(</span><span class="o">*</span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="GAM"><a class="viewcode-back" href="../../../_autosummary/gammy.models.numpy.GAM.html#gammy.models.numpy.GAM">[docs]</a><span class="k">class</span> <span class="nc">GAM</span><span class="p">:</span>
@@ -113,11 +114,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">tau</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">formula</span> <span class="o">=</span> <span class="n">formula</span>
+        <span class="sd">&quot;&quot;&quot;Model formula&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tau</span> <span class="o">=</span> <span class="n">tau</span>
+        <span class="sd">&quot;&quot;&quot;Additive noise precision parameter&quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">theta</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">theta</span> <span class="k">if</span> <span class="n">theta</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">create_gaussian_theta</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span>
         <span class="p">)</span>
+        <span class="sd">&quot;&quot;&quot;Model parameters&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="GAM.__len__"><a class="viewcode-back" href="../../../_autosummary/gammy.models.numpy.GAM.html#gammy.models.numpy.GAM.__len__">[docs]</a>    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Number of model parameters</span>
@@ -385,7 +392,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api.html">API Reference</a></li>
 </ul>
 
 <div class="relations">

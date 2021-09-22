@@ -1,4 +1,4 @@
-﻿.. py:data:: gammy.models.bayespy.GAM
+.. py:data:: gammy.models.bayespy.GAM
    :noindex:
 
 GAM

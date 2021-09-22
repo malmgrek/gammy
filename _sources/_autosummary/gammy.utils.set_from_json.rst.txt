@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.set_from_json
+   :noindex:
+
+set\_from\_json
+===============
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: set_from_json

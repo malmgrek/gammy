@@ -1,6 +1,15 @@
-﻿gammy.models
+﻿.. py:data:: gammy.models
+   :noindex:
+
+gammy.models
 ============
 
-.. currentmodule:: gammy.models
-
 .. automodule:: gammy.models
+
+   
+   
+   
+
+   
+   
+   

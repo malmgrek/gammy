@@ -1,5 +1,8 @@
-gammy.utils.pipe
-================
+.. py:data:: gammy.utils.pipe
+   :noindex:
+
+pipe
+====
 
 .. currentmodule:: gammy.utils
 

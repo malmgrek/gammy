@@ -1,6 +1,29 @@
+.. py:data:: gammy.models.bayespy
+   :noindex:
+
 gammy.models.bayespy
 ====================
 
-.. currentmodule:: gammy.models.bayespy
-
 .. automodule:: gammy.models.bayespy
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      GAM
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_gaussian_theta
+   
+   

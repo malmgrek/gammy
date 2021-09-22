@@ -1,0 +1,9 @@
+.. py:data:: gammy.arraymapper.x
+   :noindex:
+
+x
+=
+
+.. currentmodule:: gammy.arraymapper
+
+.. autodata:: x

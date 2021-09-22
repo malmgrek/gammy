@@ -1,5 +1,8 @@
-﻿gammy.utils.unflatten
-=====================
+.. py:data:: gammy.utils.unflatten
+   :noindex:
+
+unflatten
+=========
 
 .. currentmodule:: gammy.utils
 

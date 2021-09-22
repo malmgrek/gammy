@@ -1,5 +1,8 @@
-﻿gammy.formulae.design\_matrix
-=============================
+.. py:data:: gammy.formulae.design_matrix
+   :noindex:
+
+design\_matrix
+==============
 
 .. currentmodule:: gammy.formulae
 

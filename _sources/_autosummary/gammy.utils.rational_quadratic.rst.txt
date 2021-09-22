@@ -1,5 +1,8 @@
-﻿gammy.utils.rational\_quadratic
-===============================
+.. py:data:: gammy.utils.rational_quadratic
+   :noindex:
+
+rational\_quadratic
+===================
 
 .. currentmodule:: gammy.utils
 

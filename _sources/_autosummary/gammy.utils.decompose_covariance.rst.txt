@@ -1,5 +1,8 @@
-﻿gammy.utils.decompose\_covariance
-=================================
+.. py:data:: gammy.utils.decompose_covariance
+   :noindex:
+
+decompose\_covariance
+=====================
 
 .. currentmodule:: gammy.utils
 

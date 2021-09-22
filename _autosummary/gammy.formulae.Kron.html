@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
-    <title>gammy.formulae.Kron &#8212; Gammy 0.4.0 documentation</title>
+    <title>Kron &#8212; Gammy 0.4.0 documentation</title>
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
@@ -16,8 +16,8 @@
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="gammy.formulae.create_from_kernel1d" href="gammy.formulae.create_from_kernel1d.html" />
-    <link rel="prev" title="gammy.formulae.Sum" href="gammy.formulae.Sum.html" />
+    <link rel="next" title="Line" href="gammy.formulae.Line.html" />
+    <link rel="prev" title="Gaussian1d" href="gammy.formulae.Gaussian1d.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
   
@@ -34,14 +34,23 @@
 
           <div class="body" role="main">
             
-  <section id="gammy-formulae-kron">
-<h1>gammy.formulae.Kron<a class="headerlink" href="#gammy-formulae-kron" title="Permalink to this headline">¶</a></h1>
+  <dl class="py data">
+<dt class="sig sig-object py">
+<span class="sig-prename descclassname"><span class="pre">gammy.formulae.</span></span><span class="sig-name descname"><span class="pre">Kron</span></span></dt>
+<dd></dd></dl>
+
+<section id="kron">
+<h1>Kron<a class="headerlink" href="#kron" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="gammy.formulae.Kron">
 <span class="sig-name descname"><span class="pre">Kron</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="gammy.formulae.Formula.html#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Kron"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Kron" title="Permalink to this definition">¶</a></dt>
 <dd><p>Tensor product of two Formula bases</p>
-<p>a : Formula
-b : Formula</p>
+<dl class="simple">
+<dt>a<span class="classifier">Formula</span></dt><dd><p>Left input</p>
+</dd>
+<dt>b<span class="classifier">Formula</span></dt><dd><p>Right input</p>
+</dd>
+</dl>
 <p>Non-commutative!</p>
 <p>Let <code class="docutils literal notranslate"><span class="pre">u,</span> <span class="pre">v</span></code> be eigenvectors of matrices <code class="docutils literal notranslate"><span class="pre">A,</span> <span class="pre">B</span></code>, respectively. Then
 <code class="docutils literal notranslate"><span class="pre">u</span> <span class="pre">⊗</span> <span class="pre">v</span></code> is an eigenvector of <code class="docutils literal notranslate"><span class="pre">A</span> <span class="pre">⊗</span> <span class="pre">B</span></code> and <code class="docutils literal notranslate"><span class="pre">λμ</span></code> is the corresponding
@@ -70,7 +79,7 @@ eigenvalue.</p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="gammy.arraymapper.html">gammy.arraymapper</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="gammy.formulae.html">gammy.formulae</a></li>
 <li class="toctree-l2"><a class="reference internal" href="gammy.models.html">gammy.models</a></li>
@@ -84,10 +93,10 @@ eigenvalue.</p>
 <h3>Related Topics</h3>
 <ul>
   <li><a href="../index.html">Documentation overview</a><ul>
-  <li><a href="../api.html">API</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
   <li><a href="gammy.formulae.html">gammy.formulae</a><ul>
-      <li>Previous: <a href="gammy.formulae.Sum.html" title="previous chapter">gammy.formulae.Sum</a></li>
-      <li>Next: <a href="gammy.formulae.create_from_kernel1d.html" title="next chapter">gammy.formulae.create_from_kernel1d</a></li>
+      <li>Previous: <a href="gammy.formulae.Gaussian1d.html" title="previous chapter">Gaussian1d</a></li>
+      <li>Next: <a href="gammy.formulae.Line.html" title="next chapter">Line</a></li>
   </ul></li>
   </ul></li>
   </ul></li>

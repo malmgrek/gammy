@@ -1,5 +1,8 @@
-﻿gammy.utils.exp\_sine\_squared
-==============================
+.. py:data:: gammy.utils.exp_sine_squared
+   :noindex:
+
+exp\_sine\_squared
+==================
 
 .. currentmodule:: gammy.utils
 

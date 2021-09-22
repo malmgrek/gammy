@@ -1,5 +1,8 @@
-﻿gammy.formulae.Kron
-===================
+.. py:data:: gammy.formulae.Kron
+   :noindex:
+
+Kron
+====
 
 .. currentmodule:: gammy.formulae
 

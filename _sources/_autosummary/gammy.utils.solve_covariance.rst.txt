@@ -1,5 +1,8 @@
-﻿gammy.utils.solve\_covariance
-=============================
+.. py:data:: gammy.utils.solve_covariance
+   :noindex:
+
+solve\_covariance
+=================
 
 .. currentmodule:: gammy.utils
 

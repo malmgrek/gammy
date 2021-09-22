@@ -1,5 +1,8 @@
-﻿gammy.utils.concat\_gaussians
-=============================
+.. py:data:: gammy.utils.concat_gaussians
+   :noindex:
+
+concat\_gaussians
+=================
 
 .. currentmodule:: gammy.utils
 

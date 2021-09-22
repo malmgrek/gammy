@@ -1,6 +1,31 @@
+.. py:data:: gammy.models.numpy
+   :noindex:
+
 gammy.models.numpy
 ==================
 
-.. currentmodule:: gammy.models.numpy
-
 .. automodule:: gammy.models.numpy
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Delta
+      GAM
+      Gaussian
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      create_gaussian_theta
+   
+   

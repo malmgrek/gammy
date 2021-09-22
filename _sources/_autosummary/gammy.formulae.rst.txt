@@ -1,6 +1,46 @@
-﻿gammy.formulae
+﻿.. py:data:: gammy.formulae
+   :noindex:
+
+gammy.formulae
 ==============
 
-.. currentmodule:: gammy.formulae
-
 .. automodule:: gammy.formulae
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      Formula
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      BSpline1d
+      ExpSineSquared1d
+      ExpSquared1d
+      Flatten
+      FlippedReLU
+      Function
+      Gaussian1d
+      Kron
+      Line
+      OrnsteinUhlenbeck1d
+      RationalQuadratic1d
+      ReLU
+      Scalar
+      Sum
+      TanH
+      WhiteNoise1d
+      create_from_kernel1d
+      design_matrix
+   
+   

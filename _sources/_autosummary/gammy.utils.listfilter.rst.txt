@@ -1,5 +1,8 @@
-﻿gammy.utils.listfilter
-======================
+.. py:data:: gammy.utils.listfilter
+   :noindex:
+
+listfilter
+==========
 
 .. currentmodule:: gammy.utils
 

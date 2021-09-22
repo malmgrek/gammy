@@ -34,25 +34,6 @@
   <h1>Source code for gammy.formulae</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Formula type definition and constructors</span>
 
-<span class="sd">.. autosummary::</span>
-<span class="sd">   :toctree:</span>
-
-<span class="sd">   Formula</span>
-<span class="sd">   design_matrix</span>
-<span class="sd">   Flatten</span>
-<span class="sd">   Sum</span>
-<span class="sd">   Kron</span>
-<span class="sd">   create_from_kernel1d</span>
-<span class="sd">   ExpSquared1d</span>
-<span class="sd">   ExpSineSquared1d</span>
-<span class="sd">   RationalQuadratic1d</span>
-<span class="sd">   WhiteNoise1d</span>
-<span class="sd">   OrnsteinUhlenbeck1d</span>
-<span class="sd">   Scalar</span>
-<span class="sd">   ReLU</span>
-<span class="sd">   FlippedReLU</span>
-<span class="sd">   BSpline1d</span>
-
 <span class="sd">&quot;&quot;&quot;</span>
 
 
@@ -88,15 +69,16 @@
 <span class="sd">    prior : Tuple[np.ndarray]</span>
 <span class="sd">        Mean and precision matrix of the Gaussian prior distribution</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
-<span class="sd">    Manipulation and operations between formulae</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bases</span><span class="p">,</span> <span class="n">prior</span><span class="p">):</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">bases</span> <span class="o">=</span> <span class="n">bases</span>
+        <span class="sd">&quot;&quot;&quot;List of basis functions &quot;&quot;&quot;</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span>
+        <span class="sd">&quot;&quot;&quot;Prior mean and precision&quot;&quot;&quot;</span>
+
         <span class="k">return</span>
 
 
@@ -183,7 +165,7 @@
 
 
 <div class="viewcode-block" id="Sum"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Sum.html#gammy.formulae.Sum">[docs]</a><span class="k">def</span> <span class="nf">Sum</span><span class="p">(</span><span class="n">formulae</span><span class="p">,</span> <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Sum (i.e. concatenate) many formulae</span>
+    <span class="sd">&quot;&quot;&quot;Sum (concatenate) many formulae</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -192,9 +174,13 @@
 <span class="sd">    prior : Tuple[np.ndarray]</span>
 <span class="sd">        Prior mean and covariance for concatenated formula</span>
 
-<span class="sd">    Bases: ([[f1, f2], [g1, g2]], [[h1]]) =&gt; [[f1, f2], [g1, g2], [h1]]</span>
+<span class="sd">    Theoretical example:</span>
 
-<span class="sd">    NOTE: `Sum` and `Flatten` are different!</span>
+<span class="sd">    .. code-block:: text</span>
+
+<span class="sd">        ([[f1, f2], [g1, g2]], [[h1]]) =&gt; [[f1, f2], [g1, g2], [h1]]</span>
+
+<span class="sd">    NOTE: :class:`Sum` and :class:`Flatten` are different!</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">priors</span> <span class="o">=</span> <span class="p">[</span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span> <span class="k">for</span> <span class="n">formula</span> <span class="ow">in</span> <span class="n">formulae</span><span class="p">]</span>
@@ -210,7 +196,9 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    a : Formula</span>
+<span class="sd">        Left input</span>
 <span class="sd">    b : Formula</span>
+<span class="sd">        Right input</span>
 
 <span class="sd">    Non-commutative!</span>
 
@@ -473,20 +461,20 @@
     <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">Line</span><span class="p">(</span><span class="n">prior</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
+<div class="viewcode-block" id="Line"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Line.html#gammy.formulae.Line">[docs]</a><span class="k">def</span> <span class="nf">Line</span><span class="p">(</span><span class="n">prior</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">))</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Straight line (through origin) formula</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">Function</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
+<div class="viewcode-block" id="Function"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Function.html#gammy.formulae.Function">[docs]</a><span class="k">def</span> <span class="nf">Function</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Construct a formula from a single function</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">basis</span> <span class="o">=</span> <span class="p">[</span><span class="n">function</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReLU"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.ReLU.html#gammy.formulae.ReLU">[docs]</a><span class="k">def</span> <span class="nf">ReLU</span><span class="p">(</span><span class="n">grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">prior</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
@@ -513,12 +501,12 @@
     <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span><span class="n">bases</span><span class="o">=</span><span class="p">[</span><span class="n">relus</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">TanH</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<div class="viewcode-block" id="TanH"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.TanH.html#gammy.formulae.TanH">[docs]</a><span class="k">def</span> <span class="nf">TanH</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
-<span class="k">def</span> <span class="nf">Gaussian1d</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+<div class="viewcode-block" id="Gaussian1d"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Gaussian1d.html#gammy.formulae.Gaussian1d">[docs]</a><span class="k">def</span> <span class="nf">Gaussian1d</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
+    <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 
 <div class="viewcode-block" id="BSpline1d"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.BSpline1d.html#gammy.formulae.BSpline1d">[docs]</a><span class="k">def</span> <span class="nf">BSpline1d</span><span class="p">(</span>
@@ -529,7 +517,7 @@
         <span class="n">mu_basis</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">mu_hyper</span><span class="o">=</span><span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Formula</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;B-spline basis on a fixed grid</span>
+    <span class="sd">&quot;&quot;&quot;B-spline basis on a fixed one-dimensional grid</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -615,7 +603,7 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../walkthrough.html">Walkthrough</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
 </ul>
 
 <div class="relations">
