@@ -1,29 +1,5 @@
 """Miscellaneous utilities
 
-.. autosummary::
-   :toctree:
-
-   compose
-   lift
-   pipe
-   listmap
-   tuplemap
-   listfilter
-   tuplefilter
-   decompose_covariance
-   interp_arrays1d
-   flatten
-   unflatten
-   extract_diag_blocks
-   squared_dist
-   exp_squared
-   exp_sine_squared
-   rational_quadratic
-   ornstein_uhlenbeck
-   white_noise
-   concat_gaussians
-   solve_covariance
-
 """
 
 import functools
@@ -42,6 +18,9 @@ from scipy import interpolate
 
 # TODO: A proper curry
 def curryish(f: Callable) -> Callable:
+    """Lifted partial application
+
+    """
 
     def g(*args, **kwargs):
         return functools.partial(f, *args, **kwargs)
@@ -50,6 +29,9 @@ def curryish(f: Callable) -> Callable:
 
 
 def compose2(f: Callable, g: Callable) -> Callable:
+    """Compose two functions
+
+    """
 
     def h(*args, **kwargs):
         return f(g(*args, **kwargs))
@@ -68,16 +50,6 @@ def lift(func: Callable) -> Callable:
     return lambda f: compose2(func, f)
 
 
-def lift2(func: Callable) -> Callable:
-    return (
-        lambda f, g: (
-            lambda *args, **kwargs: func(
-                *[f(*args, **kwargs), g(*args, **kwargs)]
-            )
-        )
-    )
-
-
 def rlift(func: Callable) -> Callable:
     """Lift from right
 
@@ -86,10 +58,16 @@ def rlift(func: Callable) -> Callable:
 
 
 def compose(*funcs: Callable) -> Callable:
+    """Function composition
+
+    """
     return functools.partial(functools.reduce, compose2)(funcs)
 
 
 def pipe(arg, *funcs: Callable) -> Callable:
+    """Piping an object through functions
+
+    """
     return compose(*funcs[::-1])(arg)
 
 
@@ -349,7 +327,17 @@ def interp_arrays1d(v, grid, **kwargs) -> List:
     ]
 
 
-def rlift_basis(basis: List[Callable], func: Callable) -> List:
+def rlift_basis(basis, func) -> List[Callable]:
+    """Map a right lift to each function of a basis
+
+    Parameters
+    ----------
+    basis : List[Callable]
+        List of basis functions
+    func : Callable
+        Lifted function
+
+    """
     return listmap(rlift(func))(basis)
 
 
@@ -360,6 +348,9 @@ def rlift_basis(basis: List[Callable], func: Callable) -> List:
 
 
 def write_to_hdf5(group, data, name):
+    """Add data to HDF5 handler
+
+    """
     try:
         group.create_dataset(name, data=data, compression="gzip")
     except TypeError:
@@ -404,6 +395,9 @@ def solve_covariance(u) -> np.ndarray:
 
 
 solve_precision = compose(np.linalg.inv, solve_covariance)
+solve_precision.__doc__ = """Solve precision matrix from moments
+
+"""
 
 
 def jsonify(node) -> Dict:

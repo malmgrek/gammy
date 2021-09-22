@@ -1,24 +1,5 @@
 """Formula type definition and constructors
 
-.. autosummary::
-   :toctree:
-
-   Formula
-   design_matrix
-   Flatten
-   Sum
-   Kron
-   create_from_kernel1d
-   ExpSquared1d
-   ExpSineSquared1d
-   RationalQuadratic1d
-   WhiteNoise1d
-   OrnsteinUhlenbeck1d
-   Scalar
-   ReLU
-   FlippedReLU
-   BSpline1d
-
 """
 
 
@@ -54,15 +35,16 @@ class Formula():
     prior : Tuple[np.ndarray]
         Mean and precision matrix of the Gaussian prior distribution
 
-    Example
-    -------
-    Manipulation and operations between formulae
-
     """
 
     def __init__(self, bases, prior):
+
         self.bases = bases
+        """List of basis functions """
+
         self.prior = prior
+        """Prior mean and precision"""
+
         return
 
 
@@ -149,7 +131,7 @@ def Flatten(formula, prior=None) -> Formula:
 
 
 def Sum(formulae, prior=None) -> Formula:
-    """Sum (i.e. concatenate) many formulae
+    """Sum (concatenate) many formulae
 
     Parameters
     ----------
@@ -158,9 +140,13 @@ def Sum(formulae, prior=None) -> Formula:
     prior : Tuple[np.ndarray]
         Prior mean and covariance for concatenated formula
 
-    Bases: ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
+    Theoretical example:
 
-    NOTE: `Sum` and `Flatten` are different!
+    .. code-block:: text
+
+        ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
+
+    NOTE: :class:`Sum` and :class:`Flatten` are different!
 
     """
     priors = [formula.prior for formula in formulae]
@@ -176,7 +162,9 @@ def Kron(a, b) -> Formula:
     Parameters
     ----------
     a : Formula
+        Left input
     b : Formula
+        Right input
 
     Non-commutative!
 
@@ -495,7 +483,7 @@ def BSpline1d(
         mu_basis=None,
         mu_hyper=None
 ) -> Formula:
-    """B-spline basis on a fixed grid
+    """B-spline basis on a fixed one-dimensional grid
 
     Parameters
     ----------

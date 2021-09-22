@@ -1,9 +1,13 @@
 """Arraymapper module
 
+.. rubric:: Objects
+
 .. autosummary::
    :toctree:
 
-   ArrayMapper
+   x
+
+
 
 """
 
@@ -120,3 +124,16 @@ class ArrayMapper():
 
 
 x = ArrayMapper()
+x.__doc__ = """Instance of ArrayMapper
+
+Intended usage is to import ``x`` standalone:
+
+.. code-block:: python
+
+    import gammy
+    from gammy.arraymapper import x
+
+    # Define formula
+    formula = gammy.Scalar() * x
+
+"""

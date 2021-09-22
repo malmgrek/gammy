@@ -1,12 +1,5 @@
 """Numpy engine
 
-.. autosummary::
-   :toctree:
-
-   Gaussian
-   Delta
-   GAM
-
 """
 
 from __future__ import annotations
@@ -34,8 +27,13 @@ class Gaussian:
     """
 
     def __init__(self, mu, Lambda) -> None:
+
         self.mu = mu
+        """Mean vector"""
+
         self.Lambda = Lambda
+        """Precision matrix"""
+
         return
 
     def get_moments(self) -> List[np.ndarray]:
@@ -53,7 +51,10 @@ class Delta:
     """
 
     def __init__(self, mu: float):
+
         self.mu = mu
+        """Mean vector"""
+
         return
 
     def get_moments(self) -> List[np.ndarray]:
@@ -79,11 +80,17 @@ class GAM:
     """
 
     def __init__(self, formula, tau, theta=None) -> None:
+
         self.formula = formula
+        """Model formula"""
+
         self.tau = tau
+        """Additive noise precision parameter"""
+
         self.theta = (
             theta if theta is not None else create_gaussian_theta(formula)
         )
+        """Model parameters"""
 
     def __len__(self) -> int:
         """Number of model parameters

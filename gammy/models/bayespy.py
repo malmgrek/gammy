@@ -1,10 +1,5 @@
 """BayesPy engine
 
-.. autosummary::
-   :toctree:
-
-   GAM
-
 """
 
 
@@ -66,11 +61,17 @@ class GAM:
     def __init__(self, formula, tau=None, theta=None) -> None:
         # NOTE: Pitfall here: setting default value e.g. tau=bp.nodes.Gamma()
         #       would ruin everything because of mutability
+
         self.formula = formula
+        """Model formula"""
+
         self.tau = tau if tau is not None else bp.nodes.Gamma(1e-3, 1e-3)
+        """Node for additive noise precision"""
+
         self.theta = (
             theta if theta is not None else create_gaussian_theta(formula)
         )
+        """Node for model parameters"""
 
     def __len__(self) -> int:
         """Number of model parameters

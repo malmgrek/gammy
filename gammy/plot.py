@@ -1,12 +1,5 @@
 """Plotting tools for Gammy models and formulae
 
-.. autosummary::
-   :toctree:
-
-   validation_plot
-   gaussian1d_density_plot
-   basis_plot
-
 """
 
 from __future__ import annotations
