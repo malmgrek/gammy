@@ -2,7 +2,6 @@
 
 """
 
-from __future__ import annotations
 import logging
 from typing import Callable, List, Optional, Union
 
@@ -16,6 +15,7 @@ except ImportError:
 import matplotlib.pyplot as plt
 import numpy as np
 
+import gammy
 from gammy import utils
 from gammy.utils import pipe
 

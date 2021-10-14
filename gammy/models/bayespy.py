@@ -3,7 +3,6 @@
 """
 
 
-from __future__ import annotations
 import json
 from typing import Callable, List, Tuple
 
@@ -139,7 +138,7 @@ class GAM:
             Lambda=bp.utils.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data, y, repeat=1000, verbose=False, **kwargs) -> GAM:
+    def fit(self, input_data, y, repeat=1000, verbose=False, **kwargs) -> "GAM":
         """Update BayesPy nodes and construct a GAM predictor
 
         Parameters
@@ -326,7 +325,7 @@ class GAM:
         else:
             raise ValueError(f"Unknown file type: {file_ext}")
 
-    def load(self, filepath: str, **kwargs) -> GAM:
+    def load(self, filepath: str, **kwargs) -> "GAM":
         """Load model from a file on disk
 
         """

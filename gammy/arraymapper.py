@@ -9,7 +9,6 @@
 
 """
 
-from __future__ import annotations
 from typing import Callable
 
 from gammy.utils import compose
@@ -47,7 +46,7 @@ class ArrayMapper():
         """
         return self.function.__call__(*args, **kwargs)
 
-    def __getitem__(self, key: int) -> ArrayMapper:
+    def __getitem__(self, key: int) -> "ArrayMapper":
         """Access index as in a NumPy Array
 
         """
@@ -55,7 +54,7 @@ class ArrayMapper():
             lambda t: t.__getitem__(key)
         )
 
-    def __add__(self, other) -> ArrayMapper:
+    def __add__(self, other) -> "ArrayMapper":
         """Addition of arraymappers
 
         Parameters
@@ -67,7 +66,7 @@ class ArrayMapper():
             lambda t: self.function(t).__add__(other.function(t))
         )
 
-    def __sub__(self, other) -> ArrayMapper:
+    def __sub__(self, other) -> "ArrayMapper":
         """Subtraction of arraymappers
 
         Parameters
@@ -79,7 +78,7 @@ class ArrayMapper():
             lambda t: self.function(t).__sub__(other.function(t))
         )
 
-    def __mul__(self, other) -> ArrayMapper:
+    def __mul__(self, other) -> "ArrayMapper":
         """Multiplication of arraymappers
 
         Parameters
@@ -91,7 +90,7 @@ class ArrayMapper():
             lambda t: self.function(t).__mul__(other.function(t))
         )
 
-    def __truediv__(self, other) -> ArrayMapper:
+    def __truediv__(self, other) -> "ArrayMapper":
         """Division of arraymappers
 
         Parameters
@@ -103,7 +102,7 @@ class ArrayMapper():
             lambda t: self.function(t).__truediv__(other.function(t))
         )
 
-    def __pow__(self, n: float) -> ArrayMapper:
+    def __pow__(self, n: float) -> "ArrayMapper":
         """Raise an arraymapper to a power
 
         """
@@ -111,7 +110,7 @@ class ArrayMapper():
             lambda t: self.function(t).__pow__(n)
         )
 
-    def __neg__(self) -> ArrayMapper:
+    def __neg__(self) -> "ArrayMapper":
         """Negation operation
 
         """
@@ -119,7 +118,7 @@ class ArrayMapper():
             lambda t: self.function(t).__neg__()
         )
 
-    def lift(self, f) -> ArrayMapper:
+    def lift(self, f) -> "ArrayMapper":
         """Lift the contained function with a given function
 
         Parameters
@@ -131,7 +130,7 @@ class ArrayMapper():
             compose(f, self.function)
         )
 
-    def ravel(self) -> ArrayMapper:
+    def ravel(self) -> "ArrayMapper":
         """Imitates the behavior of NumPy ravel method
 
         """
@@ -139,7 +138,7 @@ class ArrayMapper():
             lambda t: self.function(t).ravel()
         )
 
-    def reshape(self, *args, **kwargs) -> ArrayMapper:
+    def reshape(self, *args, **kwargs) -> "ArrayMapper":
         """Numpy reshape
 
         """

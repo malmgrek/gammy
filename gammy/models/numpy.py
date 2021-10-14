@@ -2,7 +2,6 @@
 
 """
 
-from __future__ import annotations
 import json
 from typing import List, Tuple
 
@@ -157,7 +156,7 @@ class GAM:
             Lambda=np.linalg.inv(covs[i])
         )
 
-    def fit(self, input_data, y) -> GAM:
+    def fit(self, input_data, y) -> "GAM":
         """Estimate model parameters
 
         Parameters
@@ -356,7 +355,7 @@ class GAM:
             raise ValueError(f"Unknown file type: {file_ext}")
         return
 
-    def load(self, filepath: str) -> GAM:
+    def load(self, filepath: str) -> "GAM":
         """Load model from a file on disk
 
         """

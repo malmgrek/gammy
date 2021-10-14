@@ -3,7 +3,6 @@
 """
 
 
-from __future__ import annotations
 from typing import Callable, List, Tuple, Iterable
 
 import numpy as np
@@ -48,7 +47,7 @@ class Formula():
         return
 
 
-    def __add__(self, other) -> Formula:
+    def __add__(self, other) -> "Formula":
         """Addition of formulae
 
         Parameters
@@ -61,7 +60,7 @@ class Formula():
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
-    def __mul__(self, input_map) -> Formula:
+    def __mul__(self, input_map) -> "Formula":
         """Multiplication
 
         Parameters
@@ -84,7 +83,7 @@ class Formula():
         """
         return len(self.bases)
 
-    def __call__(self, *input_maps) -> Formula:
+    def __call__(self, *input_maps) -> "Formula":
         """Make the object callable
 
         Parameters
