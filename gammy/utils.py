@@ -262,7 +262,7 @@ def ornstein_uhlenbeck(x1, x2, corrlen=1.0, sigma=1.0) -> np.ndarray:
     )
 
 
-def white_noise(n_dims: int, sigma=1.0) -> np.ndarray:
+def white_noise(n_dims: int, sigma=1.0, **unused) -> np.ndarray:
     """White noise kernel function
 
     """
