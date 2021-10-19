@@ -3,8 +3,8 @@ import pytest
 import numpy as np
 from numpy import testing
 
-from gammy import ArrayMapper
 from gammy import utils
+from gammy.arraymapper import ArrayMapper, lift
 
 
 np.random.seed(42)
@@ -46,7 +46,7 @@ def test_lift():
 
     x = ArrayMapper(function)
     testing.assert_almost_equal(
-        x.lift(f)(data),
+        lift(f)(x)(data),
         utils.compose(f, function)(data),
         decimal=8
     )

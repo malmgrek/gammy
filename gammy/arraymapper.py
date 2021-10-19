@@ -9,6 +9,7 @@
 
 """
 
+from functools import wraps
 from typing import Callable
 
 from gammy.utils import compose
@@ -118,18 +119,6 @@ class ArrayMapper():
             lambda t: self.function(t).__neg__()
         )
 
-    def lift(self, f) -> "ArrayMapper":
-        """Lift the contained function with a given function
-
-        Parameters
-        ----------
-        f : Callable
-
-        """
-        return ArrayMapper(
-            compose(f, self.function)
-        )
-
     def ravel(self) -> "ArrayMapper":
         """Imitates the behavior of NumPy ravel method
 
@@ -145,6 +134,20 @@ class ArrayMapper():
         return ArrayMapper(
             lambda t: self.function(t).reshape(*args, **kwargs)
         )
+
+
+def lift(f):
+    """Lift a function
+
+    lift :: a -> b -> ArrayMapper(a) -> ArrayMapper(b) -> ArrayMapper(b)
+
+    """
+
+    @wraps(f)
+    def lifted(mapper):
+        return ArrayMapper(compose(f, mapper.function))
+
+    return lifted
 
 
 x = ArrayMapper()
