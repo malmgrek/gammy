@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.4.1
+
+### Fix
+- White noise GP
+- Remove future annotations which break Py < 3.7 compatibility
+
+
 ## 0.4.0
 
 ### Add

@@ -18,9 +18,7 @@ def design_matrix(input_data: np.ndarray, basis: List[Callable]):
     """Assemble the design matrix for basis function regression
 
     """
-    return np.hstack([
-        f(input_data).reshape(-1, 1) for f in basis
-    ])
+    return np.hstack([f(input_data).reshape(-1, 1) for f in basis])
 
 
 class Formula():
