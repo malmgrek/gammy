@@ -11,7 +11,7 @@ from scipy import interpolate
 
 from gammy import utils
 from gammy.arraymapper import ArrayMapper
-from gammy.utils import listmap, rlift_basis
+from gammy.utils import listmap, rlift
 
 
 def design_matrix(input_data: np.ndarray, basis: List[Callable]):
@@ -21,12 +21,12 @@ def design_matrix(input_data: np.ndarray, basis: List[Callable]):
     return np.hstack([f(input_data).reshape(-1, 1) for f in basis])
 
 
-class Formula():
+class Formula:
     """Basis manipulation and design matrix creator
 
     Parameters
     ----------
-    bases : List[Callable]
+    terms : List[Callable]
         Each element is a list of basis functions and corresponds to a term
         in the additive model formula
     prior : Tuple[np.ndarray]
@@ -34,9 +34,9 @@ class Formula():
 
     """
 
-    def __init__(self, bases, prior):
+    def __init__(self, terms, prior):
 
-        self.bases = bases
+        self.terms = terms
         """List of basis functions """
 
         self.prior = prior
@@ -54,7 +54,7 @@ class Formula():
 
         """
         return Formula(
-            bases=self.bases + other.bases,
+            terms=self.terms + other.terms,
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
@@ -67,10 +67,10 @@ class Formula():
 
         """
         return Formula(
-            bases=[
+            terms=[
                 listmap(
                     lambda f: lambda t: f(t) * input_map(t)
-                )(basis) for basis in self.bases
+                )(basis) for basis in self.terms
             ],
             prior=self.prior
         )
@@ -79,7 +79,7 @@ class Formula():
         """Number of terms in the formula
 
         """
-        return len(self.bases)
+        return len(self.terms)
 
     def __call__(self, *input_maps) -> "Formula":
         """Make the object callable
@@ -91,8 +91,9 @@ class Formula():
         """
         # TODO: Transform basis
         return Formula(
-            bases=[
-                rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)
+            terms=[
+                listmap(rlift(input_map))(basis)
+                for (basis, input_map) in zip(self.terms, input_maps)
             ],
             prior=self.prior
         )
@@ -105,7 +106,7 @@ class Formula():
         input_data : np.ndarray
 
         """
-        return design_matrix(input_data, self.bases[i])
+        return design_matrix(input_data, self.terms[i])
 
     def build_Xs(self, input_data) -> np.ndarray:
         """Build a list of sub design matrices
@@ -116,7 +117,7 @@ class Formula():
 
         """
         return [
-            self.build_Xi(input_data, i) for i, _ in enumerate(self.bases)
+            self.build_Xi(input_data, i) for i, _ in enumerate(self.terms)
         ]
 
     def build_X(self, input_data) -> np.ndarray:
@@ -136,20 +137,20 @@ class Formula():
 
 
 def Flatten(formula, prior=None) -> Formula:
-    """Flatten the bases of a given formula
+    """Flatten the terms of a given formula
 
     Parameters
     ----------
     formula : Formula
-        Flattened formula with a nested list of bases
+        Flattened formula with a nested list of terms
     prior : Tuple[np.ndarray]
         Prior of the final formula
 
-    In terms of bases: ``[[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]``
+    In terms of terms: ``[[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]``
 
     """
     return Formula(
-        bases=[utils.flatten(formula.bases)],
+        terms=[utils.flatten(formula.terms)],
         prior=formula.prior if prior is None else prior
     )
 
@@ -175,13 +176,13 @@ def Sum(formulae, prior=None) -> Formula:
     """
     priors = [formula.prior for formula in formulae]
     return Formula(
-        bases=utils.flatten([formula.bases for formula in formulae]),
+        terms=utils.flatten([formula.terms for formula in formulae]),
         prior=utils.concat_gaussians(priors) if prior is None else prior
     )
 
 
 def Kron(a, b) -> Formula:
-    """Tensor product of two Formula bases
+    """Tensor product of two Formula terms
 
     Parameters
     ----------
@@ -197,24 +198,24 @@ def Kron(a, b) -> Formula:
     eigenvalue.
 
     """
-    # NOTE: This is somewhat experimental. The bases must correspond to
+    # NOTE: This is somewhat experimental. The terms must correspond to
     #       "zero-mean" r.v.. Then Kronecker product of covariances
     #       corresponds to the product r.v. of independent r.v.'s.
     #       Check the formula of variance of product of independent r.v.'s.
 
     # In the same order as in a Kronecker product
     gen = (
-        (f, g) for f in utils.flatten(a.bases) for g in utils.flatten(b.bases)
+        (f, g) for f in utils.flatten(a.terms) for g in utils.flatten(b.terms)
     )
 
-    # Outer product of bases
+    # Outer product of terms
     basis = listmap(
         lambda funcs: lambda t: funcs[0](t) * funcs[1](t)
     )(gen)
 
     # Kronecker product of prior means and covariances
     return Formula(
-        bases=[basis],
+        terms=[basis],
         prior=(
             np.kron(a.prior[0], b.prior[0]),
             np.kron(a.prior[1], b.prior[1])
@@ -263,7 +264,7 @@ def create_from_kernel1d(kernel: Callable) -> Callable:
         )
 
         return Formula(
-            bases=[mu_basis + basis],
+            terms=[mu_basis + basis],
             prior=prior if mu_hyper is None else utils.concat_gaussians(
                 [mu_hyper, prior]
             )
@@ -448,15 +449,7 @@ def Scalar(prior: Tuple[np.ndarray]=(0, 1e-6)) -> Formula:
 
     """
     basis = [lambda t: np.ones(len(t))]
-    return Formula(bases=[basis], prior=prior)
-
-
-def Line(prior: Tuple[np.ndarray]=(0, 1e-6)) -> Formula:
-    """Straight line (through origin) formula
-
-    """
-    basis = [lambda t: t]
-    return Formula(bases=[basis], prior=prior)
+    return Formula(terms=[basis], prior=prior)
 
 
 def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
@@ -464,7 +457,16 @@ def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
 
     """
     basis = [function]
-    return Formula(bases=[basis], prior=prior)
+    return Formula(terms=[basis], prior=prior)
+
+
+def Polynomial(order):
+
+    def monomial(p):
+        return lambda t: t ** p
+
+    basis = [monomial(n) for n in range(order)]
+    return Formula(terms=[basis], prior=prior)
 
 
 def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
@@ -476,7 +478,7 @@ def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return Formula(bases=[relus], prior=prior)
+    return Formula(terms=[relus], prior=prior)
 
 
 def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
@@ -488,7 +490,7 @@ def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
         (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
         if not prior else prior
     )
-    return Formula(bases=[relus], prior=prior)
+    return Formula(terms=[relus], prior=prior)
 
 
 def TanH() -> Formula:
@@ -567,7 +569,7 @@ def BSpline1d(
         if prior is None else prior
     )
     return Formula(
-        bases=[mu_basis + basis],
+        terms=[mu_basis + basis],
         prior=prior if mu_hyper is None else utils.concat_gaussians(
             [mu_hyper, prior]
         )

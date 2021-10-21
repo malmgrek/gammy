@@ -102,7 +102,7 @@ def flatten(x: list) -> list:
     """Flatten a list of lists once
 
     """
-    return functools.reduce(lambda cum, this: cum + this, x, [])
+    return sum(x, [])
 
 
 def unflatten(x: list, y: list) -> list:
@@ -325,20 +325,6 @@ def interp_arrays1d(v, grid, **kwargs) -> List:
         interpolate.interp1d(grid, v[:, i], **kwargs)
         for i in range(v.shape[1])
     ]
-
-
-def rlift_basis(basis, func) -> List[Callable]:
-    """Map a right lift to each function of a basis
-
-    Parameters
-    ----------
-    basis : List[Callable]
-        List of basis functions
-    func : Callable
-        Lifted function
-
-    """
-    return listmap(rlift(func))(basis)
 
 
 #

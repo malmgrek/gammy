@@ -80,10 +80,10 @@ def validation_plot(
     ), (
         "Given grid limits do not match with the shape of input data."
     )
-    assert len(model.formula.bases) == len(input_maps), (
+    assert len(model.formula.terms) == len(input_maps), (
         "Must give exactly one input per model term."
     )
-    assert len(model.formula.bases) == len(titles), (
+    assert len(model.formula.terms) == len(titles), (
         "Must give exactly one title per model term."
     )
 
@@ -229,7 +229,7 @@ def basis_plot(
     )
 
     # Plot stuff
-    for i, (basis, input_map) in enumerate(zip(formula.bases, input_maps)):
+    for i, (basis, input_map) in enumerate(zip(formula.terms, input_maps)):
         ax = fig.add_subplot(gs[i])
         x = input_map(grid)
         for f in basis:

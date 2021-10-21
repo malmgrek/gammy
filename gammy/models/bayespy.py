@@ -25,7 +25,7 @@ class GAM:
     Parameters
     ----------
     formula : gammy.formulae.Formula
-        Formula object containing the bases and prior
+        Formula object containing the terms and prior
     theta : bp.nodes.Gaussian
         Model parameters vector
     tau : bp.nodes.Gamma
@@ -76,7 +76,7 @@ class GAM:
         """Number of model parameters
 
         """
-        return len(utils.flatten(self.formula.bases))
+        return len(utils.flatten(self.formula.terms))
 
     @property
     def theta_marginals(self) -> List[bp.nodes.Gaussian]:
@@ -85,10 +85,10 @@ class GAM:
         """
         # TODO: Test that the marginal distributions are correct
         u = self.theta.get_moments()
-        mus = utils.unflatten(u[0], self.formula.bases)
+        mus = utils.unflatten(u[0], self.formula.terms)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(u),
-            self.formula.bases
+            self.formula.terms
         )
         return [
             bp.nodes.Gaussian(mu=mu, Lambda=bp.utils.linalg.inv(cov))
@@ -105,7 +105,7 @@ class GAM:
         return utils.listmap(np.array)(
             utils.unflatten(
                 self.theta.get_moments()[0],
-                self.formula.bases
+                self.formula.terms
             )
         )
 
@@ -128,10 +128,10 @@ class GAM:
 
         """
         u = self.theta.get_moments()
-        mus = utils.unflatten(u[0], self.formula.bases)
+        mus = utils.unflatten(u[0], self.formula.terms)
         covs = utils.extract_diag_blocks(
             utils.solve_covariance(u),
-            self.formula.bases
+            self.formula.terms
         )
         return bp.nodes.Gaussian(
             mu=mus[i],

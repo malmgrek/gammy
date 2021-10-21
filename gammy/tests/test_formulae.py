@@ -72,7 +72,7 @@ def test_design_matrix(xs, expected):
     assert_array_equal(
         utils.listmap(
             lambda b: gammy.design_matrix(input_data, b)
-        )(formula.bases),
+        )(formula.terms),
         expected
     )
     return
@@ -156,15 +156,15 @@ def test_formula(xs, ys, expected):
 
 def test_flatten():
     formula = line()[0] + sine()[0] + multinomial()[0]
-    assert all([len(bs) == 1 for bs in formula.bases])
-    [bs] = gammy.formulae.Flatten(formula).bases
+    assert all([len(bs) == 1 for bs in formula.terms])
+    [bs] = gammy.formulae.Flatten(formula).terms
     assert len(bs) == 4
     return
 
 
 def test_sum():
     formula = gammy.formulae.Sum([line()[0], sine()[0], multinomial()[0]])
-    assert all([len(b) == 1 for b in formula.bases])
+    assert all([len(b) == 1 for b in formula.terms])
     assert_equal(
         formula.prior,
         (
@@ -185,7 +185,7 @@ def test_kron():
     a = gammy.formulae.Flatten(line()[0] + sine()[0])
     b = gammy.formulae.Flatten(line()[0] + square()[0])
     formula = gammy.formulae.Kron(a, b)
-    [bs] = formula.bases
+    [bs] = formula.terms
     assert len(bs) == 4
     assert_almost_equal(
         formula.build_X(input_data),
