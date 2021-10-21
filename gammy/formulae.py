@@ -428,12 +428,13 @@ def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
     return Formula(terms=[basis], prior=prior)
 
 
-def Polynomial(order):
+def Polynomial(order, prior=None):
 
     def monomial(p):
         return lambda t: t ** p
 
-    basis = [monomial(n) for n in range(order)]
+    basis = [monomial(n) for n in range(order + 1)]
+    prior = (np.zeros(order + 1), 1e-6 * np.identity(order + 1))
     return Formula(terms=[basis], prior=prior)
 
 
@@ -533,7 +534,7 @@ def BSpline1d(
 
     # Default prior is white noise
     prior = (
-        (np.zeros(len(basis)), np.identity(len(basis)))
+        (np.zeros(len(basis)), 1e-6 * np.identity(len(basis)))
         if prior is None else prior
     )
     return Formula(

@@ -49,56 +49,79 @@ pip install gammy
 ```
 
 
-## Quick glance
+## Quick overview
 
-Let's try to estimate the MATLAB function from pseudo-random samples that are
-corrupted with pseudo-random noise. 
+Import the bare minimum dependencies for later use:
 
 ``` python
-import matplotlib.pyplot
+import matplotlib.pyplot as plt
 import numpy as np
 
 import gammy
 from gammy.arraymapper import x
+```
 
+### Simple example: Polynomial regression
 
+A typical simple but non-trivial modeling task is to estimate an unknown function from noisy data.
+
+``` python
+# Simulate data
+input_data = np.linspace(0.01, 1, 50)
+y = np.sin(1 / input_data) * input_data + 0.1 * np.random.randn(50)
+
+# Define and fit model
+model = gammy.bayespy.GAM(gammy.Polynomial(order=6)).fit(input_data, y)
+```
+
+Automatically estimated noise level:
+
+``` python
+# Variance of additive zero-mean normally distributed noise is estimated
+np.sqrt(model.inv_mean_tau)
+# 0.10129...
+```
+
+Plot posterior predictive mean and 2σ-confidence interval:
+
+``` python
+# Posterior predictive mean and variance
+(μ, σ) = model.predict_variance(input_data)
+
+plt.scatter(input_data, y, color="r")
+plt.plot(input_data, model.predict(input_data), color="k")
+plt.fill_between(input_data, μ - 2 * np.sqrt(σ), μ + 2 * np.sqrt(σ), alpha=0.1)
+```
+
+![Plot](./doc/source/unknown-function.png "unknown function")
+
+### Estimating higher dimensional manifolds
+
+In this example we try estimating the bivariate "MATLAB function" using
+a Gaussian process model with Kronecker structure.
+
+``` python
 # Simulate data
 n = 100
-input_data = 6 * np.vstack((
-    np.random.rand(n),
-    np.random.rand(n)
-)).T - 3
+input_data = 6 * np.vstack((np.random.rand(n), np.random.rand(n))).T - 3
 y = (
     gammy.peaks(input_data[:, 0], input_data[:, 1]) + 4 
     + 0.3 * np.random.randn(n)
 )
 
-# Fit a model
-gp = gammy.ExpSquared1d(
+# Define and fit the model
+gaussian_process = gammy.ExpSquared1d(
     grid=np.arange(-3, 3, 0.1),
     corrlen=0.5,
     sigma=4.0,
     energy=0.9
 )
-model = gammy.models.bayespy.GAM(
-    # Define a bivariate Gaussian Process prior with a
-    # Kronecker structure
-    gammy.Kron(gp(x[:, 0]), gp(x[:, 1])) + gammy.Scalar()
-).fit(input_data, y)
-
-err = model.predict(input_data) - y  # Prediction error
-err.mean()
-# 1.00842e-08
-err.std()
-# 0.739
-
-# Noise std estimated by the model
-np.sqrt(model.inv_mean_tau)
-# 0.913
-
+bias = gammy.Scalar()
+formula = gammy.Kron(gaussian_process(x[:, 0]), gaussian_process(x[:, 1])) + bias
+model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 ```
 
-Plot generated with `gammy.plot.validation_plot`:
+The above Kronecker transformation generalizes to arbitrary dimension. The below plot is generated with `gammy.plot.validation_plot`:
 
 ![Validation plots](./doc/source/quick.png "Validation")
 `
