@@ -12,7 +12,7 @@ import numpy as np
 
 import gammy
 from gammy import utils
-from gammy.formulae import Formula
+from gammy.formulae import design_matrix, Formula
 
 
 def create_gaussian_theta(formula: Formula):
@@ -76,7 +76,7 @@ class GAM:
         """Number of model parameters
 
         """
-        return len(utils.flatten(self.formula.terms))
+        return len(sum(self.formula.terms, []))
 
     @property
     def theta_marginals(self) -> List[bp.nodes.Gaussian]:
@@ -158,7 +158,7 @@ class GAM:
         ``initialize_from_prior()`` of BayesPy nodes.
 
         """
-        X = self.formula.build_X(input_data)
+        X = design_matrix(input_data, sum(self.formula.terms, []))
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
         Y = bp.nodes.GaussianARD(F, self.tau)
         Y.observe(y)
@@ -174,7 +174,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = self.formula.build_X(input_data)
+        X = design_matrix(input_data, sum(self.formula.terms, []))
         return np.dot(X, np.hstack(self.mean_theta))
 
     def predict_variance(self, input_data) -> Tuple[np.ndarray]:
@@ -185,7 +185,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = self.formula.build_X(input_data)
+        X = design_matrix(input_data, sum(self.formula.terms, []))
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
         u = F.get_moments()
         return (u[0], np.diag(utils.solve_covariance(u)) + self.inv_mean_tau)
@@ -198,7 +198,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = self.formula.build_X(input_data)
+        X = design_matrix(input_data, sum(self.formula.terms, []))
         F = bp.nodes.SumMultiply("i,i", self.theta, X)
         # Ensuring correct moments
         #
@@ -218,7 +218,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        Xs = self.formula.build_Xs(input_data)
+        Xs = [design_matrix(input_data, basis) for basis in self.formula.terms]
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
     def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
@@ -233,7 +233,7 @@ class GAM:
         know how it is splitted among the model terms.
 
         """
-        Xs = self.formula.build_Xs(input_data)
+        Xs = [design_matrix(input_data, basis) for basis in self.formula.terms]
         Fs = [
             bp.nodes.SumMultiply("i,i", theta, X)
             for (X, theta) in zip(Xs, self.theta_marginals)
@@ -250,7 +250,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = self.formula.build_Xi(input_data, i=i)
+        X = design_matrix(input_data, self.formula.terms[i])
         return np.dot(X, self.mean_theta[i])
 
     def predict_variance_marginal(
@@ -266,7 +266,7 @@ class GAM:
 
         """
         # Not refactored with predict_marginal for perf reasons
-        X = self.formula.build_Xi(input_data, i=i)
+        X = design_matrix(input_data, self.formula.terms[i])
         F = bp.nodes.SumMultiply("i,i", self.theta_marginal(i), X)
         mu = np.dot(X, self.mean_theta[i])
         sigma = np.diag(utils.solve_covariance(F.get_moments()))

@@ -98,13 +98,6 @@ tuplefilter.__doc__ = """Filter for tuples with partial evaluation
 #
 
 
-def flatten(x: list) -> list:
-    """Flatten a list of lists once
-
-    """
-    return sum(x, [])
-
-
 def unflatten(x: list, y: list) -> list:
     """Unflatten according to a reference
 

@@ -400,6 +400,7 @@ covariance kernel functions.
 
    import gammy
    from gammy.arraymapper import x
+   from gammy.formulae import design_matrix
 
 
    def kernel(x1, x2):
@@ -433,8 +434,8 @@ covariance kernel functions.
    #
 
    ax = plt.figure().gca()
-   ax.plot(grid, sample(a.build_X(grid)), label="Custom")
-   ax.plot(grid, sample(b.build_X(grid)), label="Exp. squared")
+   ax.plot(grid, sample(design_matrix(grid, sum(a.terms, []))), label="Custom")
+   ax.plot(grid, sample(design_matrix(grid, sum(b.terms, []))), label="Custom")
    ax.legend()
 
    plt.show()

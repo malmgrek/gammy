@@ -98,38 +98,6 @@ class Formula:
             prior=self.prior
         )
 
-    def build_Xi(self, input_data, i: int) -> np.ndarray:
-        """Build one sub design matrix corresponding to a basis
-
-        Parameters
-        ----------
-        input_data : np.ndarray
-
-        """
-        return design_matrix(input_data, self.terms[i])
-
-    def build_Xs(self, input_data) -> np.ndarray:
-        """Build a list of sub design matrices
-
-        Parameters
-        ----------
-        input_data : np.ndarray
-
-        """
-        return [
-            self.build_Xi(input_data, i) for i, _ in enumerate(self.terms)
-        ]
-
-    def build_X(self, input_data) -> np.ndarray:
-        """Build whole design matrix
-
-        Parameters
-        ----------
-        input_data : np.ndarray
-
-        """
-        return np.hstack(self.build_Xs(input_data))
-
 
 #
 # Operations between formulae
@@ -150,7 +118,7 @@ def Flatten(formula, prior=None) -> Formula:
 
     """
     return Formula(
-        terms=[utils.flatten(formula.terms)],
+        terms=[sum(formula.terms, [])],
         prior=formula.prior if prior is None else prior
     )
 
@@ -176,7 +144,7 @@ def Sum(formulae, prior=None) -> Formula:
     """
     priors = [formula.prior for formula in formulae]
     return Formula(
-        terms=utils.flatten([formula.terms for formula in formulae]),
+        terms=sum([formula.terms for formula in formulae], []),
         prior=utils.concat_gaussians(priors) if prior is None else prior
     )
 
@@ -205,7 +173,7 @@ def Kron(a, b) -> Formula:
 
     # In the same order as in a Kronecker product
     gen = (
-        (f, g) for f in utils.flatten(a.terms) for g in utils.flatten(b.terms)
+        (f, g) for f in sum(a.terms, []) for g in sum(b.terms, [])
     )
 
     # Outer product of terms
