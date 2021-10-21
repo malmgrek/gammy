@@ -378,3 +378,13 @@ class GAM:
         else:
             raise ValueError(f"Unknown file type: {file_ext}")
         return GAM(formula=self.formula, theta=theta, tau=tau)
+
+
+def LinearModel(n_features, prior=None, **kwargs):
+    prior = (
+        (np.zeros(n_features), 1e-6 * np.identity(n_features)) if prior is None
+        else prior
+    )
+    basis = [(lambda t: t) for i in range(n_features)]
+    formula = Formula(terms=[basis], prior=prior)
+    return GAM(formula, **kwargs)
