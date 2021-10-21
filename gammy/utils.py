@@ -50,13 +50,6 @@ def lift(func: Callable) -> Callable:
     return lambda f: compose2(func, f)
 
 
-def rlift(func: Callable) -> Callable:
-    """Lift from right
-
-    """
-    return lambda f: compose2(f, func)
-
-
 def compose(*funcs: Callable) -> Callable:
     """Function composition
 
@@ -325,20 +318,6 @@ def interp_arrays1d(v, grid, **kwargs) -> List:
         interpolate.interp1d(grid, v[:, i], **kwargs)
         for i in range(v.shape[1])
     ]
-
-
-def rlift_basis(basis, func) -> List[Callable]:
-    """Map a right lift to each function of a basis
-
-    Parameters
-    ----------
-    basis : List[Callable]
-        List of basis functions
-    func : Callable
-        Lifted function
-
-    """
-    return listmap(rlift(func))(basis)
 
 
 #

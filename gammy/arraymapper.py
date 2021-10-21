@@ -15,7 +15,7 @@ from typing import Callable
 from gammy.utils import compose
 
 
-class ArrayMapper():
+class ArrayMapper:
     """Callable input mapping object that obey arithmetic operations
 
     When working with basis function regression, when building the

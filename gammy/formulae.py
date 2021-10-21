@@ -11,33 +11,66 @@ from scipy import interpolate
 
 from gammy import utils
 from gammy.arraymapper import ArrayMapper
-from gammy.utils import listmap, rlift_basis
+from gammy.utils import listmap
 
 
-def design_matrix(input_data: np.ndarray, basis: List[Callable]):
-    """Assemble the design matrix for basis function regression
+class Term:
+
+    def __init__(self, design_matrix: Callable):
+        self.design_matrix = design_matrix
+
+    def __call__(self, input_map):
+        return Term(
+            lambda input_data: self.design_matrix(input_map(input_data))
+        )
+
+    def __add__(self, other) -> "Term":
+        return Term(
+            lambda input_data: np.hstack([
+                self.design_matrix(input_data),
+                other.design_matrix(input_data)
+            ])
+        )
+
+    def __mul__(self, input_map) -> "Term":
+        return Term(
+            lambda input_data: (
+                self.design_matrix(input_data) * input_map(input_data)
+            )
+        )
+
+
+def Span(basis: List[Callable]):
+    """Term from a list of functions, i.e., basis
 
     """
-    return np.hstack([f(input_data).reshape(-1, 1) for f in basis])
+
+    def design_matrix(input_data):
+        """Assemble the design matrix for basis function regression
+
+        """
+        return np.hstack([f(input_data).reshape(-1, 1) for f in basis])
+
+    return Term(design_matrix)
 
 
-class Formula():
-    """Basis manipulation and design matrix creator
+class Formula:
+    """Linear system and prior assembler
 
     Parameters
     ----------
-    bases : List[Callable]
-        Each element is a list of basis functions and corresponds to a term
-        in the additive model formula
+    terms : List[Term]
+        Each list element corresponds to a term
     prior : Tuple[np.ndarray]
         Mean and precision matrix of the Gaussian prior distribution
+        NOTE / TODO: Prior shape = terms shape
 
     """
 
-    def __init__(self, bases, prior):
+    def __init__(self, terms, prior):
 
-        self.bases = bases
-        """List of basis functions """
+        self.terms = terms
+        """List of Term objects"""
 
         self.prior = prior
         """Prior mean and precision"""
@@ -54,7 +87,7 @@ class Formula():
 
         """
         return Formula(
-            bases=self.bases + other.bases,
+            terms=self.terms + other.terms,
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
@@ -67,22 +100,22 @@ class Formula():
 
         """
         return Formula(
-            bases=[
-                listmap(
-                    lambda f: lambda t: f(t) * input_map(t)
-                )(basis) for basis in self.bases
-            ],
-            prior=self.prior
+            terms=[term * input_map for term in self.terms]
         )
 
     def __len__(self) -> int:
         """Number of terms in the formula
 
         """
-        return len(self.bases)
+        return len(self.terms)
 
     def __call__(self, *input_maps) -> "Formula":
         """Make the object callable
+
+        The nicety about this method is that we can compose formulae with
+        input maps, e.g.
+
+            foobar = foo(x[:, 0] ** 2)
 
         Parameters
         ----------
@@ -91,47 +124,27 @@ class Formula():
         """
         # TODO: Transform basis
         return Formula(
-            bases=[
-                rlift_basis(f, m) for (f, m) in zip(self.bases, input_maps)
+            terms=[
+                term(input_map) for (term, input_map) in zip(terms, input_maps)
             ],
             prior=self.prior
         )
 
-    def build_Xi(self, input_data, i: int) -> np.ndarray:
-        """Build one sub design matrix corresponding to a basis
+    def design_matrix(self, input_data) -> np.ndarray:
+        """Assemble the full design matrix
 
         Parameters
         ----------
         input_data : np.ndarray
 
         """
-        return design_matrix(input_data, self.bases[i])
-
-    def build_Xs(self, input_data) -> np.ndarray:
-        """Build a list of sub design matrices
-
-        Parameters
-        ----------
-        input_data : np.ndarray
-
-        """
-        return [
-            self.build_Xi(input_data, i) for i, _ in enumerate(self.bases)
-        ]
-
-    def build_X(self, input_data) -> np.ndarray:
-        """Build whole design matrix
-
-        Parameters
-        ----------
-        input_data : np.ndarray
-
-        """
-        return np.hstack(self.build_Xs(input_data))
+        return np.hstack([
+            term.design_matrix(input_data) for term in self.terms
+        ])
 
 
 #
-# Operations between formulae
+# Operations for formulae
 #
 
 
@@ -141,7 +154,7 @@ def Flatten(formula, prior=None) -> Formula:
     Parameters
     ----------
     formula : Formula
-        Flattened formula with a nested list of bases
+        Formula to be flattened
     prior : Tuple[np.ndarray]
         Prior of the final formula
 
@@ -149,13 +162,15 @@ def Flatten(formula, prior=None) -> Formula:
 
     """
     return Formula(
-        bases=[utils.flatten(formula.bases)],
+        terms=sum(formula.terms),  # FIXME: Initial value missing
         prior=formula.prior if prior is None else prior
     )
 
 
 def Sum(formulae, prior=None) -> Formula:
     """Sum (concatenate) many formulae
+
+    Same as the addition method for formulae.
 
     Parameters
     ----------
