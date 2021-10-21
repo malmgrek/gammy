@@ -432,13 +432,13 @@ def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
     return Formula(terms=[basis], prior=prior)
 
 
-def Polynomial(order, prior=None):
+def Polynomial(degree, prior=None):
 
     def monomial(p):
         return lambda t: t ** p
 
-    basis = [monomial(n) for n in range(order + 1)]
-    prior = (np.zeros(order + 1), 1e-6 * np.identity(order + 1))
+    basis = [monomial(n) for n in range(degree + 1)]
+    prior = (np.zeros(degree + 1), 1e-6 * np.identity(degree + 1))
     return Formula(terms=[basis], prior=prior)
 
 
