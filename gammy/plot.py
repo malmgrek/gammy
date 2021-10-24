@@ -13,6 +13,7 @@ except ImportError:
         "Problem with importing Axes3D from mpl_toolkits.mplot3d. Skipping."
     )
 import matplotlib.pyplot as plt
+from matplotlib.colors import SymLogNorm
 import numpy as np
 
 import gammy
@@ -198,11 +199,25 @@ def gaussian2d_density_plot(model: gammy.bayespy.GAM, i, j):
     raise NotImplementedError
 
 
-def covariance_plot(model):
+def covariance_plot(model, ax=None, linthresh=0.1, **kwargs):
     """Covariance matrix
 
     """
-    raise NotImplementedError
+
+    ax = plt.figure().gca() if ax is None else ax
+
+    C = model.covariance_theta
+    im = ax.imshow(
+        C,
+        norm=SymLogNorm(
+            vmin=np.min(C),
+            vmax=np.max(C),
+            linthresh=linthresh
+        ),
+        **kwargs
+    )
+
+    return (ax, im)
 
 
 def basis_plot(
