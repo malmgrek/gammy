@@ -74,22 +74,14 @@
 <div class="viewcode-block" id="Formula.__add__"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Formula.html#gammy.formulae.Formula.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Formula&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Addition of formulae</span>
 
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        other : Formula</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span>
             <span class="n">terms</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">terms</span> <span class="o">+</span> <span class="n">other</span><span class="o">.</span><span class="n">terms</span><span class="p">,</span>
             <span class="n">prior</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">concat_gaussians</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">prior</span><span class="p">])</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="Formula.__mul__"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Formula.html#gammy.formulae.Formula.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_map</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Formula&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Formula.__mul__"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Formula.html#gammy.formulae.Formula.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_map</span><span class="p">:</span> <span class="n">ArrayMapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Formula&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Multiplication</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_map : ArrayMapper</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">Formula</span><span class="p">(</span>
@@ -107,12 +99,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">terms</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="Formula.__call__"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Formula.html#gammy.formulae.Formula.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">input_maps</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Formula&quot;</span><span class="p">:</span>
+<div class="viewcode-block" id="Formula.__call__"><a class="viewcode-back" href="../../_autosummary/gammy.formulae.Formula.html#gammy.formulae.Formula.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">input_maps</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">ArrayMapper</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;Formula&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make the object callable</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        input_maps : Iterable[ArrayMapper]</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: Transform basis</span>
