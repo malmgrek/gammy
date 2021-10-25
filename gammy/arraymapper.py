@@ -123,9 +123,23 @@ class ArrayMapper:
 def lift(f):
     """Lift a function
 
-    .. code-block:: text
+    Examples
+    --------
 
-        lift :: a -> b -> ArrayMapper(a) -> ArrayMapper(b) -> ArrayMapper(b)
+    The main use case is to transform a numeric function to act on
+    array mappers.
+
+    .. code-block:: python
+
+        import numpy as np
+
+        from gammy.arraymapper import x, lift
+        from gammy.formulae import Scalar
+
+
+        sin = lift(np.sin)
+        cos = lift(np.cos)
+        formula = Scalar() * sin(x) + Scalar() * cos(x)
 
     """
 

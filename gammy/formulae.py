@@ -48,7 +48,20 @@ class Formula:
         )
 
     def __mul__(self, input_map: ArrayMapper) -> "Formula":
-        """Multiplication
+        """Multiplication with input map
+
+        *Note*: This is not a :class:`Formula` × :class:`Formula`
+        multiplication! See :func:`Kron` for that use case.
+
+        Examples
+        --------
+
+        .. code-block:: python
+
+            from gammy.arraymapper import x
+            from gammy.formulae import Scalar
+
+            formula = Scalar() * x
 
         """
         return Formula(
@@ -79,7 +92,7 @@ class Formula:
             prior=self.prior
         )
 
-    def design_matrix(self, input_data, i: int=None):
+    def design_matrix(self, input_data: np.ndarray, i: int=None):
         # If one term is asked for, give it. Otherwise use all terms.
         fs = sum(self.terms, []) if i is None else self.terms[i]
         return np.hstack([f(input_data).reshape(-1, 1) for f in fs])
