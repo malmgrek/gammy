@@ -41,22 +41,14 @@ class Formula:
     def __add__(self, other) -> "Formula":
         """Addition of formulae
 
-        Parameters
-        ----------
-        other : Formula
-
         """
         return Formula(
             terms=self.terms + other.terms,
             prior=utils.concat_gaussians([self.prior, other.prior])
         )
 
-    def __mul__(self, input_map) -> "Formula":
+    def __mul__(self, input_map: ArrayMapper) -> "Formula":
         """Multiplication
-
-        Parameters
-        ----------
-        input_map : ArrayMapper
 
         """
         return Formula(
@@ -74,12 +66,8 @@ class Formula:
         """
         return len(self.terms)
 
-    def __call__(self, *input_maps) -> "Formula":
+    def __call__(self, *input_maps: Iterable[ArrayMapper]) -> "Formula":
         """Make the object callable
-
-        Parameters
-        ----------
-        input_maps : Iterable[ArrayMapper]
 
         """
         # TODO: Transform basis

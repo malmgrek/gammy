@@ -28,7 +28,7 @@ class ArrayMapper:
        formula = a(x[:, 0]) * x[:, 1] + x[:, 2] ** 2
 
     is a valid definition as long as ``a`` is an instance of
-    :class:`gammy.Formula` and ``x`` is an instance of :class:`ArrayMapper`.
+    :class:`gammy.formulae.Formula` and ``x`` is an instance of :class:`ArrayMapper`.
 
     TODO: Are some natural methods are still missing?
 
@@ -58,10 +58,6 @@ class ArrayMapper:
     def __add__(self, other) -> "ArrayMapper":
         """Addition of arraymappers
 
-        Parameters
-        ----------
-        other : ArrayMapper
-
         """
         return ArrayMapper(
             lambda t: self.function(t).__add__(other.function(t))
@@ -69,10 +65,6 @@ class ArrayMapper:
 
     def __sub__(self, other) -> "ArrayMapper":
         """Subtraction of arraymappers
-
-        Parameters
-        ----------
-        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -82,10 +74,6 @@ class ArrayMapper:
     def __mul__(self, other) -> "ArrayMapper":
         """Multiplication of arraymappers
 
-        Parameters
-        ----------
-        other : ArrayMapper
-
         """
         return ArrayMapper(
             lambda t: self.function(t).__mul__(other.function(t))
@@ -93,10 +81,6 @@ class ArrayMapper:
 
     def __truediv__(self, other) -> "ArrayMapper":
         """Division of arraymappers
-
-        Parameters
-        ----------
-        other : ArrayMapper
 
         """
         return ArrayMapper(
@@ -139,7 +123,9 @@ class ArrayMapper:
 def lift(f):
     """Lift a function
 
-    lift :: a -> b -> ArrayMapper(a) -> ArrayMapper(b) -> ArrayMapper(b)
+    .. code-block:: text
+
+        lift :: a -> b -> ArrayMapper(a) -> ArrayMapper(b) -> ArrayMapper(b)
 
     """
 
