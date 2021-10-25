@@ -1,6 +1,6 @@
 # Gammy – Generalized additive models in Python with a Bayesian twist
 
-![](./doc/source/cover.png "Cover")
+![](/doc/source/cover.png "Cover")
 
 A Generalized additive model is a predictive mathematical model defined as a sum
 of terms that are calibrated (fitted) with observation data. 
@@ -108,7 +108,7 @@ plt.plot(input_data, model_ideal.predict(input_data), label="ideal")
 plt.legend()
 ```
 
-![Plot](./doc/source/bad-worse.png "bad worse")
+![Plot](/doc/source/bad-worse.png "bad worse")
 
 Note that in higher dimensions we would need to use NumPy-indexing such as in
 
@@ -175,7 +175,7 @@ for ((name, model), ax) in zip(models.items(), axs):
     ax.set_title(name)
 ```
 
-![Plot](./doc/source/unknown-function.png "unknown function")
+![Plot](/doc/source/unknown-function.png "unknown function")
 
 Since model parameters are Gaussian random variables, posterior covariance matrices can be easily calculated and visualised with the model:
 
@@ -186,7 +186,7 @@ for ((name, model), ax) in zip(models.items(), axs):
     ax.set_title(name)
 ```
 
-![Plot](./doc/source/post-cov.png "posterior covariance")
+![Plot](/doc/source/post-cov.png "posterior covariance")
 
 ### Term composition framework
 
@@ -255,7 +255,7 @@ ax.plot_surface(
 )
 ```
 
-![Plot](./doc/source/surfs.png "surfs")
+![Plot](/doc/source/surfs.png "surfs")
 
 ### Non-linear manifold regression
 
@@ -289,7 +289,7 @@ model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
 The above Kronecker transformation generalizes to arbitrary dimension. The below plot is generated with `gammy.plot.validation_plot`. More information in the [Documentation](https://malmgrek.github.io/gammy/).
 
-![Validation plots](./doc/source/quick.png "Validation")
+![Validation plots](/doc/source/quick.png "Validation")
 `
 
 ## Package documentation
