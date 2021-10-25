@@ -8,7 +8,7 @@ with open(os.path.join(os.path.dirname(__file__), "README.md")) as fh:
 
 setup(
     name="gammy",
-    version="0.4.1",
+    version="0.4.2",
     author="Stratos Staboulis",
     description="Generalized additive models with a Bayesian twist",
     url="https://github.com/malmgrek/gammy",
