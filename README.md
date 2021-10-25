@@ -294,10 +294,10 @@ The above Kronecker transformation generalizes to arbitrary dimension. The below
 
 ## Package documentation
 
-A documentation of the package code together with more code examples and images:
+Documentation of the package with code examples:
 <https://malmgrek.github.io/gammy>.
 
-Links to various code examples:
+Links to some code examples:
 
 - [Polynomial regression](https://malmgrek.github.io/gammy/walkthrough.html#polynomial-regression)
 - [Gaussian process inference](https://malmgrek.github.io/gammy/walkthrough.html#one-dimensional-gaussian-process-models)
