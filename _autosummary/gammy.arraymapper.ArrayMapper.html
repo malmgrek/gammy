@@ -4,19 +4,17 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>ArrayMapper &#8212; Gammy 0.4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ArrayMapper &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="gammy.formulae" href="gammy.formulae.html" />
+    <link rel="next" title="lift" href="gammy.arraymapper.lift.html" />
     <link rel="prev" title="x" href="gammy.arraymapper.x.html" />
    
   <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
@@ -35,15 +33,15 @@
           <div class="body" role="main">
             
   <dl class="py data">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">gammy.arraymapper.</span></span><span class="sig-name descname"><span class="pre">ArrayMapper</span></span></dt>
+<dt>
+<code class="sig-prename descclassname"><span class="pre">gammy.arraymapper.</span></code><code class="sig-name descname"><span class="pre">ArrayMapper</span></code></dt>
 <dd></dd></dl>
 
-<section id="arraymapper">
+<div class="section" id="arraymapper">
 <h1>ArrayMapper<a class="headerlink" href="#arraymapper" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper">
-<em class="property"><span class="pre">class</span> </em><span class="sig-name descname"><span class="pre">ArrayMapper</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">function=&lt;function</span> <span class="pre">ArrayMapper.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">ArrayMapper</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">function=&lt;function</span> <span class="pre">ArrayMapper.&lt;lambda&gt;&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Callable input mapping object that obey arithmetic operations</p>
 <p>When working with basis function regression, when building the
@@ -57,85 +55,102 @@ show how inputs are mapped. For example,</p>
 <code class="xref py py-class docutils literal notranslate"><span class="pre">gammy.Formula</span></code> and <code class="docutils literal notranslate"><span class="pre">x</span></code> is an instance of <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">ArrayMapper</span></code></a>.</p>
 <p>TODO: Are some natural methods are still missing?</p>
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__add__">
-<span class="sig-name descname"><span class="pre">__add__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__add__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__add__">
+<code class="sig-name descname"><span class="pre">__add__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__add__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__add__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Addition of arraymappers</p>
-<p>other : ArrayMapper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>other</strong><span class="classifier">ArrayMapper</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__call__">
-<span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__call__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__call__">
+<code class="sig-name descname"><span class="pre">__call__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__call__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__call__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call the wrapped function</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__getitem__">
-<span class="sig-name descname"><span class="pre">__getitem__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__getitem__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__getitem__">
+<code class="sig-name descname"><span class="pre">__getitem__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__getitem__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__getitem__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Access index as in a NumPy Array</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__mul__">
-<span class="sig-name descname"><span class="pre">__mul__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__mul__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__mul__">
+<code class="sig-name descname"><span class="pre">__mul__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__mul__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multiplication of arraymappers</p>
-<p>other : ArrayMapper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>other</strong><span class="classifier">ArrayMapper</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__neg__">
-<span class="sig-name descname"><span class="pre">__neg__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__neg__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__neg__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__neg__">
+<code class="sig-name descname"><span class="pre">__neg__</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__neg__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__neg__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Negation operation</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__pow__">
-<span class="sig-name descname"><span class="pre">__pow__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__pow__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__pow__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__pow__">
+<code class="sig-name descname"><span class="pre">__pow__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__pow__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__pow__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise an arraymapper to a power</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__sub__">
-<span class="sig-name descname"><span class="pre">__sub__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__sub__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__sub__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__sub__">
+<code class="sig-name descname"><span class="pre">__sub__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__sub__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__sub__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Subtraction of arraymappers</p>
-<p>other : ArrayMapper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>other</strong><span class="classifier">ArrayMapper</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.__truediv__">
-<span class="sig-name descname"><span class="pre">__truediv__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__truediv__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__truediv__" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.__truediv__">
+<code class="sig-name descname"><span class="pre">__truediv__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">other</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.__truediv__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.__truediv__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Division of arraymappers</p>
-<p>other : ArrayMapper</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>other</strong><span class="classifier">ArrayMapper</span></dt><dd></dd>
+</dl>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py attribute">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.function">
-<span class="sig-name descname"><span class="pre">function</span></span><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.function" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.function">
+<code class="sig-name descname"><span class="pre">function</span></code><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.function" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrapped function</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.lift">
-<span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">f</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.lift"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.lift" title="Permalink to this definition">¶</a></dt>
-<dd><p>Lift the contained function with a given function</p>
-<p>f : Callable</p>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.ravel">
-<span class="sig-name descname"><span class="pre">ravel</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.ravel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.ravel" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.ravel">
+<code class="sig-name descname"><span class="pre">ravel</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.ravel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.ravel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Imitates the behavior of NumPy ravel method</p>
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="gammy.arraymapper.ArrayMapper.reshape">
-<span class="sig-name descname"><span class="pre">reshape</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></span><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.reshape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.reshape" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.arraymapper.ArrayMapper.reshape">
+<code class="sig-name descname"><span class="pre">reshape</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a><a class="reference internal" href="../_modules/gammy/arraymapper.html#ArrayMapper.reshape"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.arraymapper.ArrayMapper.reshape" title="Permalink to this definition">¶</a></dt>
 <dd><p>Numpy reshape</p>
 </dd></dl>
 
 </dd></dl>
 
-</section>
+</div>
 
 
           </div>
@@ -174,7 +189,7 @@ show how inputs are mapped. For example,</p>
   <li><a href="../api.html">API Reference</a><ul>
   <li><a href="gammy.arraymapper.html">gammy.arraymapper</a><ul>
       <li>Previous: <a href="gammy.arraymapper.x.html" title="previous chapter">x</a></li>
-      <li>Next: <a href="gammy.formulae.html" title="next chapter">gammy.formulae</a></li>
+      <li>Next: <a href="gammy.arraymapper.lift.html" title="next chapter">lift</a></li>
   </ul></li>
   </ul></li>
   </ul></li>
@@ -184,7 +199,7 @@ show how inputs are mapped. For example,</p>
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -206,7 +221,7 @@ show how inputs are mapped. For example,</p>
       &copy;2021, Malmgrek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

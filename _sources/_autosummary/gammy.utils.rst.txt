@@ -26,7 +26,6 @@ gammy.utils
       exp_squared
       extend_spline_grid
       extract_diag_blocks
-      flatten
       gen_spline_args_from_grid_ext
       interp_arrays1d
       jsonify
@@ -38,7 +37,6 @@ gammy.utils
       pipe
       rational_quadratic
       rlift
-      rlift_basis
       set_from_json
       solve_covariance
       solve_precision

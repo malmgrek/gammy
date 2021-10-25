@@ -24,6 +24,7 @@ gammy.models.bayespy
    .. autosummary::
       :toctree:
    
+      LinearModel
       create_gaussian_theta
    
    

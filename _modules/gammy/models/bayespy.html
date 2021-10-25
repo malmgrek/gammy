@@ -5,11 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>gammy.models.bayespy &#8212; Gammy 0.4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
-    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <title>gammy.models.bayespy &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -37,7 +36,6 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
 
@@ -60,7 +58,7 @@
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    formula : gammy.formulae.Formula</span>
-<span class="sd">        Formula object containing the bases and prior</span>
+<span class="sd">        Formula object containing the terms and prior</span>
 <span class="sd">    theta : bp.nodes.Gaussian</span>
 <span class="sd">        Model parameters vector</span>
 <span class="sd">    tau : bp.nodes.Gamma</span>
@@ -111,7 +109,7 @@
         <span class="sd">&quot;&quot;&quot;Number of model parameters</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">flatten</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span><span class="p">))</span></div>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span><span class="p">,</span> <span class="p">[]))</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">theta_marginals</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">]:</span>
@@ -120,10 +118,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># TODO: Test that the marginal distributions are correct</span>
         <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">get_moments</span><span class="p">()</span>
-        <span class="n">mus</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unflatten</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span><span class="p">)</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unflatten</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span><span class="p">)</span>
         <span class="n">covs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">extract_diag_blocks</span><span class="p">(</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">solve_covariance</span><span class="p">(</span><span class="n">u</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span>
             <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">Lambda</span><span class="o">=</span><span class="n">bp</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
@@ -140,7 +138,7 @@
         <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">listmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)(</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">unflatten</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">get_moments</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span>
             <span class="p">)</span>
         <span class="p">)</span>
 
@@ -163,17 +161,17 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">u</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="o">.</span><span class="n">get_moments</span><span class="p">()</span>
-        <span class="n">mus</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unflatten</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span><span class="p">)</span>
+        <span class="n">mus</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">unflatten</span><span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span><span class="p">)</span>
         <span class="n">covs</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">extract_diag_blocks</span><span class="p">(</span>
             <span class="n">utils</span><span class="o">.</span><span class="n">solve_covariance</span><span class="p">(</span><span class="n">u</span><span class="p">),</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">bases</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">terms</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span>
             <span class="n">mu</span><span class="o">=</span><span class="n">mus</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
             <span class="n">Lambda</span><span class="o">=</span><span class="n">bp</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">covs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GAM.fit"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GAM</span><span class="p">:</span>
+<div class="viewcode-block" id="GAM.fit"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GAM&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Update BayesPy nodes and construct a GAM predictor</span>
 
 <span class="sd">        Parameters</span>
@@ -193,7 +191,7 @@
 <span class="sd">        ``initialize_from_prior()`` of BayesPy nodes.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
         <span class="n">Y</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">GaussianARD</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tau</span><span class="p">)</span>
         <span class="n">Y</span><span class="o">.</span><span class="n">observe</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -209,7 +207,7 @@
 <span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">))</span></div>
 
 <div class="viewcode-block" id="GAM.predict_variance"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -220,7 +218,7 @@
 <span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
         <span class="n">u</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">get_moments</span><span class="p">()</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">u</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">solve_covariance</span><span class="p">(</span><span class="n">u</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_mean_tau</span><span class="p">)</span></div>
@@ -233,7 +231,7 @@
 <span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
         <span class="c1"># Ensuring correct moments</span>
         <span class="c1">#</span>
@@ -253,7 +251,10 @@
 <span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xs</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">Xs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">))</span>
+        <span class="p">]</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">)]</span></div>
 
 <div class="viewcode-block" id="GAM.predict_variance_marginals"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance_marginals">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance_marginals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
@@ -268,7 +269,10 @@
 <span class="sd">        know how it is splitted among the model terms.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">Xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xs</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+        <span class="n">Xs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">))</span>
+        <span class="p">]</span>
         <span class="n">Fs</span> <span class="o">=</span> <span class="p">[</span>
             <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_marginals</span><span class="p">)</span>
@@ -285,7 +289,7 @@
 <span class="sd">        input_data : np.ndarray</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xi</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="GAM.predict_variance_marginal"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.predict_variance_marginal">[docs]</a>    <span class="k">def</span> <span class="nf">predict_variance_marginal</span><span class="p">(</span>
@@ -301,7 +305,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Not refactored with predict_marginal for perf reasons</span>
-        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">build_Xi</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">i</span><span class="p">)</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
         <span class="n">F</span> <span class="o">=</span> <span class="n">bp</span><span class="o">.</span><span class="n">nodes</span><span class="o">.</span><span class="n">SumMultiply</span><span class="p">(</span><span class="s2">&quot;i,i&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">theta_marginal</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">X</span><span class="p">)</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_theta</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">solve_covariance</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">get_moments</span><span class="p">()))</span>
@@ -360,7 +364,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown file type: </span><span class="si">{</span><span class="n">file_ext</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GAM.load"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GAM</span><span class="p">:</span>
+<div class="viewcode-block" id="GAM.load"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.GAM.html#gammy.models.bayespy.GAM.load">[docs]</a>    <span class="k">def</span> <span class="nf">load</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;GAM&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load model from a file on disk</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -384,6 +388,16 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown file type: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">file_ext</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">formula</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="n">tau</span><span class="p">,</span> <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="LinearModel"><a class="viewcode-back" href="../../../_autosummary/gammy.models.bayespy.LinearModel.html#gammy.models.bayespy.LinearModel">[docs]</a><span class="k">def</span> <span class="nf">LinearModel</span><span class="p">(</span><span class="n">n_features</span><span class="p">,</span> <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="n">prior</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_features</span><span class="p">),</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">n_features</span><span class="p">))</span> <span class="k">if</span> <span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="k">else</span> <span class="n">prior</span>
+    <span class="p">)</span>
+    <span class="n">basis</span> <span class="o">=</span> <span class="p">[(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_features</span><span class="p">)]</span>
+    <span class="n">formula</span> <span class="o">=</span> <span class="n">Formula</span><span class="p">(</span><span class="n">terms</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span> <span class="n">prior</span><span class="o">=</span><span class="n">prior</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 </pre></div>
 
           </div>
@@ -421,7 +435,7 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -443,7 +457,7 @@
       &copy;2021, Malmgrek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -36,8 +36,8 @@ b = gammy.ExpSquared1d(
 #
 
 ax = plt.figure().gca()
-ax.plot(grid, sample(a.build_X(grid)), label="Custom")
-ax.plot(grid, sample(b.build_X(grid)), label="Exp. squared")
+ax.plot(grid, sample(a.design_matrix(grid)), label="Custom")
+ax.plot(grid, sample(b.design_matrix(grid)), label="Custom")
 ax.legend()
 
 plt.show()

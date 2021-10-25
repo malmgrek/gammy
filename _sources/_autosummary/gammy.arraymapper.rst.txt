@@ -19,4 +19,11 @@ gammy.arraymapper
 
    
    
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      lift
+   
    

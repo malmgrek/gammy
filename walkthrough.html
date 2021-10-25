@@ -4,17 +4,15 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Walkthrough &#8212; Gammy 0.4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
-    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Walkthrough &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/doctools.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="API Reference" href="api.html" />
@@ -35,12 +33,12 @@
 
           <div class="body" role="main">
             
-  <section id="walkthrough">
+  <div class="section" id="walkthrough">
 <h1>Walkthrough<a class="headerlink" href="#walkthrough" title="Permalink to this headline">¶</a></h1>
 <p>The introduction begins with a familiar example. After that we gather main
 features of the basic user interface. The rest of the walkthrough is a
 collection of different use cases through code examples.</p>
-<section id="polynomial-regression">
+<div class="section" id="polynomial-regression">
 <span id="id1"></span><h2>Polynomial regression<a class="headerlink" href="#polynomial-regression" title="Permalink to this headline">¶</a></h2>
 <p>Although a very simple special case, this example demonstrates how you can solve
 problems where you know the model shape.</p>
@@ -88,19 +86,19 @@ problems where you know the model shape.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-1.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-1_00.png" class="plot-directive" src="_images/walkthrough-1_00.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-1_01.png" class="plot-directive" src="_images/walkthrough-1_01.png" />
-</figure>
+<div class="figure align-default">
+<img alt="_images/walkthrough-1_00.png" src="_images/walkthrough-1_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-1_01.png" src="_images/walkthrough-1_01.png" />
+</div>
 <p>The grey band in the top figure is two times the prediction standard deviation
 and, in the partial residual plots, two times the respective marginal posterior
 standard deviation.</p>
-</section>
-<section id="basic-user-interface">
+</div>
+<div class="section" id="basic-user-interface">
 <h2>Basic user interface<a class="headerlink" href="#basic-user-interface" title="Permalink to this headline">¶</a></h2>
-<section id="model-formula">
+<div class="section" id="model-formula">
 <h3>Model formula<a class="headerlink" href="#model-formula" title="Permalink to this headline">¶</a></h3>
 <p>The basic building block of a Gammy model is a formula object which defines the
 function basis in terms of which the model is expressed. The package implements
@@ -134,8 +132,8 @@ coefficients</p>
 <span class="go">       [0, 0, 3]]))</span>
 </pre></div>
 </div>
-</section>
-<section id="fitting-and-predicting">
+</div>
+<div class="section" id="fitting-and-predicting">
 <h3>Fitting and predicting<a class="headerlink" href="#fitting-and-predicting" title="Permalink to this headline">¶</a></h3>
 <p>The package provides two alternative interfaces for estimating formula
 coefficients, and subsequently, predicting. The <a class="reference external" href="http://www.bayespy.org/index.html">BayesPy</a> based model and the “raw” NumPy based
@@ -158,14 +156,14 @@ The BayesPy interface also supports estimating additive noise variance parameter
 <span class="go">array([0.00171644, 0.0013108 , 0.0013108 , 0.00171644])</span>
 </pre></div>
 </div>
-</section>
-<section id="serialization">
+</div>
+<div class="section" id="serialization">
 <h3>Serialization<a class="headerlink" href="#serialization" title="Permalink to this headline">¶</a></h3>
-</section>
-</section>
-<section id="gaussian-processes">
+</div>
+</div>
+<div class="section" id="gaussian-processes">
 <h2>Gaussian processes<a class="headerlink" href="#gaussian-processes" title="Permalink to this headline">¶</a></h2>
-<section id="theory">
+<div class="section" id="theory">
 <h3>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h3>
 <p>In real-world applications usually one doesn’t know closed form expression for
 the model. One approach in tackling such problems is modeling the unknown
@@ -231,8 +229,8 @@ don’t need to solve least squares problem.</p></li>
 <li><p>Doesn’t scale efficiently if the number of input dimensions is large because
 we use Kronecker product to construct high dimensional bases.</p></li>
 </ul>
-</section>
-<section id="one-dimensional-gaussian-process-models">
+</div>
+<div class="section" id="one-dimensional-gaussian-process-models">
 <h3>One-dimensional Gaussian Process models<a class="headerlink" href="#one-dimensional-gaussian-process-models" title="Permalink to this headline">¶</a></h3>
 <p>In this example, we have a 1-D noisy dataset <span class="math notranslate nohighlight">\(y\)</span> and the input data are
 from the interval <span class="math notranslate nohighlight">\([0, 1]\)</span>. The model shape is unknown, and is sought in
@@ -291,14 +289,14 @@ zero-mean but it’s variance is estimated from data.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-2.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-2_00.png" class="plot-directive" src="_images/walkthrough-2_00.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-2_01.png" class="plot-directive" src="_images/walkthrough-2_01.png" />
-</figure>
-</section>
-<section id="more-on-gaussian-process-kernels">
+<div class="figure align-default">
+<img alt="_images/walkthrough-2_00.png" src="_images/walkthrough-2_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-2_01.png" src="_images/walkthrough-2_01.png" />
+</div>
+</div>
+<div class="section" id="more-on-gaussian-process-kernels">
 <h3>More on Gaussian Process kernels<a class="headerlink" href="#more-on-gaussian-process-kernels" title="Permalink to this headline">¶</a></h3>
 <p>The GP covariance kernel defines the shape and smoothness of the resulting
 function estimate. The package implements some of the most typical kernels, and
@@ -377,11 +375,11 @@ step function (truncated) estimation problem.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-3.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-3.png" class="plot-directive" src="_images/walkthrough-3.png" />
-</figure>
-</section>
-<section id="customize-gaussian-process-kernels">
+<div class="figure align-default">
+<img alt="_images/walkthrough-3.png" src="_images/walkthrough-3.png" />
+</div>
+</div>
+<div class="section" id="customize-gaussian-process-kernels">
 <h3>Customize Gaussian Process kernels<a class="headerlink" href="#customize-gaussian-process-kernels" title="Permalink to this headline">¶</a></h3>
 <p>It is straightforward to define custom formulas from “positive semidefinite”
 covariance kernel functions.</p>
@@ -423,25 +421,25 @@ covariance kernel functions.</p>
 <span class="c1">#</span>
 
 <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Custom&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">build_X</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Exp. squared&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Custom&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Custom&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-4.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-4.png" class="plot-directive" src="_images/walkthrough-4.png" />
-</figure>
-</section>
-</section>
-<section id="multivariate-formulae">
+<div class="figure align-default">
+<img alt="_images/walkthrough-4.png" src="_images/walkthrough-4.png" />
+</div>
+</div>
+</div>
+<div class="section" id="multivariate-formulae">
 <h2>Multivariate formulae<a class="headerlink" href="#multivariate-formulae" title="Permalink to this headline">¶</a></h2>
 <p>Often, the expressive power of a model that is a sum of univariate basis functions is
 not sufficient. To avoid problems, an important generalization is to be able to define
 multivariate terms. Gammy supports various ways of defining multivariate model terms.</p>
-<section id="multiplying-formulae-with-each-other">
+<div class="section" id="multiplying-formulae-with-each-other">
 <h3>Multiplying formulae with each other<a class="headerlink" href="#multiplying-formulae-with-each-other" title="Permalink to this headline">¶</a></h3>
 <p>A straightforward way to mathematically define multivariate functions is to
 multiply two univariate (real valued) functions of different variable
@@ -497,14 +495,14 @@ built-in feature in Gammy formula objects.</p>
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-5.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-5_00.png" class="plot-directive" src="_images/walkthrough-5_00.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-5_01.png" class="plot-directive" src="_images/walkthrough-5_01.png" />
-</figure>
-</section>
-<section id="kronecker-formulae">
+<div class="figure align-default">
+<img alt="_images/walkthrough-5_00.png" src="_images/walkthrough-5_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-5_01.png" src="_images/walkthrough-5_01.png" />
+</div>
+</div>
+<div class="section" id="kronecker-formulae">
 <h3>Kronecker formulae<a class="headerlink" href="#kronecker-formulae" title="Permalink to this headline">¶</a></h3>
 <p>In this example we construct a basis corresponding to a multi-variate Gaussian
 process with a Kronecker structure (see e.g. <a class="reference external" href="https://docs.pymc.io/notebooks/GP-Kron.html">PyMC3</a>).</p>
@@ -586,23 +584,23 @@ distribution priors and covariances are constructed using the Kronecker product.
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-6.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-6_00.png" class="plot-directive" src="_images/walkthrough-6_00.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-6_01.png" class="plot-directive" src="_images/walkthrough-6_01.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-6_02.png" class="plot-directive" src="_images/walkthrough-6_02.png" />
-</figure>
+<div class="figure align-default">
+<img alt="_images/walkthrough-6_00.png" src="_images/walkthrough-6_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-6_01.png" src="_images/walkthrough-6_01.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-6_02.png" src="_images/walkthrough-6_02.png" />
+</div>
 <p>Note that same logic could be used to construct higher dimensional bases:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3-D formula</span>
 <span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">gammy</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
 </pre></div>
 </div>
-</section>
-</section>
-<section id="spline-regression">
+</div>
+</div>
+<div class="section" id="spline-regression">
 <h2>Spline regression<a class="headerlink" href="#spline-regression" title="Permalink to this headline">¶</a></h2>
 <p>Constructing B-Spline based 1-D basis functions is also supported.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -654,14 +652,14 @@ distribution priors and covariances are constructed using the Kronecker product.
 </pre></div>
 </div>
 <p>(<a class="reference external" href=".//walkthrough-7.py">Source code</a>)</p>
-<figure class="align-default">
-<img alt="_images/walkthrough-7_00.png" class="plot-directive" src="_images/walkthrough-7_00.png" />
-</figure>
-<figure class="align-default">
-<img alt="_images/walkthrough-7_01.png" class="plot-directive" src="_images/walkthrough-7_01.png" />
-</figure>
-</section>
-</section>
+<div class="figure align-default">
+<img alt="_images/walkthrough-7_00.png" src="_images/walkthrough-7_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/walkthrough-7_01.png" src="_images/walkthrough-7_01.png" />
+</div>
+</div>
+</div>
 
 
           </div>
@@ -706,7 +704,7 @@ distribution priors and covariances are constructed using the Kronecker product.
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -728,7 +726,7 @@ distribution priors and covariances are constructed using the Kronecker product.
       &copy;2021, Malmgrek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

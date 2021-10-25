@@ -32,8 +32,8 @@ gammy.formulae
       Function
       Gaussian1d
       Kron
-      Line
       OrnsteinUhlenbeck1d
+      Polynomial
       RationalQuadratic1d
       ReLU
       Scalar
@@ -41,6 +41,5 @@ gammy.formulae
       TanH
       WhiteNoise1d
       create_from_kernel1d
-      design_matrix
    
    

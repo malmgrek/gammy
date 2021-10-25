@@ -5,11 +5,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>gammy.utils &#8212; Gammy 0.4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <title>gammy.utils &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -76,10 +75,6 @@
 <div class="viewcode-block" id="lift"><a class="viewcode-back" href="../../_autosummary/gammy.utils.lift.html#gammy.utils.lift">[docs]</a><span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Transforms a function into an operator</span>
 
-<span class="sd">    ``lift :: (a -&gt; b) -&gt; ((c -&gt; a) -&gt; (c -&gt; b))``</span>
-
-<span class="sd">    NOTE: Could add func&#39;s *args and **kwargs as arguments</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="k">lambda</span> <span class="n">f</span><span class="p">:</span> <span class="n">compose2</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
 
@@ -132,18 +127,11 @@
 <span class="c1">#</span>
 
 
-<div class="viewcode-block" id="flatten"><a class="viewcode-back" href="../../_autosummary/gammy.utils.flatten.html#gammy.utils.flatten">[docs]</a><span class="k">def</span> <span class="nf">flatten</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Flatten a list of lists once</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">functools</span><span class="o">.</span><span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">cum</span><span class="p">,</span> <span class="n">this</span><span class="p">:</span> <span class="n">cum</span> <span class="o">+</span> <span class="n">this</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="p">[])</span></div>
-
-
 <div class="viewcode-block" id="unflatten"><a class="viewcode-back" href="../../_autosummary/gammy.utils.unflatten.html#gammy.utils.unflatten">[docs]</a><span class="k">def</span> <span class="nf">unflatten</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="nb">list</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Unflatten according to a reference</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -241,8 +229,8 @@
 <span class="sd">    x2 : np.ndarray</span>
 <span class="sd">        1-D Column array</span>
 
-<span class="sd">    Example</span>
-<span class="sd">    -------</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -296,7 +284,7 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="white_noise"><a class="viewcode-back" href="../../_autosummary/gammy.utils.white_noise.html#gammy.utils.white_noise">[docs]</a><span class="k">def</span> <span class="nf">white_noise</span><span class="p">(</span><span class="n">n_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<div class="viewcode-block" id="white_noise"><a class="viewcode-back" href="../../_autosummary/gammy.utils.white_noise.html#gammy.utils.white_noise">[docs]</a><span class="k">def</span> <span class="nf">white_noise</span><span class="p">(</span><span class="n">n_dims</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">**</span><span class="n">unused</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;White noise kernel function</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -359,20 +347,6 @@
         <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">v</span><span class="p">[:,</span> <span class="n">i</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
     <span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="rlift_basis"><a class="viewcode-back" href="../../_autosummary/gammy.utils.rlift_basis.html#gammy.utils.rlift_basis">[docs]</a><span class="k">def</span> <span class="nf">rlift_basis</span><span class="p">(</span><span class="n">basis</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Map a right lift to each function of a basis</span>
-
-<span class="sd">    Parameters</span>
-<span class="sd">    ----------</span>
-<span class="sd">    basis : List[Callable]</span>
-<span class="sd">        List of basis functions</span>
-<span class="sd">    func : Callable</span>
-<span class="sd">        Lifted function</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">listmap</span><span class="p">(</span><span class="n">rlift</span><span class="p">(</span><span class="n">func</span><span class="p">))(</span><span class="n">basis</span><span class="p">)</span></div>
 
 
 <span class="c1">#</span>
@@ -519,7 +493,7 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -541,7 +515,7 @@
       &copy;2021, Malmgrek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
     </div>

@@ -4,13 +4,11 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
-    <title>Sum &#8212; Gammy 0.4.0 documentation</title>
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sum &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -35,30 +33,33 @@
           <div class="body" role="main">
             
   <dl class="py data">
-<dt class="sig sig-object py">
-<span class="sig-prename descclassname"><span class="pre">gammy.formulae.</span></span><span class="sig-name descname"><span class="pre">Sum</span></span></dt>
+<dt>
+<code class="sig-prename descclassname"><span class="pre">gammy.formulae.</span></code><code class="sig-name descname"><span class="pre">Sum</span></code></dt>
 <dd></dd></dl>
 
-<section id="sum">
+<div class="section" id="sum">
 <h1>Sum<a class="headerlink" href="#sum" title="Permalink to this headline">¶</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="gammy.formulae.Sum">
-<span class="sig-name descname"><span class="pre">Sum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formulae</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="gammy.formulae.Formula.html#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a></span></span><a class="reference internal" href="../_modules/gammy/formulae.html#Sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Sum" title="Permalink to this definition">¶</a></dt>
+<dt id="gammy.formulae.Sum">
+<code class="sig-name descname"><span class="pre">Sum</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">formulae</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="gammy.formulae.Formula.html#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a><a class="reference internal" href="../_modules/gammy/formulae.html#Sum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Sum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sum (concatenate) many formulae</p>
-<dl class="simple">
-<dt>formulae<span class="classifier">List[Formula]</span></dt><dd><p>Formulas to concatenate</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>formulae</strong><span class="classifier">List[Formula]</span></dt><dd><p>Formulas to concatenate</p>
 </dd>
-<dt>prior<span class="classifier">Tuple[np.ndarray]</span></dt><dd><p>Prior mean and covariance for concatenated formula</p>
+<dt><strong>prior</strong><span class="classifier">Tuple[np.ndarray]</span></dt><dd><p>Prior mean and covariance for concatenated formula</p>
+</dd>
+<dt><strong>Theoretical example:</strong></dt><dd></dd>
+<dt><strong>.. code-block:: text</strong></dt><dd><p>([[f1, f2], [g1, g2]], [[h1]]) =&gt; [[f1, f2], [g1, g2], [h1]]</p>
+</dd>
+<dt><strong>NOTE: :class:`Sum` and :class:`Flatten` are different!</strong></dt><dd></dd>
+</dl>
 </dd>
 </dl>
-<p>Theoretical example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>([[f1, f2], [g1, g2]], [[h1]]) =&gt; [[f1, f2], [g1, g2], [h1]]
-</pre></div>
-</div>
-<p>NOTE: <a class="reference internal" href="#gammy.formulae.Sum" title="gammy.formulae.Sum"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sum</span></code></a> and <a class="reference internal" href="gammy.formulae.Flatten.html#gammy.formulae.Flatten" title="gammy.formulae.Flatten"><code class="xref py py-class docutils literal notranslate"><span class="pre">Flatten</span></code></a> are different!</p>
 </dd></dl>
 
-</section>
+</div>
 
 
           </div>
@@ -107,7 +108,7 @@
   <h3 id="searchlabel">Quick search</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="text" name="q" aria-labelledby="searchlabel" />
       <input type="submit" value="Go" />
     </form>
     </div>
@@ -129,7 +130,7 @@
       &copy;2021, Malmgrek.
       
       |
-      Powered by <a href="http://sphinx-doc.org/">Sphinx 4.2.0</a>
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
       &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
       
       |

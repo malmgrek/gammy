@@ -26,6 +26,7 @@ gammy.models.numpy
    .. autosummary::
       :toctree:
    
+      LinearModel
       create_gaussian_theta
    
    

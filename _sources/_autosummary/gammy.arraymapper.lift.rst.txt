@@ -1,0 +1,9 @@
+.. py:data:: gammy.arraymapper.lift
+   :noindex:
+
+lift
+====
+
+.. currentmodule:: gammy.arraymapper
+
+.. autofunction:: lift
