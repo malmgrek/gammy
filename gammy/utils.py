@@ -42,10 +42,6 @@ def compose2(f: Callable, g: Callable) -> Callable:
 def lift(func: Callable) -> Callable:
     """Transforms a function into an operator
 
-    ``lift :: (a -> b) -> ((c -> a) -> (c -> b))``
-
-    NOTE: Could add func's *args and **kwargs as arguments
-
     """
     return lambda f: compose2(func, f)
 
@@ -101,8 +97,8 @@ tuplefilter.__doc__ = """Filter for tuples with partial evaluation
 def unflatten(x: list, y: list) -> list:
     """Unflatten according to a reference
 
-    Example
-    -------
+    Examples
+    --------
 
     .. code-block:: python
 
@@ -200,8 +196,8 @@ def squared_dist(x1, x2) -> np.ndarray:
     x2 : np.ndarray
         1-D Column array
 
-    Example
-    -------
+    Examples
+    --------
 
     .. code-block:: python
 

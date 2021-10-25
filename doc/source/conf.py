@@ -36,7 +36,8 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.autodoc',
-    'sphinx.ext.autosummary'
+    'sphinx.ext.autosummary',
+    'numpydoc'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -46,6 +47,9 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+numpydoc_class_members_toctree = False
+numpydoc_show_class_members = False
 
 autosummary_generate = True
 add_module_names = False

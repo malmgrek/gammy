@@ -256,8 +256,8 @@ def ExpSquared1d(
 ) -> Formula:
     """Squared exponential kernel formula
 
-    Example
-    -------
+    Examples
+    --------
 
     .. code-block:: python
 

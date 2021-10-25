@@ -21,6 +21,7 @@ setup(
     ],
     extras_require={
         "test": ["pytest"],
+        "doc": ["sphinx", "numpydoc"]
     },
     keywords="bayesian statistics modeling gaussian process splines",
     # See https://pypi.python.org/pypi?%3Aaction=list_classifiers
