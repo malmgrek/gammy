@@ -1,6 +1,12 @@
 # Change Log
 
 
+## 0.4.4
+
+### Fix
+- Missing images in PyPi
+
+
 ## 0.4.3
 
 ### Change
