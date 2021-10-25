@@ -14,13 +14,6 @@ from gammy.arraymapper import ArrayMapper
 from gammy.utils import listmap, rlift
 
 
-def design_matrix(input_data: np.ndarray, basis: List[Callable]):
-    """Assemble the design matrix for basis function regression
-
-    """
-    return np.hstack([f(input_data).reshape(-1, 1) for f in basis])
-
-
 class Formula:
     """Basis manipulation and design matrix creator
 
@@ -97,6 +90,13 @@ class Formula:
             ],
             prior=self.prior
         )
+
+    def design_matrix(self, input_data, i: int=None):
+        # If one term is asked for, give it. Otherwise use all terms.
+        fs = sum(self.terms, []) if i is None else self.terms[i:i+1]
+        # Reshape 1d-arrays into column vectors
+        reshape = lambda t: (t.reshape(-1, 1) if t.ndim == 1 else t)
+        return np.hstack([reshape(f(input_data)) for f in fs])
 
 
 #
