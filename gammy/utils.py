@@ -261,15 +261,6 @@ def white_noise(n_dims: int, sigma=1.0, **unused) -> np.ndarray:
 def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
     """Most important eigenvectors of a symmetric positive-definite square matrix
 
-    Parameters
-    ----------
-    H : np.ndarray
-        Symmetric positive-definite square matrix
-    energy : float
-        Truncate to eigenvalues that sum up to this proportion of the total
-        eigenvalue sum. If absolutelu all eigenvectors are needed, give value
-        slightly larger than one.
-
     Ordered with respect of the descending eigenvalues. Each
     eigenvector scaled with ``sqrt(λ)``. For theoretical justification,
     see the section on Gaussian Processes in the package documentation.
@@ -282,6 +273,15 @@ def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
     REVIEW: There might be problem with serialization. If there are duplicate
     eigenvalues, then on different machines, the vectors might appear in
     different order.
+
+    Parameters
+    ----------
+    H : np.ndarray
+        Symmetric positive-definite square matrix
+    energy : float
+        Truncate to eigenvalues that sum up to this proportion of the total
+        eigenvalue sum. If absolutelu all eigenvectors are needed, give value
+        slightly larger than one.
 
     """
 

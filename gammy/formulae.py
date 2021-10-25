@@ -105,7 +105,13 @@ class Formula:
 def Flatten(formula, prior=None) -> Formula:
     """Flatten the terms of a given formula
 
-    Optionally override prior
+    Optionally override prior.
+
+    In terms of terms:
+
+    .. code-block:: text
+
+        [[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]
 
     Parameters
     ----------
@@ -114,7 +120,6 @@ def Flatten(formula, prior=None) -> Formula:
     prior : Tuple[np.ndarray]
         Prior of the final formula
 
-    In terms of terms: ``[[f1, f2], [g1, g2, g3]] => [[f1, f2, g1, g2, g3]]``
 
     """
     return Formula(
@@ -126,13 +131,6 @@ def Flatten(formula, prior=None) -> Formula:
 def Sum(formulae, prior=None) -> Formula:
     """Sum (concatenate) many formulae
 
-    Parameters
-    ----------
-    formulae : List[Formula]
-        Formulas to concatenate
-    prior : Tuple[np.ndarray]
-        Prior mean and covariance for concatenated formula
-
     Theoretical example:
 
     .. code-block:: text
@@ -140,6 +138,14 @@ def Sum(formulae, prior=None) -> Formula:
         ([[f1, f2], [g1, g2]], [[h1]]) => [[f1, f2], [g1, g2], [h1]]
 
     NOTE: :class:`Sum` and :class:`Flatten` are different!
+
+    Parameters
+    ----------
+    formulae : List[Formula]
+        Formulas to concatenate
+    prior : Tuple[np.ndarray]
+        Prior mean and covariance for concatenated formula
+
 
     """
     priors = [formula.prior for formula in formulae]
@@ -152,18 +158,18 @@ def Sum(formulae, prior=None) -> Formula:
 def Kron(a, b) -> Formula:
     """Tensor product of two Formula terms
 
+    Non-commutative!
+
+    Let ``u, v`` be eigenvectors of matrices ``A, B``, respectively. Then
+    ``u ⊗ v`` is an eigenvector of ``A ⊗ B`` and ``λμ`` is the corresponding
+    eigenvalue.
+
     Parameters
     ----------
     a : Formula
         Left input
     b : Formula
         Right input
-
-    Non-commutative!
-
-    Let ``u, v`` be eigenvectors of matrices ``A, B``, respectively. Then
-    ``u ⊗ v`` is an eigenvector of ``A ⊗ B`` and ``λμ`` is the corresponding
-    eigenvalue.
 
     """
     # NOTE: This is somewhat experimental. The terms must correspond to
@@ -484,6 +490,11 @@ def BSpline1d(
 ) -> Formula:
     """B-spline basis on a fixed one-dimensional grid
 
+    Number of spline basis functions is always ``N = len(grid) + order - 2``
+
+    TODO: Verify that this doesn't break when scaling the grid
+          (extrapolation + damping)
+
     Parameters
     ----------
     grid : np.ndarray
@@ -499,11 +510,6 @@ def BSpline1d(
         Basis for estimating the mean hyperparameter
     mu_hyper : Tuple[np.ndarray]
         Hyperprior mean and precision matrix
-
-    Number of spline basis functions is always ``N = len(grid) + order - 2``
-
-    TODO: Verify that this doesn't break when scaling the grid
-          (extrapolation + damping)
 
     """
 

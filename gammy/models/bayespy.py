@@ -22,15 +22,6 @@ def create_gaussian_theta(formula: Formula):
 class GAM:
     """Generalized additive model with BayesPy backend
 
-    Parameters
-    ----------
-    formula : gammy.formulae.Formula
-        Formula object containing the terms and prior
-    theta : bp.nodes.Gaussian
-        Model parameters vector
-    tau : bp.nodes.Gamma
-        Observation noise precision (inverse variance)
-
     Currently tau is fixed to Gamma distribution, i.e., it is not
     possible to manually define the noise level. Note though that one can
     set tight values for `α, β` in `Gamma(α, β)`, recalling that `mean = α / β`
@@ -54,6 +45,15 @@ class GAM:
            gammy.bayespy.GAM(
                gammy.Scalar()
            ).fit(np.array([0]), np.array([1]))
+
+    Parameters
+    ----------
+    formula : gammy.formulae.Formula
+        Formula object containing the terms and prior
+    theta : bp.nodes.Gaussian
+        Model parameters vector
+    tau : bp.nodes.Gamma
+        Observation noise precision (inverse variance)
 
     """
 
@@ -141,6 +141,11 @@ class GAM:
     def fit(self, input_data, y, repeat=1000, verbose=False, **kwargs) -> "GAM":
         """Update BayesPy nodes and construct a GAM predictor
 
+        WARNING: Currently mutates the original object's ``theta`` and ``tau``.
+
+        An option to "reset" the original object to prior is to use the method
+        ``initialize_from_prior()`` of BayesPy nodes.
+
         Parameters
         ----------
         input_data : np.ndarray
@@ -151,11 +156,6 @@ class GAM:
             BayesPy allowed repetitions in variational Bayes learning
         verbose : bool
             BayesPy logging
-
-        WARNING: Currently mutates the original object's ``theta`` and ``tau``.
-
-        An option to "reset" the original object to prior is to use the method
-        ``initialize_from_prior()`` of BayesPy nodes.
 
         """
         X = self.formula.design_matrix(input_data)
@@ -227,13 +227,13 @@ class GAM:
     def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
         """Predict variance (theta) for marginal parameter distributions
 
-        Parameters
-        ----------
-        input_data : np.ndarray
-
         NOTE: Analogous to self.predict_variance_theta but for marginal
         distributions. Adding observation noise does not make sense as we don't
         know how it is splitted among the model terms.
+
+        Parameters
+        ----------
+        input_data : np.ndarray
 
         """
         Xs = [
