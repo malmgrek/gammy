@@ -94,9 +94,7 @@ class Formula:
     def design_matrix(self, input_data, i: int=None):
         # If one term is asked for, give it. Otherwise use all terms.
         fs = sum(self.terms, []) if i is None else self.terms[i:i+1]
-        # Reshape 1d-arrays into column vectors
-        reshape = lambda t: (t.reshape(-1, 1) if t.ndim == 1 else t)
-        return np.hstack([reshape(f(input_data)) for f in fs])
+        return np.hstack([f(input_data) for f in fs])
 
 
 #
