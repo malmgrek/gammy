@@ -105,6 +105,8 @@ class Formula:
 def Flatten(formula, prior=None) -> Formula:
     """Flatten the terms of a given formula
 
+    Optionally override prior
+
     Parameters
     ----------
     formula : Formula
@@ -169,8 +171,9 @@ def Kron(a, b) -> Formula:
     #       corresponds to the product r.v. of independent r.v.'s.
     #       Check the formula of variance of product of independent r.v.'s.
 
-    # In the same order as in a Kronecker product
+    # TODO / FIXME: Don't flatten a and b.
     gen = (
+        # Careful! Must be same order as in a Kronecker product.
         (f, g) for f in sum(a.terms, []) for g in sum(b.terms, [])
     )
 
@@ -184,6 +187,9 @@ def Kron(a, b) -> Formula:
         terms=[basis],
         prior=(
             np.kron(a.prior[0], b.prior[0]),
+            # Although we kron-multiply precision matrices here (inverse
+            # of covariance), the order of inputs doesn't flip because
+            # (A ⊗ B) ^ -1 = (A ^ -1) ⊗ (B ^ -1)
             np.kron(a.prior[1], b.prior[1])
         )
     )
