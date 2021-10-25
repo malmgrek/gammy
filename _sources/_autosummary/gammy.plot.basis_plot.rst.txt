@@ -1,0 +1,9 @@
+.. py:data:: gammy.plot.basis_plot
+   :noindex:
+
+basis\_plot
+===========
+
+.. currentmodule:: gammy.plot
+
+.. autofunction:: basis_plot

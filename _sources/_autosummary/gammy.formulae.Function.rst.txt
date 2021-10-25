@@ -1,0 +1,9 @@
+.. py:data:: gammy.formulae.Function
+   :noindex:
+
+Function
+========
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Function

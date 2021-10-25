@@ -1,0 +1,50 @@
+﻿.. py:data:: gammy.utils
+   :noindex:
+
+gammy.utils
+===========
+
+.. automodule:: gammy.utils
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      compose
+      compose2
+      concat_gaussians
+      curryish
+      decompose_covariance
+      exp_sine_squared
+      exp_squared
+      extend_spline_grid
+      extract_diag_blocks
+      gen_spline_args_from_grid_ext
+      interp_arrays1d
+      jsonify
+      lift
+      listfilter
+      listmap
+      ornstein_uhlenbeck
+      peaks
+      pipe
+      rational_quadratic
+      rlift
+      set_from_json
+      solve_covariance
+      solve_precision
+      squared_dist
+      tuplefilter
+      tuplemap
+      unflatten
+      white_noise
+      write_to_hdf5
+   
+   

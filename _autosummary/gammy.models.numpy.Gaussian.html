@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gaussian &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="LinearModel" href="gammy.models.numpy.LinearModel.html" />
+    <link rel="prev" title="GAM" href="gammy.models.numpy.GAM.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <dl class="py data">
+<dt>
+<code class="sig-prename descclassname"><span class="pre">gammy.models.numpy.</span></code><code class="sig-name descname"><span class="pre">Gaussian</span></code></dt>
+<dd></dd></dl>
+
+<div class="section" id="gaussian">
+<h1>Gaussian<a class="headerlink" href="#gaussian" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="gammy.models.numpy.Gaussian">
+<em class="property"><span class="pre">class</span> </em><code class="sig-name descname"><span class="pre">Gaussian</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Lambda</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/models/numpy.html#Gaussian"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.numpy.Gaussian" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Moment calculator for a Gaussian distribution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>mu</strong><span class="classifier">np.ndarray</span></dt><dd><p>Mean value</p>
+</dd>
+<dt><strong>Lambda</strong><span class="classifier">np.ndarray</span></dt><dd><p>Precision matrix (inverse of covariance)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt id="gammy.models.numpy.Gaussian.Lambda">
+<code class="sig-name descname"><span class="pre">Lambda</span></code><a class="headerlink" href="#gammy.models.numpy.Gaussian.Lambda" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precision matrix</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gammy.models.numpy.Gaussian.get_moments">
+<code class="sig-name descname"><span class="pre">get_moments</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">numpy.ndarray</span><span class="p"><span class="pre">]</span></span><a class="reference internal" href="../_modules/gammy/models/numpy.html#Gaussian.get_moments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.models.numpy.Gaussian.get_moments" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gammy.models.numpy.Gaussian.mu">
+<code class="sig-name descname"><span class="pre">mu</span></code><a class="headerlink" href="#gammy.models.numpy.Gaussian.mu" title="Permalink to this definition">¶</a></dt>
+<dd><p>Mean vector</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Gammy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../walkthrough.html">Walkthrough</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gammy.arraymapper.html">gammy.arraymapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.formulae.html">gammy.formulae</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gammy.models.html">gammy.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.plot.html">gammy.plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.utils.html">gammy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
+  <li><a href="gammy.models.html">gammy.models</a><ul>
+  <li><a href="gammy.models.numpy.html">gammy.models.numpy</a><ul>
+      <li>Previous: <a href="gammy.models.numpy.GAM.html" title="previous chapter">GAM</a></li>
+      <li>Next: <a href="gammy.models.numpy.LinearModel.html" title="next chapter">LinearModel</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Malmgrek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_autosummary/gammy.models.numpy.Gaussian.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

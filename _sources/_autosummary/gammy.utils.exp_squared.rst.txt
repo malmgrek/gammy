@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.exp_squared
+   :noindex:
+
+exp\_squared
+============
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: exp_squared

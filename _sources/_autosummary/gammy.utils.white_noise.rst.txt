@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.white_noise
+   :noindex:
+
+white\_noise
+============
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: white_noise

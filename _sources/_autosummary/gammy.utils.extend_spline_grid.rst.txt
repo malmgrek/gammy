@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.extend_spline_grid
+   :noindex:
+
+extend\_spline\_grid
+====================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: extend_spline_grid

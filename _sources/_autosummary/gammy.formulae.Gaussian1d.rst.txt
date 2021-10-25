@@ -1,0 +1,9 @@
+.. py:data:: gammy.formulae.Gaussian1d
+   :noindex:
+
+Gaussian1d
+==========
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Gaussian1d

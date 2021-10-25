@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.tuplemap
+   :noindex:
+
+tuplemap
+========
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: tuplemap

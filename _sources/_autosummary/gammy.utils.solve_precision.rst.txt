@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.solve_precision
+   :noindex:
+
+solve\_precision
+================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: solve_precision

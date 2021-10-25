@@ -1,0 +1,30 @@
+.. py:data:: gammy.models.bayespy
+   :noindex:
+
+gammy.models.bayespy
+====================
+
+.. automodule:: gammy.models.bayespy
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+      :toctree:
+   
+      GAM
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+      :toctree:
+   
+      LinearModel
+      create_gaussian_theta
+   
+   

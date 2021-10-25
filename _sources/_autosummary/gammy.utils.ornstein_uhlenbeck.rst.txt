@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.ornstein_uhlenbeck
+   :noindex:
+
+ornstein\_uhlenbeck
+===================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: ornstein_uhlenbeck

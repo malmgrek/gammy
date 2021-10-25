@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.pipe
+   :noindex:
+
+pipe
+====
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: pipe

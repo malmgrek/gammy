@@ -1,0 +1,15 @@
+.. py:data:: gammy.models.bayespy.GAM
+   :noindex:
+
+GAM
+========================
+
+.. currentmodule:: gammy.models.bayespy
+
+.. autoclass:: GAM
+   :members:
+   :special-members:
+   :inherited-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:

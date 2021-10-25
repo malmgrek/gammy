@@ -1,0 +1,15 @@
+.. py:data:: gammy.formulae.Formula
+   :noindex:
+
+Formula
+======================
+
+.. currentmodule:: gammy.formulae
+
+.. autoclass:: Formula
+   :members:
+   :special-members:
+   :inherited-members:
+   :private-members:
+   :undoc-members:
+   :show-inheritance:

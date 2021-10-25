@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.squared_dist
+   :noindex:
+
+squared\_dist
+=============
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: squared_dist

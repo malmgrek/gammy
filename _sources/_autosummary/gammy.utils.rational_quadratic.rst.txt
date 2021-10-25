@@ -1,0 +1,9 @@
+.. py:data:: gammy.utils.rational_quadratic
+   :noindex:
+
+rational\_quadratic
+===================
+
+.. currentmodule:: gammy.utils
+
+.. autofunction:: rational_quadratic

@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>validation_plot &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gammy.utils" href="gammy.utils.html" />
+    <link rel="prev" title="gaussian2d_density_plot" href="gammy.plot.gaussian2d_density_plot.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <dl class="py data">
+<dt>
+<code class="sig-prename descclassname"><span class="pre">gammy.plot.</span></code><code class="sig-name descname"><span class="pre">validation_plot</span></code></dt>
+<dd></dd></dl>
+
+<div class="section" id="validation-plot">
+<h1>validation_plot<a class="headerlink" href="#validation-plot" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="gammy.plot.validation_plot">
+<code class="sig-name descname"><span class="pre">validation_plot</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_limits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_maps</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xlabels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gridsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'r'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/plot.html#validation_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.plot.validation_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validation plot for a GAM object</p>
+<p>Contains:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Series plot with predicted vs. observed</p></li>
+<li><p>Partial residual plots</p></li>
+</ul>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><dl class="simple">
+<dt><strong>model</strong><span class="classifier">gammy.bayespy.GAM | gammy.numpy.GAM</span></dt><dd><p>Visualized model</p>
+</dd>
+<dt><strong>input_data</strong><span class="classifier">np.ndarray</span></dt><dd><p>Input data</p>
+</dd>
+<dt><strong>y</strong><span class="classifier">np.ndarray</span></dt><dd><p>Observations</p>
+</dd>
+<dt><strong>grid_limits</strong><span class="classifier">List</span></dt><dd><p>Grid limits, either <cite>[a, b]</cite> or <cite>[[a_1, b_1], …, [a_N, b_N]]</cite></p>
+</dd>
+<dt><strong>input_maps</strong><span class="classifier">List[Callable]</span></dt><dd><p>List of input maps to be used for each pair of grid limits</p>
+</dd>
+<dt><strong>index</strong><span class="classifier">np.ndarray</span></dt><dd><p>Optional x-axis for the series plot</p>
+</dd>
+<dt><strong>xlabels</strong><span class="classifier">List[str]</span></dt><dd><p>Optional x-labels for the partial residual plots</p>
+</dd>
+<dt><strong>gridsize</strong><span class="classifier">int</span></dt><dd><p>Number of points in the input dimensions discretizations</p>
+</dd>
+<dt><strong>color</strong><span class="classifier">str</span></dt><dd><p>Color of scatter points</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Gammy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../walkthrough.html">Walkthrough</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../api.html">API Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gammy.arraymapper.html">gammy.arraymapper</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.formulae.html">gammy.formulae</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.models.html">gammy.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gammy.plot.html">gammy.plot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gammy.utils.html">gammy.utils</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../api.html">API Reference</a><ul>
+  <li><a href="gammy.plot.html">gammy.plot</a><ul>
+      <li>Previous: <a href="gammy.plot.gaussian2d_density_plot.html" title="previous chapter">gaussian2d_density_plot</a></li>
+      <li>Next: <a href="gammy.utils.html" title="next chapter">gammy.utils</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Malmgrek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/_autosummary/gammy.plot.validation_plot.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gammy.arraymapper &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Source code for gammy.arraymapper</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Arraymapper module</span>
+
+<span class="sd">.. rubric:: Objects</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   :toctree:</span>
+
+<span class="sd">   x</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span>
+
+<span class="kn">from</span> <span class="nn">gammy.utils</span> <span class="kn">import</span> <span class="n">compose</span>
+
+
+<div class="viewcode-block" id="ArrayMapper"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper">[docs]</a><span class="k">class</span> <span class="nc">ArrayMapper</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Callable input mapping object that obey arithmetic operations</span>
+
+<span class="sd">    When working with basis function regression, when building the</span>
+<span class="sd">    design matrix, one needs the information &#39;how eact term maps input array&#39;.</span>
+<span class="sd">    This class helps writing human-readable model definitions that explicitly</span>
+<span class="sd">    show how inputs are mapped. For example,</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">       formula = a(x[:, 0]) * x[:, 1] + x[:, 2] ** 2</span>
+
+<span class="sd">    is a valid definition as long as ``a`` is an instance of</span>
+<span class="sd">    :class:`gammy.Formula` and ``x`` is an instance of :class:`ArrayMapper`.</span>
+
+<span class="sd">    TODO: Are some natural methods are still missing?</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
+        <span class="sd">&quot;&quot;&quot;Wrapped function&quot;&quot;&quot;</span>
+
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="ArrayMapper.__call__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__call__">[docs]</a>    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the wrapped function</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__getitem__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__getitem__">[docs]</a>    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Access index as in a NumPy Array</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__add__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__add__">[docs]</a>    <span class="k">def</span> <span class="fm">__add__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Addition of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__add__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__sub__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__sub__">[docs]</a>    <span class="k">def</span> <span class="fm">__sub__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Subtraction of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__sub__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__mul__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__mul__">[docs]</a>    <span class="k">def</span> <span class="fm">__mul__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Multiplication of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__mul__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__truediv__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__truediv__">[docs]</a>    <span class="k">def</span> <span class="fm">__truediv__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Division of arraymappers</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        other : ArrayMapper</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__truediv__</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__pow__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__pow__">[docs]</a>    <span class="k">def</span> <span class="fm">__pow__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Raise an arraymapper to a power</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__pow__</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.__neg__"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.__neg__">[docs]</a>    <span class="k">def</span> <span class="fm">__neg__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Negation operation</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="fm">__neg__</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.ravel"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.ravel">[docs]</a>    <span class="k">def</span> <span class="nf">ravel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Imitates the behavior of NumPy ravel method</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArrayMapper.reshape"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper.reshape">[docs]</a>    <span class="k">def</span> <span class="nf">reshape</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ArrayMapper&quot;</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Numpy reshape</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="lift"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.lift.html#gammy.arraymapper.lift">[docs]</a><span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Lift a function</span>
+
+<span class="sd">    lift :: a -&gt; b -&gt; ArrayMapper(a) -&gt; ArrayMapper(b) -&gt; ArrayMapper(b)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@wraps</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">lifted</span><span class="p">(</span><span class="n">mapper</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ArrayMapper</span><span class="p">(</span><span class="n">compose</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">mapper</span><span class="o">.</span><span class="n">function</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">lifted</span></div>
+
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">ArrayMapper</span><span class="p">()</span>
+<span class="n">x</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="sd">&quot;&quot;&quot;ArrayMapper instantiated at load-time for convenient importing to applications</span>
+
+<span class="sd">    Intended usage is to import ``x`` standalone:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import gammy</span>
+<span class="sd">        from gammy.arraymapper import x</span>
+
+<span class="sd">        # Define formula</span>
+<span class="sd">        formula = gammy.Scalar() * x</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="p">)</span>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../../index.html">Gammy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../walkthrough.html">Walkthrough</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Module code</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Malmgrek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

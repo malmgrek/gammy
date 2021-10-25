@@ -1,0 +1,9 @@
+.. py:data:: gammy.formulae.Kron
+   :noindex:
+
+Kron
+====
+
+.. currentmodule:: gammy.formulae
+
+.. autofunction:: Kron
