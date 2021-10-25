@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.listfilter
-   :noindex:
-
-listfilter
-==========
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: listfilter

@@ -1,9 +1,0 @@
-.. py:data:: gammy.models.numpy.LinearModel
-   :noindex:
-
-LinearModel
-===========
-
-.. currentmodule:: gammy.models.numpy
-
-.. autofunction:: LinearModel

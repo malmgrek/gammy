@@ -1,9 +1,0 @@
-.. py:data:: gammy.models.bayespy.create_gaussian_theta
-   :noindex:
-
-create\_gaussian\_theta
-=======================
-
-.. currentmodule:: gammy.models.bayespy
-
-.. autofunction:: create_gaussian_theta

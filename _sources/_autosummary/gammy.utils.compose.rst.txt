@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.compose
-   :noindex:
-
-compose
-=======
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: compose

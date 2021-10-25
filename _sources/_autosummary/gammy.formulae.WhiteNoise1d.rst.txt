@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.WhiteNoise1d
-   :noindex:
-
-WhiteNoise1d
-============
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: WhiteNoise1d

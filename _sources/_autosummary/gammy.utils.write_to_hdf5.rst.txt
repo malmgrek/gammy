@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.write_to_hdf5
-   :noindex:
-
-write\_to\_hdf5
-===============
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: write_to_hdf5

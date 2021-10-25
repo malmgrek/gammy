@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.listmap
-   :noindex:
-
-listmap
-=======
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: listmap

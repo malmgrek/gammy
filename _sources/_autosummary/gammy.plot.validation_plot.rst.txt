@@ -1,9 +1,0 @@
-.. py:data:: gammy.plot.validation_plot
-   :noindex:
-
-validation\_plot
-================
-
-.. currentmodule:: gammy.plot
-
-.. autofunction:: validation_plot

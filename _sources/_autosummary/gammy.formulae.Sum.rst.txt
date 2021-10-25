@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.Sum
-   :noindex:
-
-Sum
-===
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: Sum

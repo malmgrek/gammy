@@ -43,6 +43,11 @@
 <dt id="gammy.formulae.BSpline1d">
 <code class="sig-name descname"><span class="pre">BSpline1d</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extrapolate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prior</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_basis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu_hyper</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="gammy.formulae.Formula.html#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a><a class="reference internal" href="../_modules/gammy/formulae.html#BSpline1d"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.BSpline1d" title="Permalink to this definition">¶</a></dt>
 <dd><p>B-spline basis on a fixed one-dimensional grid</p>
+<p>Number of spline basis functions is always <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">=</span> <span class="pre">len(grid)</span> <span class="pre">+</span> <span class="pre">order</span> <span class="pre">-</span> <span class="pre">2</span></code></p>
+<dl class="simple">
+<dt>TODO: Verify that this doesn’t break when scaling the grid</dt><dd><p>(extrapolation + damping)</p>
+</dd>
+</dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><dl class="simple">
@@ -58,9 +63,6 @@ endpoints</p>
 <dt><strong>mu_basis</strong><span class="classifier">List[Callable]</span></dt><dd><p>Basis for estimating the mean hyperparameter</p>
 </dd>
 <dt><strong>mu_hyper</strong><span class="classifier">Tuple[np.ndarray]</span></dt><dd><p>Hyperprior mean and precision matrix</p>
-</dd>
-<dt><strong>Number of spline basis functions is always ``N = len(grid) + order - 2``</strong></dt><dd></dd>
-<dt><strong>TODO: Verify that this doesn’t break when scaling the grid</strong></dt><dd><p>(extrapolation + damping)</p>
 </dd>
 </dl>
 </dd>

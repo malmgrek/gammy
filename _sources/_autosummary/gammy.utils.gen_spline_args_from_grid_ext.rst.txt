@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.gen_spline_args_from_grid_ext
-   :noindex:
-
-gen\_spline\_args\_from\_grid\_ext
-==================================
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: gen_spline_args_from_grid_ext

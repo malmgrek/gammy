@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.lift
-   :noindex:
-
-lift
-====
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: lift

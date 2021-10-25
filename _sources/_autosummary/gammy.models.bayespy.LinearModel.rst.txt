@@ -1,9 +1,0 @@
-.. py:data:: gammy.models.bayespy.LinearModel
-   :noindex:
-
-LinearModel
-===========
-
-.. currentmodule:: gammy.models.bayespy
-
-.. autofunction:: LinearModel

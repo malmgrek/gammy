@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.TanH
-   :noindex:
-
-TanH
-====
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: TanH

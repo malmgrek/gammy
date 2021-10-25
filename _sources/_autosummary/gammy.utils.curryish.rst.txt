@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.curryish
-   :noindex:
-
-curryish
-========
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: curryish

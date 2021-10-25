@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.peaks
-   :noindex:
-
-peaks
-=====
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: peaks

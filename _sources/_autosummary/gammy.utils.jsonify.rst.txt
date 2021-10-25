@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.jsonify
-   :noindex:
-
-jsonify
-=======
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: jsonify

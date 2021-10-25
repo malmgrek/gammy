@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.design_matrix
-   :noindex:
-
-design\_matrix
-==============
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: design_matrix

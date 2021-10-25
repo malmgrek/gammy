@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.Polynomial
-   :noindex:
-
-Polynomial
-==========
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: Polynomial

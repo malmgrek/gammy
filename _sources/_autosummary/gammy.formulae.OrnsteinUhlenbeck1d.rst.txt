@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.OrnsteinUhlenbeck1d
-   :noindex:
-
-OrnsteinUhlenbeck1d
-===================
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: OrnsteinUhlenbeck1d

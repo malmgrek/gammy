@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.tuplefilter
-   :noindex:
-
-tuplefilter
-===========
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: tuplefilter

@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.Flatten
-   :noindex:
-
-Flatten
-=======
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: Flatten

@@ -1,9 +1,0 @@
-.. py:data:: gammy.utils.rlift_basis
-   :noindex:
-
-rlift\_basis
-============
-
-.. currentmodule:: gammy.utils
-
-.. autofunction:: rlift_basis

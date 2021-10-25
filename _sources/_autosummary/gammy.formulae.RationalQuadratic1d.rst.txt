@@ -1,9 +1,0 @@
-.. py:data:: gammy.formulae.RationalQuadratic1d
-   :noindex:
-
-RationalQuadratic1d
-===================
-
-.. currentmodule:: gammy.formulae
-
-.. autofunction:: RationalQuadratic1d
