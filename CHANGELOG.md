@@ -1,6 +1,12 @@
 # Change Log
 
 
+## 0.4.3
+
+### Change
+- Absolute to relative image links so that images show in PyPi
+
+
 ## 0.4.2
 
 ### Add
