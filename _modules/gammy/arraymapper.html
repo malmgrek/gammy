@@ -156,9 +156,23 @@
 <div class="viewcode-block" id="lift"><a class="viewcode-back" href="../../_autosummary/gammy.arraymapper.lift.html#gammy.arraymapper.lift">[docs]</a><span class="k">def</span> <span class="nf">lift</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Lift a function</span>
 
-<span class="sd">    .. code-block:: text</span>
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
 
-<span class="sd">        lift :: a -&gt; b -&gt; ArrayMapper(a) -&gt; ArrayMapper(b) -&gt; ArrayMapper(b)</span>
+<span class="sd">    The main use case is to transform a numeric function to act on</span>
+<span class="sd">    array mappers.</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+
+<span class="sd">        from gammy.arraymapper import x, lift</span>
+<span class="sd">        from gammy.formulae import Scalar</span>
+
+
+<span class="sd">        sin = lift(np.sin)</span>
+<span class="sd">        cos = lift(np.cos)</span>
+<span class="sd">        formula = Scalar() * sin(x) + Scalar() * cos(x)</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 

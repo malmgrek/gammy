@@ -76,12 +76,21 @@ in the additive model formula</p>
 <dl class="py method">
 <dt id="gammy.formulae.Formula.__mul__">
 <code class="sig-name descname"><span class="pre">__mul__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_map</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><a class="reference internal" href="gammy.arraymapper.ArrayMapper.html#gammy.arraymapper.ArrayMapper" title="gammy.arraymapper.ArrayMapper"><span class="pre">gammy.arraymapper.ArrayMapper</span></a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><span class="pre">gammy.formulae.Formula</span></a><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.__mul__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.__mul__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Multiplication</p>
+<dd><p>Multiplication with input map</p>
+<p><em>Note</em>: This is not a <a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formula</span></code></a> × <a class="reference internal" href="#gammy.formulae.Formula" title="gammy.formulae.Formula"><code class="xref py py-class docutils literal notranslate"><span class="pre">Formula</span></code></a>
+multiplication! See <a class="reference internal" href="gammy.formulae.Kron.html#gammy.formulae.Kron" title="gammy.formulae.Kron"><code class="xref py py-func docutils literal notranslate"><span class="pre">Kron()</span></code></a> for that use case.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+<span class="kn">from</span> <span class="nn">gammy.formulae</span> <span class="kn">import</span> <span class="n">Scalar</span>
+
+<span class="n">formula</span> <span class="o">=</span> <span class="n">Scalar</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span>
+</pre></div>
+</div>
 </dd></dl>
 
 <dl class="py method">
 <dt id="gammy.formulae.Formula.design_matrix">
-<code class="sig-name descname"><span class="pre">design_matrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.design_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.design_matrix" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">design_matrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">numpy.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/gammy/formulae.html#Formula.design_matrix"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gammy.formulae.Formula.design_matrix" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
