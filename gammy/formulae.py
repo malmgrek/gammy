@@ -93,8 +93,8 @@ class Formula:
 
     def design_matrix(self, input_data, i: int=None):
         # If one term is asked for, give it. Otherwise use all terms.
-        fs = sum(self.terms, []) if i is None else self.terms[i:i+1]
-        return np.hstack([f(input_data) for f in fs])
+        fs = sum(self.terms, []) if i is None else self.terms[i]
+        return np.hstack([f(input_data).reshape(-1, 1) for f in fs])
 
 
 #

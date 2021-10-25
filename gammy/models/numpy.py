@@ -10,7 +10,7 @@ import numpy as np
 
 import gammy
 from gammy import utils
-from gammy.formulae import design_matrix, Formula
+from gammy.formulae import Formula
 
 
 class Gaussian:
@@ -167,7 +167,7 @@ class GAM:
             Observations
 
         """
-        X = design_matrix(input_data, sum(self.formula.terms, []))
+        X = self.formula.design_matrix(input_data)
         #
         # NOTE: Posterior covariance formula based on Kaipio--Somersalo; Remark
         # after Theorem 3.7
@@ -198,7 +198,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = design_matrix(input_data, sum(self.formula.terms, []))
+        X = self.formula.design_matrix(input_data)
         return np.dot(X, np.hstack(self.mean_theta))
 
     def predict_variance(self, input_data) -> Tuple[np.ndarray]:
@@ -209,7 +209,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = design_matrix(input_data, sum(self.formula.terms, []))
+        X = self.formula.design_matrix(input_data)
         Sigma = utils.solve_covariance(self.theta.get_moments())
         return (
             np.dot(X, self.theta.mu),
@@ -225,7 +225,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = design_matrix(input_data, sum(self.formula.terms, []))
+        X = self.formula.design_matrix(input_data)
         Sigma = utils.solve_covariance(self.theta.get_moments())
         return (
             np.dot(X, self.theta.mu),
@@ -240,7 +240,10 @@ class GAM:
         input_data : np.ndarray
 
         """
-        Xs = [design_matrix(input_data, basis) for basis in self.formula.terms]
+        Xs = [
+            self.formula.design_matrix(input_data, i)
+            for i in range(len(self.formula))
+        ]
         return [np.dot(X, c) for (X, c) in zip(Xs, self.mean_theta)]
 
     def predict_variance_marginals(self, input_data) -> List[Tuple[np.ndarray]]:
@@ -251,7 +254,10 @@ class GAM:
         input_data : np.ndarray
 
         """
-        Xs = [design_matrix(input_data, basis) for basis in self.formula.terms]
+        Xs = [
+            self.formula.design_matrix(input_data, i)
+            for i in range(len(self.formula))
+        ]
         Sigmas = [
             utils.solve_covariance(theta.get_moments())
             for theta in self.theta_marginals
@@ -271,7 +277,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = design_matrix(input_data, self.formula.terms[i])
+        X = self.formula.design_matrix(input_data, i)
         return np.dot(X, self.mean_theta[i])
 
     def predict_variance_marginal(
@@ -286,7 +292,7 @@ class GAM:
         input_data : np.ndarray
 
         """
-        X = design_matrix(input_data, self.formula.terms[i])
+        X = self.formula.design_matrix(input_data, i)
         Sigma = utils.solve_covariance(self.theta_marginal(i).get_moments())
         mu = np.dot(X, self.mean_theta[i])
         sigma = np.diag(np.dot(X, np.dot(Sigma, X.T)))

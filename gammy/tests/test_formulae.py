@@ -12,7 +12,6 @@ import pytest
 import gammy
 from gammy import utils
 from gammy.arraymapper import x
-from gammy.formulae import design_matrix
 
 
 # TODO: Multivariate with Kron
@@ -71,9 +70,10 @@ def square():
 def test_design_matrix(xs, expected):
     (formula, input_data) = xs
     assert_array_equal(
-        utils.listmap(
-            lambda b: gammy.design_matrix(input_data, b)
-        )(formula.terms),
+        [
+            formula.design_matrix(input_data, i)
+            for i in range(len(formula))
+        ],
         expected
     )
     return
@@ -108,7 +108,7 @@ def test_formula(xs, ys, expected):
     # ~~~~~~~~
     #
     assert_almost_equal(
-        design_matrix(input_data, sum((formula_1 + formula_2).terms, [])),
+        (formula_1 + formula_2).design_matrix(input_data),
         expected["__add__"],
         decimal=10
     )
@@ -118,7 +118,7 @@ def test_formula(xs, ys, expected):
     # ~~~~~~~~~~~~~~~~~~~~~~~~~
     #
     assert_array_equal(
-        design_matrix(input_data, sum((formula_1 * gammy.x).terms, [])),
+        (formula_1 * gammy.x).design_matrix(input_data),
         expected["__mul__"]
     )
 
@@ -133,7 +133,7 @@ def test_formula(xs, ys, expected):
     # ~~~~~~~~~~~~~~~~
     #
     assert_array_equal(
-        design_matrix(input_data, sum(formula_1(lambda t: t * .5).terms, [])),
+        formula_1(lambda t: t * .5).design_matrix(input_data),
         expected["__call__"]
     )
 
@@ -142,7 +142,7 @@ def test_formula(xs, ys, expected):
     # ~~~~~~~~~~~~~~~~~~
     #
     assert_array_equal(
-        design_matrix(input_data, sum(formula_1.terms, [])),
+        formula_1.design_matrix(input_data),
         expected["X"]
     )
 
@@ -151,7 +151,7 @@ def test_formula(xs, ys, expected):
     # ~~~~~~~~~~~~~~~~~~~~~
     #
     assert_array_equal(
-        design_matrix(input_data, (formula_1 + formula_2).terms[0]),
+        (formula_1 + formula_2).design_matrix(input_data, 0),
         expected["Xi"]
     )
 
@@ -192,7 +192,7 @@ def test_kron():
     [bs] = formula.terms
     assert len(bs) == 4
     assert_almost_equal(
-        design_matrix(input_data, sum(formula.terms, [])),
+        formula.design_matrix(input_data),
         np.array([
             [0., 0., 0., 0.],
             [1., 1., 1., 1.],
