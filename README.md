@@ -22,18 +22,18 @@ fit models using just NumPy.
 **Table of Contents**
 
 - [Installation](#installation)
-- [Features through examples](#features-through-examples)
+- [Examples](#examples)
     - [Polynomial regression on 'roids](#polynomial-regression-on-roids)
         - [Predicting with model](#predicting-with-model)
         - [Plotting results](#plotting-results)
-        - [Saving model on hard disk for later use (HDF5)](#saving-model-on-hard-disk-for-later-use-hdf5)
-    - [Gaussian process regression ("kriging")](#gaussian-process-regression-kriging)
-        - [More kernel functions for GPs](#more-kernel-functions-for-gps)
-        - [Define custom kernels](#define-custom-kernels)
-    - [Multivariate Gaussian process regression](#multivariate-gaussian-process-regression)
+        - [Saving model on hard disk](#saving-model-on-hard-disk)
+    - [Gaussian process regression](#gaussian-process-regression)
+        - [More covariance kernels](#more-covariance-kernels)
+        - [Defining custom kernels](#defining-custom-kernels)
+    - [Non-linear manifold regression](#non-linear-manifold-regression)
     - [B-Spline basis](#b-spline-basis)
 - [Testing](#testing)
-- [Documentation](#documentation)
+- [Package documentation](#package-documentation)
 - [ToDo](#todo)
 
 <!-- markdown-toc end -->
@@ -46,81 +46,95 @@ The package is found in PyPi.
 pip install gammy
 ```
 
-## Features through examples
+## Examples
 
 In this overview, we demonstrate the package's most important features through
 common usage examples. 
 
 ### Polynomial regression on 'roids
 
-Start with very simple dataset
+A typical simple (but sometimes non-trivial) modeling task is to estimate an
+unknown function from noisy data. First we import the bare minimum dependencies to be used in the below examples:
 
 ```python
-import matplotlib.pyplot as plt
-import numpy as np
-import pandas as pd
+>>> from functools import reduce
 
-import gammy
+>>> import matplotlib.pyplot as plt
+>>> import numpy as np
+>>> import pandas as pd
 
-# NOTE: Used repetitively in defining model terms!
-from gammy.arraymapper import x
+>>> import gammy
+>>> from gammy.models.bayespy import GAM
 
+```
 
-np.random.seed(42)
+Let's simulate a dataset:
 
+```python
+>>> np.random.seed(42)
 
-# Define dummy data
-n = 30
-input_data = 10 * np.random.rand(n)
-y = 5 * input_data + 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
+>>> n = 30
+>>> input_data = 10 * np.random.rand(n)
+>>> y = 5 * input_data + 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
+
 ```
 
 The object `x` is just a convenience tool for defining input data maps
-as if they were just Numpy arrays.
+as if they were just Numpy arrays:
 
 ```python
-# Define model
-a = gammy.Scalar(prior=(0, 1e-6))
-b = gammy.Scalar(prior=(0, 1e-6))
-bias = gammy.Scalar(prior=(0, 1e-6))
-formula = a * x + b * x ** 2 + bias
-model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
+>>> from gammy.arraymapper import x
+
 ```
 
-The model attribute `model.theta` characterizes the Gaussian posterior distribution of the model parameters vector.
+Define and fit the model:
+
+```python
+>>> a = gammy.formulae.Scalar(prior=(0, 1e-6))
+>>> b = gamme.formulae.Scalar(prior=(0, 1e-6))
+>>> bias = gammy.formulae.Scalar(prior=(0, 1e-6))
+>>> formula = a * x + b * x ** 2 + bias
+>>> model = GAM(formula).fit(input_data, y)
+
+```
+
+The model attribute `model.theta` characterizes the Gaussian posterior
+distribution of the model parameters vector.
 
 #### Predicting with model
 
 ```python
-model.predict(input_data[:3])
-# array([  99.25493083,   23.31063443,  226.70702106])
+>>> np.round(model.predict(input_data[:3]), 4)
+array([ 52.5711, 226.9461, 144.7863])
+
 ```
 
-Predictions with uncertainty can be calculated as follows (`scale=2.0` roughly corresponds to the 95% confidence interval):
+Predictions with uncertainty can be calculated as follows:
 
 ```python
-model.predict_total_uncertainty(input_data[:3], scale=2.0)
-# (array([ 97.3527439 ,  77.79515549,  59.88285762]),
-#  array([ 2.18915289,  2.19725385,  2.18571614]))
+>>> np.round(model.predict_variance(input_data[:3]), 4)
+array([[ 52.5711, 226.9461, 144.7863],
+       [ 79.3583,  95.1636,  79.9003]])
+
 ```
 
 #### Plotting results
 
 ```python
-# Plot results
-fig = gammy.plot.validation_plot(
-    model,
-    input_data,
-    y,
-    grid_limits=[0, 10],
-    input_maps=[x, x, x],
-    titles=["a", "b", "bias"]
-)
+>>> fig = gammy.plot.validation_plot(
+...     model,
+...     input_data,
+...     y,
+...     grid_limits=[0, 10],
+...     input_maps=[x, x, x],
+...     titles=["a", "b", "bias"]
+... )
+
 ```
 
-The grey band in the top figure is two times
-the prediction standard deviation and, in the partial residual plots, two times
-the respective marginal posterior standard deviation.
+The grey band in the top figure is two times the prediction standard deviation
+and, in the partial residual plots, two times the respective marginal posterior
+standard deviation.
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example0-0.png)
 
@@ -128,175 +142,200 @@ It is also possible to plot the estimated Γ-distribution of the noise precision
 (inverse variance) as well as the 1-D Normal distributions of each individual
 model parameter.
 
+Plot (prior or posterior) probability density functions of all model parameters:
+
 ```python
-# Plot parameter probability density functions
-fig = gammy.plot.gaussian1d_density_plot(model)
+>>> fig = gammy.plot.gaussian1d_density_plot(model)
+
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example0-1.png)
 
-#### Saving model on hard disk for later use (HDF5)
+#### Saving model on hard disk
 
-Saving
+Saving:
 
+<!-- NOTE: To skip doctests, one > has been removed -->
 ```python
-model.save("/home/foobar/test.hdf5")
+>> model.save("/home/foobar/test.hdf5")
 ```
 
-Loading
+Loading:
 
+<!-- NOTE: To skip doctests, one > has been removed -->
 ```python
-model = bayespy.GAM(formula).load("/home/foobar/test.hdf5")
+>> model = GAM(formula).load("/home/foobar/test.hdf5")
 ```
 
-### Gaussian process regression ("kriging")
+### Gaussian process regression
+
+Create fake dataset:
 
 ```python
-# Create some data
-n = 50
-input_data = np.vstack((2 * np.pi * np.random.rand(n), np.random.rand(n))).T
-y = (
-    np.abs(np.cos(input_data[:, 0])) * input_data[:, 1] 
-    + 1 + 0.1 * np.random.randn(n)
-)
+>>> n = 50
+>>> input_data = np.vstack((2 * np.pi * np.random.rand(n), np.random.rand(n))).T
+>>> y = (
+...     np.abs(np.cos(input_data[:, 0])) * input_data[:, 1] +
+...     1 + 0.1 * np.random.randn(n)
+... )
 
+```
 
-# Define model
-a = gammy.ExpSineSquared1d(
-    np.arange(0, 2 * np.pi, 0.1),
-    corrlen=1.0,
-    sigma=1.0,
-    period=2 * np.pi,
-    energy=0.99
-)
-bias = gammy.Scalar(prior=(0, 1e-6))
-formula = a(x[:, 0]) * x[:, 1] + bias
-model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
+Define model:
 
+``` python
+>>> a = ExpSineSquared1d(
+...     np.arange(0, 2 * np.pi, 0.1),
+...     corrlen=1.0,
+...     sigma=1.0,
+...     period=2 * np.pi,
+...     energy=0.99
+... )
+>>> bias = gammy.Scalar(prior=(0, 1e-6))
+>>> formula = a(x[:, 0]) * x[:, 1] + bias
+>>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
-# Plot results
-fig = gammy.plot.validation_plot(
-    model,
-    input_data,
-    y,
-    grid_limits=[[0, 2 * np.pi], [0, 1]],
-    input_maps=[x[:, 0:2], x[:, 1]],
-    titles=["a", "intercept"]
-)
+```
 
+Plot results:
 
-# Plot parameter probability density functions
-fig = gammy.plot.gaussian1d_density_plot(model)
+``` python
+>>> fig = gammy.plot.validation_plot(
+...     model,
+...     input_data,
+...     y,
+...     grid_limits=[[0, 2 * np.pi], [0, 1]],
+...     input_maps=[x[:, 0:2], x[:, 1]],
+...     titles=["a", "intercept"]
+... )
+
+```
+
+Plot parameter probability density functions
+
+``` python
+>>> fig = gammy.plot.gaussian1d_density_plot(model)
+
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example1-0.png)
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example1-1.png)
 
-#### More kernel functions for GPs
+#### More covariance kernels
+
+Target function: staircase shape with 5 steps between 0...1.
 
 ``` python
+>>> input_data = np.arange(0, 1, 0.01)
+>>> y = reduce(lambda u, v: u + v, [
+...     1.0 * (input_data > c) for c in [0, 0.2, 0.4, 0.6, 0.8]
+... ])
 
-input_data = np.arange(0, 1, 0.01)
+>>> grid = np.arange(0, 1, 0.01)
+>>> corrlen = 0.01
+>>> sigma = 2
 
-# Staircase function with 5 steps from 0...1
-y = reduce(lambda u, v: u + v, [
-    1.0 * (input_data > c) for c in [0, 0.2, 0.4, 0.6, 0.8]
-])
+>>> exp_squared_model = GAM(
+...     gammy.formulae.ExpSquared1d(
+...         grid=grid,
+...         corrlen=corrlen,
+...         sigma=sigma,
+...         energy=0.9
+...     )(x)
+... ).fit(input_data, y)
 
-grid = np.arange(0, 1, 0.001)
-corrlen = 0.01
-sigma = 2
-a = gammy.ExpSquared1d(
-    grid=grid,
-    corrlen=corrlen,
-    sigma=sigma,
-    energy=0.999
-)(x)
-b = gammy.RationalQuadratic1d(
-    grid=grid,
-    corrlen=corrlen,
-    alpha=1,
-    sigma=sigma,
-    energy=0.99
-)(x)
-c = gammy.OrnsteinUhlenbeck1d(
-    grid=grid,
-    corrlen=corrlen,
-    sigma=sigma,
-    energy=0.99
-)(x)
+>>> rat_quad_model = GAM(
+...     gammy.formulae.RationalQuadratic1d(
+...         grid=grid,
+...         corrlen=corrlen,
+...         alpha=1,
+...         sigma=sigma,
+...         energy=0.9
+...     )(x)
+... ).fit(input_data, y)
 
-exponential_squared = gammy.models.bayespy.GAM(a).fit(input_data, y)
-rational_quadratic = gammy.models.bayespy.GAM(b).fit(input_data, y)
-ornstein_uhlenbeck = gammy.models.bayespy.GAM(c).fit(input_data, y)
-# Plot boilerplate ...
+>>> orn_uhl_model = GAM(
+...     gammy.formulae.OrnsteinUhlenbeck1d(
+...         grid=grid,
+...         corrlen=corrlen,
+...         sigma=sigma,
+...         energy=0.9
+...     )(x)
+... ).fit(input_data, y)
+
+>>> np.round(exp_squared_model.mean_theta[0][:3], 2)
+array([11.87,  5.09,  3.98])
+
+>>> np.round(rat_quad_model.mean_theta[0][:3], 2)
+array([9.54, 4.34, 2.48])
+
+>>> np.round(orn_uhl_model.mean_theta[0][:3], 2)
+array([12.86,  5.55,  4.3 ])
 
 ```
 
+The plotting related boilerplate code is omitted:
+
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example1-2.png)
 
-#### Define custom kernels
+#### Defining custom kernels
 
 It is straightforward to define custom formulas from "positive semidefinite" covariance kernel functions.
 
 ``` python
-
-def kernel(x1, x2):
-    """Kernel for min(x, x')
-    
-    """
-    r = lambda t: t.repeat(*t.shape)
-    return np.minimum(r(x1), r(x2).T)
-
-
-grid = np.arange(0, 1, 0.001)
-
-Minimum = gammy.create_from_kernel1d(kernel)
-a = Minimum(grid=grid, energy=0.999)(x)
-
-# Let's compare to exp squared
-b = gammy.ExpSquared1d(grid=grid, corrlen=0.05, sigma=1, energy=0.999)(x)
+>>> def kernel(x1, x2):
+...     """Kernel for min(x, x')
+...
+...     """
+...     r = lambda t: t.repeat(*t.shape)
+...     return np.minimum(r(x1), r(x2).T)
 
 
-def sample(X):
-    return np.dot(X, np.random.randn(X.shape[1]))
+>>> grid = np.arange(0, 1, 0.001)
+>>> Minimum = gammy.create_from_kernel1d(kernel)
+>>> a = Minimum(grid=grid, energy=0.999)(x)
+
+```
+
+Let's compare to `ExpSquared1d`:
+
+``` python
+>>> b = ExpSquared1d(grid=grid, corrlen=0.05, sigma=1, energy=0.999)(x)
 
 
-ax = plt.figure().gca()
-ax.plot(grid, sample(a.build_X(grid)), label="Custom")
-ax.plot(grid, sample(b.build_X(grid)), label="Exp. squared")
-ax.legend()
+>>> def sample(X):
+...     return np.dot(X, np.random.randn(X.shape[1]))
+
+
+>>> _ = plt.plot(grid, sample(a.design_matrix(grid)), label="Custom")
+>>> _ = plt.plot(grid, sample(b.design_matrix(grid)), label="Exp. squared")
+>>> _ = plt.legend()
 
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example1-3.png)
 
-### Multivariate Gaussian process regression
+### Non-linear manifold regression
 
-In this example we construct a basis corresponding to a multi-variate
-Gaussian process with a Kronecker structure (see e.g. [PyMC3](https://docs.pymc.io/notebooks/GP-Kron.html)).
+In this example we try estimating the bivariate "MATLAB function" using a
+Gaussian process model with Kronecker tensor structure (see e.g.
+[PyMC3](https://docs.pymc.io/notebooks/GP-Kron.html)). The main point in the
+below example is that it is quite straightforward to build models that can learn
+arbitrary 2D-surfaces.
 
 Let us first create some artificial data using the MATLAB function!
 
 ```python
-# Create some data
-n = 100
-input_data = np.vstack((6 * np.random.rand(n) - 3, 6 * np.random.rand(n) - 3)).T
+>>> n = 100
+>>> input_data = np.vstack((
+...     6 * np.random.rand(n) - 3, 6 * np.random.rand(n) - 3
+... )).T
+>>> y = (
+...     gammy.utils.peaks(input_data[:, 0], input_data[:, 1]) + 
+...     4 + 0.3 * np.random.randn(n)
+... )
 
-
-def peaks(x, y):
-    """The MATLAB function
-
-    """
-    return (
-        3 * (1 - x) ** 2 * np.exp(-(x ** 2) - (y + 1) ** 2) -
-        10 * (x / 5 - x ** 3 - y ** 5) * np.exp(-x ** 2 - y ** 2) -
-        1 / 3 * np.exp(-(x + 1) ** 2 - y ** 2)
-    )
-
-
-y = peaks(input_data[:, 0], input_data[:, 1]) + 4 + 0.3 * np.random.randn(n)
 ```
 
 There is support for forming two-dimensional basis functions given two
@@ -305,111 +344,117 @@ product of the given bases. The underlying weight prior distribution priors and
 covariances are constructed using the Kronecker product.
 
 ```python
-# Define model
-a = gammy.ExpSquared1d(
-    np.arange(-3, 3, 0.1),
-    corrlen=0.5,
-    sigma=4.0,
-    energy=0.99
-)(x[:, 0])  # note that we need to define the input map at this point!
-b = gammy.ExpSquared1d(
-    np.arange(-3, 3, 0.1),
-    corrlen=0.5,
-    sigma=4.0,
-    energy=0.99
-)(x[:, 1]) # note that we need to define the input map at this point!
-A = gammy.Kron(a, b)
-bias = gammy.Scalar(prior=(0, 1e-6))
-formula = A + bias
-model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
+>>> a = ExpSquared1d(
+...     np.arange(-3, 3, 0.1),
+...     corrlen=0.5,
+...     sigma=4.0,
+...     energy=0.99
+... )(x[:, 0])  # NOTE: Input map is defined here!
+>>> b = ExpSquared1d(
+...     np.arange(-3, 3, 0.1),
+...     corrlen=0.5,
+...     sigma=4.0,
+...     energy=0.99
+... )(x[:, 1]) # NOTE: Input map is defined here!
+>>> A = gammy.Kron(a, b)
+>>> bias = Scalar(prior=(0, 1e-6))
+>>> formula = A + bias
+>>> model = GAM(formula).fit(input_data, y)
+
 ```
 
 Note that same logic could be used to construct higher dimensional bases,
-that is, one could define
+that is, one could define a 3D-formula:
 
+<!-- NOTE: To skip doctests, one > has been removed -->
 ```python
-# 3-D formula
-formula = gammy.kron(gammy.kron(a, b), c)
+>> formula_3d = gammy.Kron(gammy.Kron(a, b), c)
+
 ```
 
-Finally, plot results.
+Finally, plot results:
 
 ```python
-# Plot results
-fig = gammy.plot.validation_plot(
-    model,
-    input_data,
-    y,
-    grid_limits=[[-3, 3], [-3, 3]],
-    input_maps=[x, x[:, 0]],
-    titles=["A", "intercept"]
-)
+>>> fig = gammy.plot.validation_plot(
+...     model,
+...     input_data,
+...     y,
+...     grid_limits=[[-3, 3], [-3, 3]],
+...     input_maps=[x, x[:, 0]],
+...     titles=["A", "intercept"]
+... )
 
+```
 
-# Plot parameter probability density functions
-fig = gammy.plot.gaussian1d_density_plot(model)
+Plot parameter probability density functions:
+
+```
+>>> fig = gammy.plot.gaussian1d_density_plot(model)
+
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example2-0.png)
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example2-1.png)
 
-The original function can be plotted like so
+The original function can be plotted as follows:
 
 ```python
-from mpl_toolkits.mplot3d import Axes3D
+>>> from mpl_toolkits.mplot3d import Axes3D
 
+>>> X, Y = np.meshgrid(np.linspace(-3, 3, 100), np.linspace(-3, 3, 100))
+>>> Z = gammy.utils.peaks(X, Y) + 4
 
-X, Y = np.meshgrid(np.linspace(-3, 3, 100), np.linspace(-3, 3, 100))
-Z = peaks(X, Y) + 4
+>>> fig = plt.figure()
+>>> ax = fig.gca(projection="3d")
+>>> _ = ax.plot_surface(X, Y, Z, color="r", antialiased=False)
 
-fig = plt.figure()
-ax = fig.gca(projection="3d")
-ax.plot_surface(X, Y, Z, color="r", antialiased=False)
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/peaks.png)
 
-### B-Spline basis
+### Spline regression
 
-Constructing B-Spline based 1-D basis functions is also supported.
+Constructing B-Spline based 1-D basis functions is also supported. Let's define
+dummy data:
 
 ```python
-# Define dummy data
-n = 30
-input_data = 10 * np.random.rand(n)
-y = 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
+>>> n = 30
+>>> input_data = 10 * np.random.rand(n)
+>>> y = 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
 
+```
 
-# Define model
-a = gammy.Scalar(prior=(0, 1e-6))
+Define model:
 
-grid = np.arange(0, 11, 2.0)
-order = 2
-N = len(grid) + order - 2
-sigma = 10 ** 2
-a = gammy.BSpline1d(
-    grid,
-    order=order,
-    prior=(np.zeros(N), np.identity(N) / sigma),
-    extrapolate=True
-)
-formula = a(x)
-model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
+``` python
+>>> grid = np.arange(0, 11, 2.0)
+>>> order = 2
+>>> N = len(grid) + order - 2
+>>> sigma = 10 ** 2
+>>> formula = gammy.BSpline1d(
+...     grid,
+...     order=order,
+...     prior=(np.zeros(N), np.identity(N) / sigma),
+...     extrapolate=True
+... )(x)
+>>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
-# Plot results
-fig = gammy.plot.validation_plot(
-    model,
-    input_data,
-    y,
-    grid_limits=[-2, 12],
-    input_maps=[x],
-    titles=["a"]
-)
+```
 
+Plot validation figure and parameter probability densities:
 
-# Plot parameter probability density functions
-fig = gammy.plot.gaussian1d_density_plot(model)
+``` python
+>>> fig = gammy.plot.validation_plot(
+...     model,
+...     input_data,
+...     y,
+...     grid_limits=[-2, 12],
+...     input_maps=[x],
+...     titles=["a"]
+... )
+>>> fig = gammy.plot.gaussian1d_density_plot(model)
+
 ```
 
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/example3-0.png)
@@ -424,14 +469,18 @@ The package's unit tests can be ran with PyTest (`cd` to repository root):
 pytest -v
 ```
 
-Running the tests in this documentation
+Running this documentation as a Doctest:
 
-## Documentation
+``` shell
+python -m doctest -v README.md
+```
+
+## Package documentation
 
 Documentation of the package with code examples:
 <https://malmgrek.github.io/gammy>.
 
-## ToDo
+## TODO-list
 
 - **TODO** Quick model template functions (e.g. splines, GPs)
 - **TODO** Shorter overview and examples in README. Other docs inside `docs`.
