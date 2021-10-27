@@ -104,16 +104,16 @@ Variance of additive zero-mean normally distributed noise is estimated
 automagically:
 
 ``` python
->>> np.round(np.sqrt(model.inv_mean_tau), 3)
-8.632
+>>> model.inv_mean_tau
+74.51660744335699
 
 ```
 
 #### Predicting with model
 
 ```python
->>> np.round(model.predict(input_data[:3]), 4)
-array([ 52.5711, 226.9461, 144.7863])
+>>> model.predict(input_data[:2])
+array([ 52.57112684, 226.9460579 ])
 
 ```
 
@@ -121,9 +121,8 @@ Predictions with uncertainty, that is, posterior predictive mean and variance
 can be calculated as follows:
 
 ```python
->>> np.round(model.predict_variance(input_data[:3]), 4)
-array([[ 52.5711, 226.9461, 144.7863],
-       [ 79.3583,  95.1636,  79.9003]])
+>>> model.predict_variance(input_data[:2])
+(array([ 52.57112684, 226.9460579 ]), array([79.35827362, 95.16358131]))
 
 ```
 
@@ -204,8 +203,9 @@ Define model:
 >>> formula = a(x[:, 0]) * x[:, 1] + bias
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
->>> np.round(model.mean_theta[0][:3], 2)
-array([-0.83, -0.07,  0.01])
+# doctest
+>>> model.mean_theta[0][0]
+-0.8343458038816278
 
 ```
 
@@ -275,8 +275,9 @@ Define model:
 ... )(x)
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
->>> np.round(model.mean_theta[0][:3], 2)
-array([-49.  ,   5.65,  -2.33])
+# doctest
+>>> model.mean_theta[0][0]
+-49.0001911544372
 
 ```
 
@@ -350,8 +351,9 @@ covariances are constructed using the Kronecker product.
 >>> formula = A + bias
 >>> model = GAM(formula).fit(input_data, y)
 
->>> np.round(model.mean_theta[0][:3], 2)
-array([ 0.37, -1.24, -0.2 ])
+# doctest
+>>> model.mean_theta[0][0]
+0.3742698633207369
 
 ```
 
