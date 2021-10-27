@@ -100,6 +100,12 @@ Define and fit the model:
 The model attribute `model.theta` characterizes the Gaussian posterior
 distribution of the model parameters vector.
 
+``` python
+>>> model.mean_theta
+[array([3.20130444]), array([2.0420961]), array([11.93437195])]
+
+```
+
 Variance of additive zero-mean normally distributed noise is estimated
 automagically:
 
@@ -203,7 +209,6 @@ Define model:
 >>> formula = a(x[:, 0]) * x[:, 1] + bias
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
-# doctest
 >>> model.mean_theta[0][0]
 -0.8343458038816278
 
@@ -275,7 +280,6 @@ Define model:
 ... )(x)
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
-# doctest
 >>> model.mean_theta[0][0]
 -49.0001911544372
 
@@ -351,7 +355,6 @@ covariances are constructed using the Kronecker product.
 >>> formula = A + bias
 >>> model = GAM(formula).fit(input_data, y)
 
-# doctest
 >>> model.mean_theta[0][0]
 0.3742698633207369
 
