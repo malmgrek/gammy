@@ -1,70 +1,5 @@
-Walkthrough
-===========
-
-The introduction begins with a familiar example. After that we gather main
-features of the basic user interface. The rest of the walkthrough is a
-collection of different use cases through code examples.
-
-.. _Polynomial regression:
-
-Polynomial regression
----------------------
-
-Although a very simple special case, this example demonstrates how you can solve
-problems where you know the model shape.
-
-.. plot::
-   :include-source:
-
-   import matplotlib.pyplot as plt
-   import numpy as np
-   import pandas as pd
-
-   import gammy
-   from gammy.arraymapper import x
-
-
-   # Define dummy data
-   n = 30
-   input_data = 10 * np.random.rand(n)
-   y = (
-       5 * input_data + 2.0 * input_data ** 2 + 7 +
-       10 * np.random.randn(n)
-   )
-
-   # Define model
-   a = gammy.Scalar()
-   b = gammy.Scalar()
-   bias = gammy.Scalar()
-   formula = a * x + b * x ** 2 + bias
-   model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-
-   #
-   # Plotting results -----------------------------------------
-   #
-
-   # Validation plot
-   fig1 = gammy.plot.validation_plot(
-       model,
-       input_data,
-       y,
-       grid_limits=[0, 10],
-       input_maps=[x, x, x],
-       titles=["a", "b", "bias"]
-   )
-
-   # Marginal posterior distributions of parameters
-   fig2 = gammy.plot.gaussian1d_density_plot(model)
-
-   plt.show()
-
-The grey band in the top figure is two times the prediction standard deviation
-and, in the partial residual plots, two times the respective marginal posterior
-standard deviation.
-
-
-Basic user interface
---------------------
+Key features
+============
 
 .. testsetup::
 
@@ -72,13 +7,66 @@ Basic user interface
    import gammy
    from gammy.arraymapper import x
 
-Model formula
-*************
+The introduction begins with a familiar example. After that we gather main
+features of the basic user interface. The rest of the features is a
+collection of different use cases through code examples.
+
+Intuitive interface
+-------------------
+
+A gammy model can be instantiated "on the fly" by algebraic operations of
+simpler terms. Below ``x`` is a **convenience tool (function) for mapping
+inputs**.
+
+.. plot::
+   :include-source:
+
+   import matplotlib.pyplot as plt
+   import numpy as np
+
+   import gammy
+   from gammy.arraymapper import x
+   from gammy.models.bayespy import GAM
+
+
+   # Simulate data
+   input_data = np.linspace(0.01, 1, 50)
+   y = (
+      1.3 + np.sin(1 / input_data) * np.exp(input_data) +
+      0.1 * np.random.randn(50)
+   )
+
+   # A totally non-sense model, just an example
+   bias = gammy.Scalar()
+   slope = gammy.Scalar()
+   k = gammy.Scalar()
+   formula = bias + slope * x + k * x ** (1/2)
+   model_bad = GAM(formula).fit(input_data, y)
+
+   # Ideal model with a user-defined function basis
+   basis = [
+       lambda t: np.sin(1 / t) * np.exp(t),
+       lambda t: np.ones(len(t))
+   ]
+
+   formula = gammy.Formula(
+       terms=[basis],
+       # mean and inverse covariance (precision matrix)
+       prior=(np.zeros(2), 1e-6 * np.eye(2))
+   )
+   model_ideal = GAM(formula).fit(input_data, y)
+
+   plt.scatter(input_data, y, c="r", label="data")
+   plt.plot(input_data, model_bad.predict(input_data), label="bad")
+   plt.plot(input_data, model_ideal.predict(input_data), label="ideal")
+   plt.legend()
+
+   plt.show()
 
 The basic building block of a Gammy model is a formula object which defines the
 function basis in terms of which the model is expressed. The package implements
 a collection of readily usable formulae that can be combined by basic algebraic
-operations. As seen in `Polynomial regression`_, we can define a new formula
+operations. As seen in, we can define a new formula
 from existing formulae as follows:
 
 .. doctest::
@@ -86,10 +74,10 @@ from existing formulae as follows:
    # Formula of a straight line
    >>> formula = gammy.Scalar() * x + gammy.Scalar()
 
-The object ``x`` is an instance of :class:`gammy.ArrayMapper` is just a
-convenience tool for defining input data maps as if they were just Numpy arrays.
+The object ``x`` is an instance of :class:`gammy.ArrayMapper` which is a
+short-hand for defining input data maps as if they were just Numpy arrays.
 
-A formula also contains information of the prior distribution of its
+A formula also holds information of the prior distribution of the implied model
 coefficients
 
 .. doctest::
@@ -100,6 +88,15 @@ coefficients
    >>> formula.prior
    (array([0, 0]), array([[2, 0],
           [0, 1]]))
+
+In higher dimensions we need to use numpy indexing, e.g.:
+
+.. doctest::
+
+   >>> formula = gammy.Scalar() * x[:, 0] * x[:, 1] + gammy.Scalar()
+   >>> formula.prior
+   (array([0, 0]), array([[1.e-06, 0.e+00],
+          [0.e+00, 1.e-06]]))
 
 It is easy to define your own formulae:
 
@@ -115,7 +112,7 @@ It is easy to define your own formulae:
           [0, 0, 3]]))
 
 Fitting and predicting
-**********************
+----------------------
 
 The package provides two alternative interfaces for estimating formula
 coefficients, and subsequently, predicting. The `BayesPy
@@ -141,9 +138,145 @@ The BayesPy interface also supports estimating additive noise variance parameter
    >>> var  # Posterior predictive variance
    array([0.00171644, 0.0013108 , 0.0013108 , 0.00171644])
 
-Serialization
-*************
 
+Formula collection
+------------------
+
+Below are some of the pre-defined constructors that can be used for solving
+common function estimation problems:
+
+.. plot::
+   :include-source:
+
+   import matplotlib.pyplot as plt
+   import numpy as np
+
+   import gammy
+   from gammy.arraymapper import x
+   from gammy.models.bayespy import GAM
+
+   # Data
+   input_data = np.linspace(0.01, 1, 50)
+   y = (
+       1.3 + np.sin(1 / input_data) * np.exp(input_data) +
+       0.1 * np.random.randn(50)
+   )
+
+   models = {
+       # Polynomial model
+       "polynomial": GAM(
+           gammy.Polynomial(degrees=range(7))(x)
+       ).fit(input_data, y),
+       # Smooth Gaussian process model
+       "squared_exponential": GAM(
+           gammy.Scalar() * x +
+           gammy.ExpSquared1d(
+               grid=np.arange(0, 1, 0.05),
+               corrlen=0.1,
+               sigma=2
+           )(x)
+       ).fit(input_data, y),
+       # Piecewise linear model
+       "piecewise_linear": GAM(
+           gammy.WhiteNoise1d(
+               grid=np.arange(0, 1, 0.1),
+               sigma=1
+           )(x)
+       ).fit(input_data, y)
+   }
+
+   # -----------------------------------------
+   # Posterior predictive confidence intervals
+   # -----------------------------------------
+   (fig, axs) = plt.subplots(1, 3, figsize=(8, 2))
+   for ((name, model), ax) in zip(models.items(), axs):
+       # Posterior predictive mean and variance
+       (μ, σ) = model.predict_variance(input_data)
+       ax.scatter(input_data, y, color="r")
+       ax.plot(input_data, model.predict(input_data), color="k")
+       ax.fill_between(
+           input_data,
+           μ - 2 * np.sqrt(σ),
+           μ + 2 * np.sqrt(σ),
+           alpha=0.2
+       )
+       ax.set_title(name)
+
+   # ---------------------
+   # Posterior covariances
+   # ---------------------
+   (fig, axs) = plt.subplots(1, 3, figsize=(8, 2))
+   for ((name, model), ax) in zip(models.items(), axs):
+       (ax, im) = gammy.plot.covariance_plot(
+           model, ax=ax, cmap="rainbow"
+       )
+       ax.set_title(name)
+
+
+Bayesian statistics
+-------------------
+
+Please read the previous section on how to calculate posterior predictive
+confidence intervals and posterior/prior covariance information.
+
+
+Multivariate terms
+------------------
+
+It is straightforward to build custom additive model formulas in higher input
+dimensions using the existing ones. For example, assume that we want to deduce a
+bivariate function from discrete set of samples:
+
+
+.. plot::
+   :include-source:
+
+   import matplotlib.pyplot as plt
+   import numpy as np
+
+   import gammy
+   from gammy.arraymapper import x
+   from gammy.models.bayespy import GAM
+
+   n = 100
+   input_data = np.vstack(
+       [2 * np.random.rand(n) - 1, 2 * np.random.rand(n) - 1]
+   ).T
+   y = (
+       input_data[:, 0] ** 3 -
+       3 * input_data[:, 0] * input_data[:, 1] ** 2
+   )
+
+   # The model form can be relaxed with "black box" terms such as
+   # piecewise linear basis functions:
+   model = GAM(
+       gammy.Polynomial(range(5))(x[:, 0]) +
+       gammy.WhiteNoise1d(
+           np.arange(-1, 1, 0.05),
+           sigma=1
+       )(x[:, 1]) * x[:, 0]
+   ).fit(input_data, y)
+
+   # Let's check if the model was able to fit correctly:
+   fig = plt.figure(figsize=(8, 2))
+   (X, Y) = np.meshgrid(
+       np.linspace(-1, 1, 100),
+       np.linspace(-1, 1, 100)
+   )
+   Z = X ** 3 - 3 * X * Y ** 2
+   Z_est = model.predict(
+       np.hstack([X.reshape(-1, 1), Y.reshape(-1, 1)])
+   ).reshape(100, 100)
+   ax = fig.add_subplot(121, projection="3d")
+   ax.set_title("Exact")
+   ax.plot_surface(
+       X, Y, Z, color="r", antialiased=False
+   )
+   ax = fig.add_subplot(122, projection="3d")
+   ax.set_title("Estimated")
+   ax.plot_surface(
+       X, Y, Z_est, antialiased=False
+   )
 
 Gaussian processes
 ------------------
@@ -440,20 +573,10 @@ covariance kernel functions.
    plt.show()
 
 
-Multivariate formulae
----------------------
+Spline regression
+-----------------
 
-Often, the expressive power of a model that is a sum of univariate basis functions is
-not sufficient. To avoid problems, an important generalization is to be able to define
-multivariate terms. Gammy supports various ways of defining multivariate model terms.
-
-Multiplying formulae with each other
-************************************
-
-A straightforward way to mathematically define multivariate functions is to
-multiply two univariate (real valued) functions of different variable
-dependency. Basic algebraic operations such as multiplication and division is a
-built-in feature in Gammy formula objects.
+Constructing B-Spline based 1-D basis functions is also supported.
 
 .. plot::
    :include-source:
@@ -464,51 +587,50 @@ built-in feature in Gammy formula objects.
    import gammy
    from gammy.arraymapper import x
 
+   # Define dummy data
+   n = 30
+   input_data = 10 * np.random.rand(n)
+   y = 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
 
-   # Create data
-   n = 50
-   input_data = np.vstack((
-       2 * np.pi * np.random.rand(n), np.random.rand(n)
-   )).T
-   y = (
-       np.abs(np.cos(input_data[:, 0])) * input_data[:, 1]
-       + 1 + 0.1 * np.random.randn(n)
-   )
 
    # Define model
-   f = gammy.ExpSineSquared1d(
-       np.arange(0, 2 * np.pi, 0.1),
-       corrlen=1.0,
-       sigma=1.0,
-       period=2 * np.pi,
-       energy=0.99
+   a = gammy.Scalar()
+
+   grid = np.arange(0, 11, 2.0)
+   order = 2
+   N = len(grid) + order - 2
+   sigma = 10 ** 2
+   a = gammy.BSpline1d(
+       grid,
+       order=order,
+       prior=(np.zeros(N), np.identity(N) / sigma),
+       extrapolate=True
    )
-   bias = gammy.Scalar()
-   formula = f(x[:, 0]) * x[:, 1] + bias
+   formula = a(x)
    model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
    #
-   # Plot results ---------------------------------------------
+   # Plotting results --------------------------------------------
    #
 
    # Plot results
-   fig1 = gammy.plot.validation_plot(
+   fig = gammy.plot.validation_plot(
        model,
        input_data,
        y,
-       grid_limits=[[0, 2 * np.pi], [0, 1]],
-       input_maps=[x[:, 0:2], x[:, 1]],
-       titles=["a", "intercept"]
+       grid_limits=[-2, 12],
+       input_maps=[x],
+       titles=["a"]
    )
 
    # Plot parameter probability density functions
-   fig2 = gammy.plot.gaussian1d_density_plot(model)
+   fig = gammy.plot.gaussian1d_density_plot(model)
 
    plt.show()
 
 
-Kronecker formulae
-******************
+Non-linear manifold regression
+------------------------------
 
 In this example we construct a basis corresponding to a multi-variate Gaussian
 process with a Kronecker structure (see e.g. `PyMC3
@@ -603,58 +725,4 @@ Note that same logic could be used to construct higher dimensional bases:
    # 3-D formula
    formula = gammy.kron(gammy.kron(a, b), c)
 
-
-Spline regression
------------------
-
-Constructing B-Spline based 1-D basis functions is also supported.
-
-.. plot::
-   :include-source:
-
-   import matplotlib.pyplot as plt
-   import numpy as np
-
-   import gammy
-   from gammy.arraymapper import x
-
-   # Define dummy data
-   n = 30
-   input_data = 10 * np.random.rand(n)
-   y = 2.0 * input_data ** 2 + 7 + 10 * np.random.randn(n)
-
-
-   # Define model
-   a = gammy.Scalar()
-
-   grid = np.arange(0, 11, 2.0)
-   order = 2
-   N = len(grid) + order - 2
-   sigma = 10 ** 2
-   a = gammy.BSpline1d(
-       grid,
-       order=order,
-       prior=(np.zeros(N), np.identity(N) / sigma),
-       extrapolate=True
-   )
-   formula = a(x)
-   model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
-
-   #
-   # Plotting results --------------------------------------------
-   #
-
-   # Plot results
-   fig = gammy.plot.validation_plot(
-       model,
-       input_data,
-       y,
-       grid_limits=[-2, 12],
-       input_maps=[x],
-       titles=["a"]
-   )
-
-   # Plot parameter probability density functions
-   fig = gammy.plot.gaussian1d_density_plot(model)
-
-   plt.show()
+and so on.

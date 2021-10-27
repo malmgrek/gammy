@@ -212,7 +212,8 @@ def covariance_plot(model, ax=None, linthresh=0.1, **kwargs):
         norm=SymLogNorm(
             vmin=np.min(C),
             vmax=np.max(C),
-            linthresh=linthresh
+            linthresh=linthresh,
+            base=10
         ),
         **kwargs
     )

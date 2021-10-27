@@ -30,11 +30,10 @@ fit models using just NumPy.
     - [Gaussian process regression](#gaussian-process-regression)
         - [More covariance kernels](#more-covariance-kernels)
         - [Defining custom kernels](#defining-custom-kernels)
-    - [Non-linear manifold regression](#non-linear-manifold-regression)
     - [Spline regression](#spline-regression)
+    - [Non-linear manifold regression](#non-linear-manifold-regression)
 - [Testing](#testing)
 - [Package documentation](#package-documentation)
-- [TODO-list](#todo-list)
 
 <!-- markdown-toc end -->
 
@@ -101,6 +100,15 @@ Define and fit the model:
 The model attribute `model.theta` characterizes the Gaussian posterior
 distribution of the model parameters vector.
 
+Variance of additive zero-mean normally distributed noise is estimated
+automagically:
+
+``` python
+>>> np.round(np.sqrt(model.inv_mean_tau), 3)
+8.632
+
+```
+
 #### Predicting with model
 
 ```python
@@ -109,7 +117,8 @@ array([ 52.5711, 226.9461, 144.7863])
 
 ```
 
-Predictions with uncertainty can be calculated as follows:
+Predictions with uncertainty, that is, posterior predictive mean and variance
+can be calculated as follows:
 
 ```python
 >>> np.round(model.predict_variance(input_data[:3]), 4)
@@ -231,13 +240,13 @@ The package contains covariance functions for many well-known options such as
 the _Exponential squared_, _Periodic exponential squared_, _Rational quadratic_,
 and the _Ornstein-Uhlenbeck_ kernels. Please see the documentation section [More
 on Gaussian Process
-kernels](https://malmgrek.github.io/gammy/walkthrough.html#more-on-gaussian-process-kernels)
+kernels](https://malmgrek.github.io/gammy/features.html#more-on-gaussian-process-kernels)
 for a gallery of kernels.
 
 #### Defining custom kernels
 
 Please read the documentation section: [Customize Gaussian Process
-kernels](https://malmgrek.github.io/gammy/walkthrough.html#customize-gaussian-process-kernels)
+kernels](https://malmgrek.github.io/gammy/features.html#customize-gaussian-process-kernels)
 
 ### Spline regression
 
@@ -398,16 +407,3 @@ python -m doctest -v README.md
 
 Documentation of the package with code examples:
 <https://malmgrek.github.io/gammy>.
-
-## TODO-list
-
-- **TODO** Quick model template functions (e.g. splines, GPs)
-- **TODO** Shorter overview and examples in README. Other docs inside `docs`.
-- **TODO** Support indicator models in plotting
-- **TODO** Fixed ordering for GP related basis functions.
-- **TODO** Hyperpriors for model parameters – Start from diagonal precisions.
-           Instead of `(μ, Λ)` pairs, the arguments could be just
-           BayesPy node.
-- **TODO** Support non-linear GAM models, fitting with autograd.
-- **TODO** Multi-dimensional observations.
-- **TODO** Dynamically changing models.
