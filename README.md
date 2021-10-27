@@ -134,7 +134,7 @@ models = {
     
     # Polynomial model
     "polynomial": GAM(
-        Polynomial(order=6)(x)
+        Polynomial(degrees=range(7)))(x)
     ).fit(input_data, y),
     
     # Smooth Gaussian process model
@@ -229,7 +229,7 @@ linear basis functions:
 
 ``` python
 model = GAM(
-    Polynomial(4)(x[:, 0]) + 
+    Polynomial(range(5))(x[:, 0]) + 
     WhiteNoise1d(np.arange(-1, 1, 0.05), sigma=1)(x[:, 1]) * x[:, 0]
 ).fit(input_data, y)
 ```

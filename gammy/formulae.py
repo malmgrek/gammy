@@ -439,13 +439,13 @@ def Function(function: Callable, prior: Tuple[np.ndarray]) -> Formula:
     return Formula(terms=[basis], prior=prior)
 
 
-def Polynomial(degree, prior=None):
+def Polynomial(degrees: List[int], prior=None):
 
     def monomial(p):
         return lambda t: t ** p
 
-    basis = [monomial(n) for n in range(degree + 1)]
-    prior = (np.zeros(degree + 1), 1e-6 * np.identity(degree + 1))
+    basis = [monomial(n) for n in degrees]
+    prior = (np.zeros(len(degrees)), 1e-6 * np.identity(len(degrees)))
     return Formula(terms=[basis], prior=prior)
 
 
@@ -455,8 +455,8 @@ def ReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
     """
     relus = listmap(lambda c: lambda t: (t > c) * (c - t))(grid[1:-1])
     prior = (
-        (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
-        if not prior else prior
+        (np.zeros(len(grid) - 2), 1e-6 * np.identity(len(grid) - 2))
+        if prior is None else prior
     )
     return Formula(terms=[relus], prior=prior)
 
@@ -467,8 +467,8 @@ def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
     """
     relus = listmap(lambda c: lambda t: (t < c) * (c - t))(grid[1:-1])
     prior = (
-        (np.zeros(len(grid) - 2), np.identity(len(grid) - 2))
-        if not prior else prior
+        (np.zeros(len(grid) - 2), 1e-6 * np.identity(len(grid) - 2))
+        if prior is None else prior
     )
     return Formula(terms=[relus], prior=prior)
 
