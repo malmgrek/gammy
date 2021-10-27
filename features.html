@@ -1,0 +1,810 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Key features &#8212; Gammy 0.4.4 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Backlog ideas" href="backlog.html" />
+    <link rel="prev" title="Installation" href="installation.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="key-features">
+<h1>Key features<a class="headerlink" href="#key-features" title="Permalink to this headline">¶</a></h1>
+<p>The introduction begins with a familiar example. After that we gather main
+features of the basic user interface. The rest of the features is a
+collection of different use cases through code examples.</p>
+<div class="section" id="intuitive-interface">
+<h2>Intuitive interface<a class="headerlink" href="#intuitive-interface" title="Permalink to this headline">¶</a></h2>
+<p>A gammy model can be instantiated “on the fly” by algebraic operations of
+simpler terms. Below <code class="docutils literal notranslate"><span class="pre">x</span></code> is a <strong>convenience tool (function) for mapping
+inputs</strong>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+<span class="kn">from</span> <span class="nn">gammy.models.bayespy</span> <span class="kn">import</span> <span class="n">GAM</span>
+
+
+<span class="c1"># Simulate data</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+   <span class="mf">1.3</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">+</span>
+   <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># A totally non-sense model, just an example</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="n">slope</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">bias</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">x</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">model_bad</span> <span class="o">=</span> <span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Ideal model with a user-defined function basis</span>
+<span class="n">basis</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">t</span><span class="p">),</span>
+    <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+<span class="p">]</span>
+
+<span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Formula</span><span class="p">(</span>
+    <span class="n">terms</span><span class="o">=</span><span class="p">[</span><span class="n">basis</span><span class="p">],</span>
+    <span class="c1"># mean and inverse covariance (precision matrix)</span>
+    <span class="n">prior</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="mf">1e-6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+<span class="p">)</span>
+<span class="n">model_ideal</span> <span class="o">=</span> <span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">model_bad</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;bad&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">model_ideal</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;ideal&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-1.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-1.png" src="_images/features-1.png" />
+</div>
+<p>The basic building block of a Gammy model is a formula object which defines the
+function basis in terms of which the model is expressed. The package implements
+a collection of readily usable formulae that can be combined by basic algebraic
+operations. As seen in, we can define a new formula
+from existing formulae as follows:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="go"># Formula of a straight line</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The object <code class="docutils literal notranslate"><span class="pre">x</span></code> is an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">gammy.ArrayMapper</span></code> which is a
+short-hand for defining input data maps as if they were just Numpy arrays.</p>
+<p>A formula also holds information of the prior distribution of the implied model
+coefficients</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mean</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">var</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">((</span><span class="n">mean</span><span class="p">,</span> <span class="n">var</span><span class="p">))</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span>
+<span class="go">(array([0, 0]), array([[2, 0],</span>
+<span class="go">       [0, 1]]))</span>
+</pre></div>
+</div>
+<p>In higher dimensions we need to use numpy indexing, e.g.:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span>
+<span class="go">(array([0, 0]), array([[1.e-06, 0.e+00],</span>
+<span class="go">       [0.e+00, 1.e-06]]))</span>
+</pre></div>
+</div>
+<p>It is easy to define your own formulae:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sine</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Formula</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">],</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cosine</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Formula</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">],</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tangent</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Formula</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">tan</span><span class="p">],</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">sine</span> <span class="o">+</span> <span class="n">cosine</span> <span class="o">+</span> <span class="n">tangent</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span><span class="o">.</span><span class="n">prior</span>
+<span class="go">(array([0, 1, 2]), array([[1, 0, 0],</span>
+<span class="go">       [0, 2, 0],</span>
+<span class="go">       [0, 0, 3]]))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="fitting-and-predicting">
+<h2>Fitting and predicting<a class="headerlink" href="#fitting-and-predicting" title="Permalink to this headline">¶</a></h2>
+<p>The package provides two alternative interfaces for estimating formula
+coefficients, and subsequently, predicting. The <a class="reference external" href="http://www.bayespy.org/index.html">BayesPy</a> based model and the “raw” NumPy based
+model. The former uses Variational Bayes and the latter basic linear algebra.
+The BayesPy interface also supports estimating additive noise variance parameter.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">tau</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">numpy</span><span class="o">.</span><span class="n">Delta</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Noise inverse variance</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np_model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">numpy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bp_model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np_model</span><span class="o">.</span><span class="n">mean_theta</span>
+<span class="go">[array([1.0000001]), array([0.9999996])]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">bp_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+<span class="go">array([1., 2., 3., 4.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">var</span><span class="p">)</span> <span class="o">=</span> <span class="n">bp_model</span><span class="o">.</span><span class="n">predict_variance</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span>  <span class="c1"># Posterior predictive mean</span>
+<span class="go">array([1., 2., 3., 4.])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">var</span>  <span class="c1"># Posterior predictive variance</span>
+<span class="go">array([0.00171644, 0.0013108 , 0.0013108 , 0.00171644])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="formula-collection">
+<h2>Formula collection<a class="headerlink" href="#formula-collection" title="Permalink to this headline">¶</a></h2>
+<p>Below are some of the pre-defined constructors that can be used for solving
+common function estimation problems:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+<span class="kn">from</span> <span class="nn">gammy.models.bayespy</span> <span class="kn">import</span> <span class="n">GAM</span>
+
+<span class="c1"># Data</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mf">1.3</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">+</span>
+    <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="n">models</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Polynomial model</span>
+    <span class="s2">&quot;polynomial&quot;</span><span class="p">:</span> <span class="n">GAM</span><span class="p">(</span>
+        <span class="n">gammy</span><span class="o">.</span><span class="n">Polynomial</span><span class="p">(</span><span class="n">degrees</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">7</span><span class="p">))(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+    <span class="c1"># Smooth Gaussian process model</span>
+    <span class="s2">&quot;squared_exponential&quot;</span><span class="p">:</span> <span class="n">GAM</span><span class="p">(</span>
+        <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span>
+        <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+            <span class="n">corrlen</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">sigma</span><span class="o">=</span><span class="mi">2</span>
+        <span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span>
+    <span class="c1"># Piecewise linear model</span>
+    <span class="s2">&quot;piecewise_linear&quot;</span><span class="p">:</span> <span class="n">GAM</span><span class="p">(</span>
+        <span class="n">gammy</span><span class="o">.</span><span class="n">WhiteNoise1d</span><span class="p">(</span>
+            <span class="n">grid</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c1"># -----------------------------------------</span>
+<span class="c1"># Posterior predictive confidence intervals</span>
+<span class="c1"># -----------------------------------------</span>
+<span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span> <span class="n">ax</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">axs</span><span class="p">):</span>
+    <span class="c1"># Posterior predictive mean and variance</span>
+    <span class="p">(</span><span class="n">μ</span><span class="p">,</span> <span class="n">σ</span><span class="p">)</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict_variance</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span>
+        <span class="n">input_data</span><span class="p">,</span>
+        <span class="n">μ</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">σ</span><span class="p">),</span>
+        <span class="n">μ</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">σ</span><span class="p">),</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># ---------------------</span>
+<span class="c1"># Posterior covariances</span>
+<span class="c1"># ---------------------</span>
+<span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">axs</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="k">for</span> <span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">model</span><span class="p">),</span> <span class="n">ax</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">axs</span><span class="p">):</span>
+    <span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">im</span><span class="p">)</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">covariance_plot</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s2">&quot;rainbow&quot;</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-2.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-2_00.png" src="_images/features-2_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/features-2_01.png" src="_images/features-2_01.png" />
+</div>
+</div>
+<div class="section" id="bayesian-statistics">
+<h2>Bayesian statistics<a class="headerlink" href="#bayesian-statistics" title="Permalink to this headline">¶</a></h2>
+<p>Please read the previous section on how to calculate posterior predictive
+confidence intervals and posterior/prior covariance information.</p>
+</div>
+<div class="section" id="multivariate-terms">
+<h2>Multivariate terms<a class="headerlink" href="#multivariate-terms" title="Permalink to this headline">¶</a></h2>
+<p>It is straightforward to build custom additive model formulas in higher input
+dimensions using the existing ones. For example, assume that we want to deduce a
+bivariate function from discrete set of samples:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+<span class="kn">from</span> <span class="nn">gammy.models.bayespy</span> <span class="kn">import</span> <span class="n">GAM</span>
+
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span>
+    <span class="p">[</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">T</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">input_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span>
+    <span class="mi">3</span> <span class="o">*</span> <span class="n">input_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">input_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="c1"># The model form can be relaxed with &quot;black box&quot; terms such as</span>
+<span class="c1"># piecewise linear basis functions:</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">GAM</span><span class="p">(</span>
+    <span class="n">gammy</span><span class="o">.</span><span class="n">Polynomial</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">))(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">+</span>
+    <span class="n">gammy</span><span class="o">.</span><span class="n">WhiteNoise1d</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span>
+    <span class="p">)(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s check if the model was able to fit correctly:</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+<span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">X</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">X</span> <span class="o">*</span> <span class="n">Y</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">Z_est</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">Y</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)])</span>
+<span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">121</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Exact&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">122</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Estimated&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z_est</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-3.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-3.png" src="_images/features-3.png" />
+</div>
+</div>
+<div class="section" id="gaussian-processes">
+<h2>Gaussian processes<a class="headerlink" href="#gaussian-processes" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="theory">
+<h3>Theory<a class="headerlink" href="#theory" title="Permalink to this headline">¶</a></h3>
+<p>In real-world applications usually one doesn’t know closed form expression for
+the model. One approach in tackling such problems is modeling the unknown
+function as a Gaussian Process. In practice one tries to estimate the model in
+the form</p>
+<div class="math notranslate nohighlight">
+\[y = f(x) + \varepsilon, \qquad f(x) \sim
+\mathcal{N}(\mu, \Sigma_{\rm prior}), \ \ \varepsilon \sim \mathcal{N}(0,
+\tau^{-1})\]</div>
+<p>where <span class="math notranslate nohighlight">\(\varepsilon\)</span> is the additive noise and <span class="math notranslate nohighlight">\(\Sigma_{\rm prior} =
+K(x, x)\)</span> is a symmetric positive-definite matrix valued
+function defined by a <cite>kernel function</cite> <span class="math notranslate nohighlight">\(k(x, x')\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[K(x, x) = \left[ k(x_i, x_j) \right]_{i,j=1}^N.\]</div>
+<p>The mean and covariance of the Gaussian posterior distribution has closed form:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{split}
+\mu_{\rm post}(x) &amp;= \mu + K(x, x)(K(x, x) + \tau I)^{-1}(y - \mu) \\
+\Sigma_{\rm post}(x) &amp;= K(x, x) - K(x, x)(K(x, x) + \tau I)^{-1}K(x, x)
+\end{split}\end{split}\]</div>
+<p>Point estimates such as conditional mean predictions can be easily calculated
+with the posterior covariance formula.</p>
+<p>In Gammy we use a truncated eigendecomposition method which turns the GP
+regression problem into a basis function regression problem. Let <span class="math notranslate nohighlight">\(A\)</span> be an
+invertible matrix and consider the change of variables <span class="math notranslate nohighlight">\(w = A(f(x) -
+\mu)\)</span>. Using change of variables for probability densities it is straightforward
+to deduce that</p>
+<div class="math notranslate nohighlight">
+\[w \sim \mathcal{N}(0, I) \quad {\rm if} \quad A = \Lambda ^{-1/2} U^T\]</div>
+<p>where <span class="math notranslate nohighlight">\(U\Lambda U^T\)</span> is the eigendecomposition of <span class="math notranslate nohighlight">\(\Sigma_{\rm
+prior}\)</span>. Note that the eigenvectors (columns of <span class="math notranslate nohighlight">\(U\)</span>) are orthogonal
+because a covariance matrix is symmetric and positive-definite. Therefore the
+parameter estimation problem implied by</p>
+<div class="math notranslate nohighlight">
+\[y = \mu + A^{-1} w + \varepsilon= \mu + U \Lambda^{1/2} w + \varepsilon,
+\quad w \sim \mathcal{N}(0, I), \ \ \varepsilon \sim \mathcal{N}(0, \tau^{-1})\]</div>
+<p>is equivalent with the original GP regression problem. In fact, identifying that</p>
+<div class="math notranslate nohighlight">
+\[U\Lambda^{1/2}w = \sum_{n=1}^N w_n\lambda_n(x)^{1/2}u_n(x)\]</div>
+<p>we have transformed the original problem into a basis function regression
+problem where the basis is defined in terms of the (scaled) eigenvectors of the
+original covariance matrix <span class="math notranslate nohighlight">\(K(x, x)\)</span> evaluated in the grid points.</p>
+<p>In Gammy, we use the following algorithm to perform GP regression:</p>
+<ol class="arabic">
+<li><p>Select a fixed grid of evaluation <span class="math notranslate nohighlight">\(x = [x_1, x_2, \ldots, x_N]\)</span></p></li>
+<li><p>Compute <span class="math notranslate nohighlight">\(U(x)\)</span> and <span class="math notranslate nohighlight">\(\Lambda(x)\)</span> and their linear interpolators.</p></li>
+<li><p>Estimate the weights vector using the Bayesian method <span class="math notranslate nohighlight">\(w\)</span>.</p></li>
+<li><p>Evaluate predictions in another grid <span class="math notranslate nohighlight">\(x'\)</span> by interpolation</p>
+<div class="math notranslate nohighlight">
+\[y_{\rm pred} = \mu + U(x')\Lambda^{1/2}(x')\]</div>
+</li>
+</ol>
+<p>The upside of the used approach are</p>
+<ul class="simple">
+<li><p>Precomputed model for calculating predictions, i.e, for each prediction, we
+don’t need to solve least squares problem.</p></li>
+<li><p>Ability to truncate the covariance if number of data points is large.</p></li>
+</ul>
+<p>Downsides:</p>
+<ul class="simple">
+<li><p>Grid dependence,</p></li>
+<li><p>Interpolation errors,</p></li>
+<li><p>Doesn’t scale efficiently if the number of input dimensions is large because
+we use Kronecker product to construct high dimensional bases.</p></li>
+</ul>
+</div>
+<div class="section" id="one-dimensional-gaussian-process-models">
+<h3>One-dimensional Gaussian Process models<a class="headerlink" href="#one-dimensional-gaussian-process-models" title="Permalink to this headline">¶</a></h3>
+<p>In this example, we have a 1-D noisy dataset <span class="math notranslate nohighlight">\(y\)</span> and the input data are
+from the interval <span class="math notranslate nohighlight">\([0, 1]\)</span>. The model shape is unknown, and is sought in
+the form</p>
+<div class="math notranslate nohighlight">
+\[y = f(x) + c + \varepsilon\]</div>
+<p>where <span class="math notranslate nohighlight">\(f(x)\)</span> is a Gaussian process with a squared exponential prior kernel
+and <span class="math notranslate nohighlight">\(c\)</span> is an unknown scalar with a normally distributied (wide enough)
+prior. The additive noise <span class="math notranslate nohighlight">\(\varepsilon\)</span> is normally distributed and
+zero-mean but it’s variance is estimated from data.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+
+
+<span class="c1"># Simulated dataset</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+   <span class="n">input_data</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">input_data</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span>
+   <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>  <span class="c1"># Simulated pseudo-random noise</span>
+<span class="p">)</span>
+
+<span class="c1"># Define model</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">),</span>
+    <span class="n">corrlen</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+    <span class="n">energy</span><span class="o">=</span><span class="mf">0.99</span>
+<span class="p">)</span>
+<span class="n">c</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Plotting results -----------------------------------------</span>
+<span class="c1">#</span>
+
+<span class="c1"># Plot validation plot</span>
+<span class="n">fig1</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">validation_plot</span><span class="p">(</span>
+   <span class="n">model</span><span class="p">,</span>
+   <span class="n">input_data</span><span class="p">,</span>
+   <span class="n">y</span><span class="p">,</span>
+   <span class="n">grid_limits</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+   <span class="n">input_maps</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">],</span>
+   <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;f&quot;</span><span class="p">,</span> <span class="s2">&quot;c&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Parameter posterior density plot</span>
+<span class="n">fig2</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">gaussian1d_density_plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-4.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-4_00.png" src="_images/features-4_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/features-4_01.png" src="_images/features-4_01.png" />
+</div>
+</div>
+<div class="section" id="more-on-gaussian-process-kernels">
+<h3>More on Gaussian Process kernels<a class="headerlink" href="#more-on-gaussian-process-kernels" title="Permalink to this headline">¶</a></h3>
+<p>The GP covariance kernel defines the shape and smoothness of the resulting
+function estimate. The package implements some of the most typical kernels, and
+the below example demonstrates how different kernels perform in a hypothetical
+step function (truncated) estimation problem.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">reduce</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+
+
+<span class="c1"># Define data</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">:</span> <span class="n">u</span> <span class="o">+</span> <span class="n">v</span><span class="p">,</span> <span class="p">[</span>
+    <span class="c1"># Staircase function with 5 steps from 0...1</span>
+    <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">input_data</span> <span class="o">&gt;</span> <span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">]</span>
+<span class="p">])</span>
+
+<span class="c1"># Kernel parameters</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">corrlen</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="c1"># Define and fit models with different kernels</span>
+<span class="n">exp_squared_model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span>
+    <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">corrlen</span><span class="o">=</span><span class="n">corrlen</span><span class="p">,</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+        <span class="n">energy</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">rat_quad_model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span>
+    <span class="n">gammy</span><span class="o">.</span><span class="n">RationalQuadratic1d</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">corrlen</span><span class="o">=</span><span class="n">corrlen</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+        <span class="n">energy</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">orn_uhl_model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span>
+    <span class="n">gammy</span><span class="o">.</span><span class="n">OrnsteinUhlenbeck1d</span><span class="p">(</span>
+        <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+        <span class="n">corrlen</span><span class="o">=</span><span class="n">corrlen</span><span class="p">,</span>
+        <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span>
+        <span class="n">energy</span><span class="o">=</span><span class="mf">0.9</span>
+    <span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Plotting results -----------------------------------------</span>
+<span class="c1">#</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Actual&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">,</span>
+    <span class="n">exp_squared_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Exp. squared&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">,</span>
+    <span class="n">rat_quad_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Rat. quadratic&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">input_data</span><span class="p">,</span>
+    <span class="n">orn_uhl_model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">input_data</span><span class="p">),</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Ohrnstein-Uhlenbeck&quot;</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-5.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-5.png" src="_images/features-5.png" />
+</div>
+</div>
+<div class="section" id="customize-gaussian-process-kernels">
+<h3>Customize Gaussian Process kernels<a class="headerlink" href="#customize-gaussian-process-kernels" title="Permalink to this headline">¶</a></h3>
+<p>It is straightforward to define custom formulas from “positive semidefinite”
+covariance kernel functions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+
+
+<span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Kernel for min(x, x&#39;)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="o">*</span><span class="n">t</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="p">(</span><span class="n">r</span><span class="p">(</span><span class="n">x1</span><span class="p">),</span> <span class="n">r</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">sample</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Sampling from a GP kernel square-root matrix</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.001</span><span class="p">)</span>
+
+<span class="n">Minimum</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">create_from_kernel1d</span><span class="p">(</span><span class="n">kernel</span><span class="p">)</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">Minimum</span><span class="p">(</span><span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span> <span class="n">energy</span><span class="o">=</span><span class="mf">0.999</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s compare to exp squared</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+    <span class="n">grid</span><span class="o">=</span><span class="n">grid</span><span class="p">,</span>
+    <span class="n">corrlen</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">energy</span><span class="o">=</span><span class="mf">0.999</span>
+<span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Plotting results -----------------------------------------</span>
+<span class="c1">#</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Custom&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">sample</span><span class="p">(</span><span class="n">b</span><span class="o">.</span><span class="n">design_matrix</span><span class="p">(</span><span class="n">grid</span><span class="p">)),</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;Custom&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-6.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-6.png" src="_images/features-6.png" />
+</div>
+</div>
+</div>
+<div class="section" id="spline-regression">
+<h2>Spline regression<a class="headerlink" href="#spline-regression" title="Permalink to this headline">¶</a></h2>
+<p>Constructing B-Spline based 1-D basis functions is also supported.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+
+<span class="c1"># Define dummy data</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">30</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">input_data</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+
+<span class="c1"># Define model</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+
+<span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)</span>
+<span class="n">order</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span> <span class="o">+</span> <span class="n">order</span> <span class="o">-</span> <span class="mi">2</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">2</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">BSpline1d</span><span class="p">(</span>
+    <span class="n">grid</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span>
+    <span class="n">prior</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">N</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">N</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">),</span>
+    <span class="n">extrapolate</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">a</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Plotting results --------------------------------------------</span>
+<span class="c1">#</span>
+
+<span class="c1"># Plot results</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">validation_plot</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">grid_limits</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span>
+    <span class="n">input_maps</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">],</span>
+    <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot parameter probability density functions</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">gaussian1d_density_plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-7.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-7_00.png" src="_images/features-7_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/features-7_01.png" src="_images/features-7_01.png" />
+</div>
+</div>
+<div class="section" id="non-linear-manifold-regression">
+<h2>Non-linear manifold regression<a class="headerlink" href="#non-linear-manifold-regression" title="Permalink to this headline">¶</a></h2>
+<p>In this example we construct a basis corresponding to a multi-variate Gaussian
+process with a Kronecker structure (see e.g. <a class="reference external" href="https://docs.pymc.io/notebooks/GP-Kron.html">PyMC3</a>).</p>
+<p>Another way to put it, we can form two (or more) -dimensional basis functions
+given two (or more) one-dimensional formulas. The new combined basis is
+essentially the outer product of the given bases. The underlying weight prior
+distribution priors and covariances are constructed using the Kronecker product.</p>
+<p>Let create some artificial data using the MATLAB function!</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">mpl_toolkits.mplot3d</span> <span class="kn">import</span> <span class="n">Axes3D</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">gammy</span>
+<span class="kn">from</span> <span class="nn">gammy.arraymapper</span> <span class="kn">import</span> <span class="n">x</span>
+
+
+<span class="c1"># Create some data</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">input_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span>
+    <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span>
+<span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+<span class="k">def</span> <span class="nf">peaks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;The MATLAB function</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span>
+        <span class="mi">10</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="mi">5</span> <span class="o">-</span> <span class="n">x</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span>
+        <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">y</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="p">)</span>
+
+<span class="n">y</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">peaks</span><span class="p">(</span><span class="n">input_data</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">input_data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">+</span>
+    <span class="mf">0.3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Plot the MATLAB function</span>
+<span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">100</span><span class="p">))</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">peaks</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span> <span class="o">+</span> <span class="mi">4</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s2">&quot;3d&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">antialiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Exact MATLAB function&quot;</span><span class="p">)</span>
+
+<span class="c1"># Define model</span>
+<span class="n">a</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+    <span class="n">corrlen</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">energy</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">)(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">])</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">ExpSquared1d</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+    <span class="n">corrlen</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">sigma</span><span class="o">=</span><span class="mf">4.0</span><span class="p">,</span>
+    <span class="n">energy</span><span class="o">=</span><span class="mf">0.9</span>
+<span class="p">)(</span><span class="n">x</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Kron</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+<span class="n">bias</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">Scalar</span><span class="p">()</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="n">bias</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">bayespy</span><span class="o">.</span><span class="n">GAM</span><span class="p">(</span><span class="n">formula</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># Plot results</span>
+<span class="c1">#</span>
+
+<span class="c1"># Validation plot</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">validation_plot</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">input_data</span><span class="p">,</span>
+    <span class="n">y</span><span class="p">,</span>
+    <span class="n">grid_limits</span><span class="o">=</span><span class="p">[[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">]],</span>
+    <span class="n">input_maps</span><span class="o">=</span><span class="p">[</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]],</span>
+    <span class="n">titles</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;Surface estimate&quot;</span><span class="p">,</span> <span class="s2">&quot;intercept&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Probability density functions</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">gaussian1d_density_plot</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(<a class="reference external" href=".//features-8.py">Source code</a>)</p>
+<div class="figure align-default">
+<img alt="_images/features-8_00.png" src="_images/features-8_00.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/features-8_01.png" src="_images/features-8_01.png" />
+</div>
+<div class="figure align-default">
+<img alt="_images/features-8_02.png" src="_images/features-8_02.png" />
+</div>
+<p>Note that same logic could be used to construct higher dimensional bases:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3-D formula</span>
+<span class="n">formula</span> <span class="o">=</span> <span class="n">gammy</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">gammy</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">),</span> <span class="n">c</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and so on.</p>
+</div>
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Gammy</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Key features</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#intuitive-interface">Intuitive interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitting-and-predicting">Fitting and predicting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#formula-collection">Formula collection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bayesian-statistics">Bayesian statistics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#multivariate-terms">Multivariate terms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gaussian-processes">Gaussian processes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#spline-regression">Spline regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#non-linear-manifold-regression">Non-linear manifold regression</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="backlog.html">Backlog ideas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="installation.html" title="previous chapter">Installation</a></li>
+      <li>Next: <a href="backlog.html" title="next chapter">Backlog ideas</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2021, Malmgrek.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.5.4</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/features.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -22,7 +22,8 @@ Contents
 
 .. toctree::
    installation
-   walkthrough
+   features
+   backlog
    api
    :maxdepth: 2
 
