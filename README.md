@@ -18,22 +18,11 @@ statistical analysis with the help of the superb package
 [BayesPy](http://www.bayespy.org/index.html). Alternatively, it is possible to
 fit models using just NumPy.
 
-
-### Other projects with GAM functionalities
-
-- [PyGAM](https://pygam.readthedocs.io/en/latest/)
-- [Statsmodels](https://www.statsmodels.org/dev/gam.html)
-
-<!-- Remark for Emacs users: Table of contents comes out best, when generated at
-the top of file -->
-
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Summary](#summary)
-    - [Other projects with GAM functionalities](#other-projects-with-gam-functionalities)
 - [Installation](#installation)
-- [Examples](#examples)
+- [Features through examples](#features-through-examples)
     - [Polynomial regression on 'roids](#polynomial-regression-on-roids)
         - [Predicting with model](#predicting-with-model)
         - [Plotting results](#plotting-results)
@@ -43,10 +32,11 @@ the top of file -->
         - [Define custom kernels](#define-custom-kernels)
     - [Multivariate Gaussian process regression](#multivariate-gaussian-process-regression)
     - [B-Spline basis](#b-spline-basis)
-- [To-be-added features](#to-be-added-features)
+- [Testing](#testing)
+- [Documentation](#documentation)
+- [ToDo](#todo)
 
 <!-- markdown-toc end -->
-
 
 ## Installation
 
