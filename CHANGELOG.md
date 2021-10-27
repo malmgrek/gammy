@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.4.5
+
+### Change
+- Readme: back to original form with good examples
+- Documentation: Move good parts of new readme to Sphinx documentation
+
+
 ## 0.4.4
 
 ### Fix
