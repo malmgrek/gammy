@@ -3,7 +3,7 @@
 ![](https://raw.githubusercontent.com/malmgrek/gammy/develop/doc/resources/cover.png)
 
 A Generalized additive model is a predictive mathematical model defined as a sum
-of terms that are calibrated (fitted) with observation data. 
+of terms that are calibrated (fitted) with observation data.
 
 Generalized additive models form a surprisingly general framework for building
 models for both production software and scientific research. This Python package
@@ -48,7 +48,7 @@ pip install gammy
 ## Examples
 
 In this overview, we demonstrate the package's most important features through
-common usage examples. 
+common usage examples.
 
 ### Polynomial regression on 'roids
 
@@ -60,7 +60,6 @@ unknown function from noisy data. First we import the bare minimum dependencies 
 
 >>> import matplotlib.pyplot as plt
 >>> import numpy as np
->>> import pandas as pd
 
 >>> import gammy
 >>> from gammy.models.bayespy import GAM
@@ -110,8 +109,8 @@ Variance of additive zero-mean normally distributed noise is estimated
 automagically:
 
 ``` python
->>> model.inv_mean_tau
-74.51660744335699
+>>> round(model.inv_mean_tau, 8)
+74.51660744
 
 ```
 
@@ -209,8 +208,8 @@ Define model:
 >>> formula = a(x[:, 0]) * x[:, 1] + bias
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
->>> model.mean_theta[0][0]
--0.8343458038816278
+>>> round(model.mean_theta[0][0], 8)
+-0.8343458
 
 ```
 
@@ -280,8 +279,8 @@ Define model:
 ... )(x)
 >>> model = gammy.models.bayespy.GAM(formula).fit(input_data, y)
 
->>> model.mean_theta[0][0]
--49.0001911544372
+>>> round(model.mean_theta[0][0], 8)
+-49.00019115
 
 ```
 
@@ -326,7 +325,7 @@ Let us first create some artificial data using the MATLAB function!
 ...     6 * np.random.rand(n) - 3, 6 * np.random.rand(n) - 3
 ... )).T
 >>> y = (
-...     gammy.utils.peaks(input_data[:, 0], input_data[:, 1]) + 
+...     gammy.utils.peaks(input_data[:, 0], input_data[:, 1]) +
 ...     4 + 0.3 * np.random.randn(n)
 ... )
 
@@ -355,8 +354,8 @@ covariances are constructed using the Kronecker product.
 >>> formula = A + bias
 >>> model = GAM(formula).fit(input_data, y)
 
->>> model.mean_theta[0][0]
-0.3742698633207369
+>>> round(model.mean_theta[0][0], 8)
+0.37426986
 
 ```
 
