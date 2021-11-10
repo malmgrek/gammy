@@ -473,6 +473,18 @@ def FlippedReLU(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
     return Formula(terms=[relus], prior=prior)
 
 
+def Lines(grid: np.ndarray, prior: Tuple[np.ndarray]=None) -> Formula:
+    """Collection of lines
+
+    """
+    lines = listmap(lambda c: lambda t: (c - t))(grid)
+    prior = (
+        (np.zeros(len(grid)), 1e-6 * np.identity(len(grid)))
+        if prior is None else prior
+    )
+    return Formula(terms=[lines], prior=prior)
+
+
 def TanH() -> Formula:
     raise NotImplementedError
 

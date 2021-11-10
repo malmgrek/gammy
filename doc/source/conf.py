@@ -14,15 +14,17 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
+import gammy
 
 # -- Project information -----------------------------------------------------
 
-project = 'Gammy'
-copyright = '2021, Malmgrek'
-author = 'Malmgrek'
+project = gammy.__title__
+copyright = gammy.__copyright__
+author = gammy.__author__
 
 # The full version, including alpha/beta/rc tags
-release = '0.4.5'
+release = gammy.__version__
+version = gammy.__version__
 
 
 # -- General configuration ---------------------------------------------------

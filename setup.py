@@ -2,17 +2,26 @@ import os
 from setuptools import setup, find_packages
 
 
-with open(os.path.join(os.path.dirname(__file__), "README.md")) as fh:
-    long_description = fh.read()
+here = os.path.abspath(os.path.dirname(__file__))
+
+
+with open(os.path.join(here, "README.md")) as f:
+    readme = f.read()
+
+
+about = {}
+with open(os.path.join(here, "gammy", "__version__.py"), "r") as f:
+    exec(f.read(), about)
 
 
 setup(
-    name="gammy",
-    version="0.4.5",
-    author="Stratos Staboulis",
-    description="Generalized additive models with a Bayesian twist",
-    url="https://github.com/malmgrek/gammy",
+    name=about["__title__"],
+    version=about["__version__"],
+    author=about["__author__"],
+    description=about["__description__"],
+    url=about["__url__"],
     packages=find_packages(exclude=["contrib", "doc", "tests"]),
+    license=about["__license__"],
     install_requires=[
         "numpy>=1.10.0",
         "scipy>=0.13.0",
@@ -34,6 +43,6 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    long_description=long_description,
+    long_description=readme,
     long_description_content_type="text/markdown",
 )
