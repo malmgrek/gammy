@@ -1,6 +1,10 @@
 # Change Log
 
 
+## 0.4.7
+- Allow failure in importing plot module
+
+
 ## 0.4.6
 
 ### Add
