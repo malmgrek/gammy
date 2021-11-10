@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.4.9
+- Revert back to original version handling. The flipping back and forth was
+  because I had problems with installing the package in NixOS through
+  `fetchPypi`. More specifically setuptools related checks were failing. Then I
+  realized that I can disable checks.
+
+
 ## 0.4.8
 - Refactor version handling
 
