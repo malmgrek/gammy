@@ -24,5 +24,10 @@ from .__version__ import (
 from .arraymapper import ArrayMapper, x
 from .formulae import *
 from .models import *
-from .plot import *
 from .utils import *
+
+try:
+    from .plot import *
+except ImportError:
+    # Allow import plot fail in environments where matplotlib is not installed.
+    pass

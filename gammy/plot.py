@@ -10,7 +10,7 @@ try:
     from mpl_toolkits.mplot3d import Axes3D
 except ImportError:
     logging.info(
-        "Problem with importing Axes3D from mpl_toolkits.mplot3d. Skipping."
+        "Failed importing Axes3D from mpl_toolkits.mplot3d."
     )
 import matplotlib.pyplot as plt
 from matplotlib.colors import SymLogNorm
