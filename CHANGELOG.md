@@ -1,6 +1,12 @@
 # Change Log
 
 
+## 0.4.6
+
+### Add
+- `__version__.py` for handling versioning
+
+
 ## 0.4.5
 
 ### Change
