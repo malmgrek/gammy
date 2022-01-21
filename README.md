@@ -56,9 +56,6 @@ A typical simple (but sometimes non-trivial) modeling task is to estimate an
 unknown function from noisy data. First we import the bare minimum dependencies to be used in the below examples:
 
 ```python
->>> from functools import reduce
-
->>> import matplotlib.pyplot as plt
 >>> import numpy as np
 
 >>> import gammy
