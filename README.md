@@ -310,7 +310,7 @@ Plot parameter probability densities:
 
 In this example we try estimating the bivariate "MATLAB function" using a
 Gaussian process model with Kronecker tensor structure (see e.g.
-[PyMC3](https://docs.pymc.io/notebooks/GP-Kron.html)). The main point in the
+[PyMC3](https://docs.pymc.io/en/v3/pymc-examples/examples/gaussian_processes/GP-Kron.html)). The main point in the
 below example is that it is quite straightforward to build models that can learn
 arbitrary 2D-surfaces.
 
