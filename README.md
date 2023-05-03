@@ -61,6 +61,9 @@ unknown function from noisy data. First we import the bare minimum dependencies 
 >>> import gammy
 >>> from gammy.models.bayespy import GAM
 
+>>> gammy.__version__
+"0.5.0"
+
 ```
 
 Let's simulate a dataset:
