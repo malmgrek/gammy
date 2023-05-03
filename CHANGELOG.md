@@ -1,7 +1,15 @@
 # Change Log
 
 
+## 0.5.0
+
+### Change
+- Update packaging according to present Setuptools recommendations
+
+
 ## 0.4.9
+
+### Change
 - Revert back to original version handling. The flipping back and forth was
   because I had problems with installing the package in NixOS through
   `fetchPypi`. More specifically setuptools related checks were failing. Then I
@@ -9,10 +17,14 @@
 
 
 ## 0.4.8
+
+### Change
 - Refactor version handling
 
 
 ## 0.4.7
+
+### Add
 - Allow failure in importing plot module
 
 
