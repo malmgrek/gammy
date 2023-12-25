@@ -1,6 +1,12 @@
 # Change Log
 
 
+## 0.5.1
+
+### Fix
+- Dependabot alerts by updating `requirements.txt`
+
+
 ## 0.5.0
 
 ### Change
