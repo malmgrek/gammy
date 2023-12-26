@@ -11,8 +11,7 @@
 
 """
 
-import importlib.metadata
-
+from .__version__ import __version__
 from .arraymapper import ArrayMapper, x
 from .formulae import *
 from .models import *
@@ -23,5 +22,3 @@ try:
 except ImportError:
     # Allow import plot fail in environments where matplotlib is not installed.
     pass
-
-__version__ = importlib.metadata.version("gammy")

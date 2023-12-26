@@ -1,6 +1,13 @@
 # Change Log
 
 
+## 0.5.2
+
+### Add
+- `Makefile` with releasing script
+- `__version__.py` source file for version in code
+
+
 ## 0.5.1
 
 ### Fix
