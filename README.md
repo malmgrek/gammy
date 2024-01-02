@@ -62,7 +62,7 @@ unknown function from noisy data. First we import the bare minimum dependencies 
 >>> from gammy.models.bayespy import GAM
 
 >>> gammy.__version__
-'0.5.2'
+'0.5.3'
 
 ```
 

@@ -24,5 +24,7 @@ release:
 	sed -i "s/version = .*/version = $$version/g" ./setup.cfg && \
 	echo "__version__ = '$$version'" > ./gammy/__version__.py
 	make test
+	python3 -m build
+	python3 -m twine upload --repository gammy dist/*
 
 # end
