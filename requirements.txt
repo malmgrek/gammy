@@ -34,7 +34,7 @@ packaging==23.1
     # via
     #   matplotlib
     #   pytest
-pillow==10.1.0
+pillow==10.3.0
     # via matplotlib
 pluggy==1.0.0
     # via pytest
