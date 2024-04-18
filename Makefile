@@ -4,6 +4,8 @@
 # @file
 #
 
+SHELL := /bin/bash
+
 .PHONY: test
 test:
 	pytest -v
@@ -24,6 +26,7 @@ release:
 	echo "__version__ = '$$version'" > ./gammy/__version__.py
 	make test
 	python3 -m build
-	python3 -m twine upload --repository gammy dist/*
+	@read -s -p "PyPI secret: " password && echo && \
+	python3 -m twine upload dist/* --repository-url https://upload.pypi.org/legacy/ --username __token__ --password $$password
 
 # end

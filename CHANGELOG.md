@@ -1,8 +1,22 @@
 # Change Log
 
 
+## 0.5.5
+
+### Fix
+- PyPI release script --> Add API token integration
+
+
+## 0.5.4
+
+### Update
+- Dev dependency `Pillow` to `>= 10.3.0`
+
+
 ## 0.5.3
-- Bump `Pillow` to `>= 10.3.0`
+
+### Add
+- PyPI release script to Makefile
 
 
 ## 0.5.2
