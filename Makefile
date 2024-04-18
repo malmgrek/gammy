@@ -9,13 +9,12 @@ test:
 	pytest -v
 	python3 -m doctest -v README.md
 
-
 .PHONY: pip-compile
 pip-compile:
 	pip-compile --resolver=backtracking \
 				--verbose \
 				--extra=test,dev \
-				--output-file=requirements.txt
+				--output-file=requirements.txt ./setup.cfg
 
 .PHONY: release
 release:

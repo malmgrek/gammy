@@ -1,6 +1,10 @@
 # Change Log
 
 
+## 0.5.3
+- Bump `Pillow` to `>= 10.3.0`
+
+
 ## 0.5.2
 
 ### Add

@@ -2,12 +2,22 @@
 
 """
 
+from configparser import ConfigParser
+import os
+
 import numpy as np
 from numpy.testing import assert_almost_equal
 import pytest
 
 import gammy
 from gammy.arraymapper import x
+
+
+def test_version():
+    config = ConfigParser()
+    config.read(os.path.join(os.path.dirname(__file__), "..", "..", "setup.cfg"))
+    metadata = dict(config["metadata"])
+    assert metadata["version"] == gammy.__version__, "Update package version"
 
 
 def test_polynomial(fit_model):
