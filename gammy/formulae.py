@@ -6,7 +6,6 @@
 from typing import Callable, List, Tuple, Iterable
 
 import numpy as np
-import scipy as sp
 from scipy import interpolate
 
 from gammy import utils
@@ -34,8 +33,6 @@ class Formula:
 
         self.prior = prior
         """Prior mean and precision"""
-
-        return
 
 
     def __add__(self, other) -> "Formula":

@@ -12,6 +12,8 @@
 from functools import wraps
 from typing import Callable
 
+import numpy as np
+
 from gammy.utils import compose
 
 
@@ -34,12 +36,9 @@ class ArrayMapper:
 
     """
 
-    def __init__(self, function=lambda t: t):
-
+    def __init__(self, function: Callable[np.ndarray, float]=lambda t: t):
         self.function = function
         """Wrapped function"""
-
-        return
 
     def __call__(self, *args, **kwargs):
         """Call the wrapped function
