@@ -258,7 +258,7 @@ def white_noise(n_dims: int, sigma=1.0, **unused) -> np.ndarray:
     return sigma * np.identity(n_dims)
 
 
-def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
+def decompose_covariance(H: np.ndarray, energy: float=1.01) -> np.ndarray:
     """Most important eigenvectors of a symmetric positive-definite square matrix
 
     Ordered with respect of the descending eigenvalues. Each
@@ -269,6 +269,11 @@ def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
     because the latter sometimes returns slightly negative eigenvalues for
     numerical reasons. In those cases the energy trick doesn't give all
     eigenvectors even if we wanted
+
+    NOTE: It was observed that the signs of the basis vectors from svd can have
+    different signs on different machines which can lead to problems with
+    serialization. We hence also modify the basis vectors to have consistent
+    signs.
 
     REVIEW: There might be problem with serialization. If there are duplicate
     eigenvalues, then on different machines, the vectors might appear in
@@ -295,6 +300,21 @@ def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
     #
 
     (U, S, Vh) = np.linalg.svd(H)
+
+    # Enforce consistent signs for U
+    eps = np.finfo(U.dtype).eps
+    for i in range(U.shape[1]):
+        # Choose the sign based on the first non-negligible value, this
+        # is because the sign of a value very close to 0 might be arbitrary
+        # due to numerics
+        # For similar reasons (symmetry of some eigenvectors of the GP prior
+        # cov) we don't use the average value or the max of absolute values
+        # which would be otherwise be more intuitive choices.
+        threshold = 1e4 * eps * np.max(np.abs(U[:, i]))
+        ind = np.where(np.abs(U[:, i]) > threshold)[0][0]
+        if U[ind, i] < 0:
+            U[:, i] = -U[:, i]
+
     crop = (S.cumsum() / S.sum()) <= energy
     return U[:, crop] * np.sqrt(S[crop])
 
