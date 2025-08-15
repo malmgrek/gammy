@@ -296,7 +296,7 @@ def decompose_covariance(H, energy: float=1.01) -> np.ndarray:
 
     (U, S, Vh) = np.linalg.svd(H)
     crop = (S.cumsum() / S.sum()) <= energy
-    return np.dot(U[:, crop], np.sqrt(np.diag(S[crop])))
+    return U[:, crop] * np.sqrt(S[crop])
 
 
 def interp_arrays1d(v, grid, **kwargs) -> List:
