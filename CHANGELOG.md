@@ -1,6 +1,15 @@
 # Change Log
 
 
+## 0.5.6
+
+### Fix
+- Enforce consistent signs to the basis vectors of the GP approximation to 
+  resolve potential issues with serialization. Serialized models created 
+  using any previous version of the package are not compatible if the model 
+  includes a GP term.
+
+
 ## 0.5.5
 
 ### Fix
