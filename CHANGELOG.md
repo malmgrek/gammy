@@ -3,6 +3,10 @@
 
 ## 0.5.6
 
+### Add
+- Install target to `Makefile`
+- Build tools to requirements
+
 ### Fix
 - Enforce consistent signs to the basis vectors of the GP approximation to 
   resolve potential issues with serialization. Serialized models created 
